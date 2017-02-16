@@ -13,5 +13,5 @@ export class RoutePointComponent {
     routeID = 123231;
     title = "1º Ponto de Coleta";
     address = "Av. Gulmão Paraíba, 666, Centro Oeste, Dobrada - SP"
-    imgUrl = "/Content/reciclagem.png";
-}
+    imgUrl = "../../assets/img/reciclagem.png";
+} 

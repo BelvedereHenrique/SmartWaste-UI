@@ -1,11 +1,11 @@
-@media screen and (max-width: 600px){
-    .bottom-navigation{
-        width: 100% !important;    
+@media screen and (max-width: 600px) {
+    .bottom-navigation {
+        width: 100% !important;
         /*border-radius: 0px !important;            */
     }
 }
 
-.bottom-navigation{
+.bottom-navigation {
     position: absolute;
     bottom: 0px;
     right: 0px;
@@ -17,19 +17,17 @@
     background: #009688;
 }
 
-.bottom-navigation button{
-    height: 100%;
-    background: none;
-    text-align: center;
-    border: none;
-    width: 25%;
-    color: #ffffff;
-}
+    .bottom-navigation button {
+        height: 100%;
+        background: none;
+        text-align: center;
+        border: none;
+        color: #ffffff;
+    }
 
-.bottom-navigation button.active{
-    font-size: 14px;
-    font-weight: bold;
-    color: #ffffff;
-    background: #00897B;
-}
-
+        .bottom-navigation button.active {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+            background: #00897B;
+        }

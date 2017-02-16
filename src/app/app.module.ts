@@ -12,15 +12,19 @@ import { RoutePointComponent } from './route-point/route-point.component';
 import { AccountMenuComponent } from './account-menu/account-menu.component';
 import { AccountEnterpriseComponent } from './account-enterprise/account-enterprise.component';
 
+import { NotificationService } from './_shared/_services/notification.service'
+ 
 import { BottomNavigationModule } from './bottom-navigation/bottom-navigation.module';
 import { MapRouteMenuRoutingModule } from './map-route-menu/map-route-menu-routing.module';
-import { MapRouteItemRoutingModule } from './map-route-item/map-route-item-routing.module';
+import { MapRouteDetailsRoutingModule } from './map-route-details/map-route-details-routing.module';
 import { AccountMenuModule } from './account-menu/account-menu.module';
 import { AccountMenuRoutingModule } from './account-menu/account-menu-routing.module';
 import { AccountEnterpriseModule } from './account-enterprise/account-enterprise.module';
 import { AccountEnterpriseRoutingModule } from './account-enterprise/account-enterprise-routing.module';
 import { SharedModule} from './_shared/shared.module';
 import { SearchModule} from './search/search.module';
+import { SigninModule } from './signin/signin.module'
+import { SigninRoutingModule } from './signin/signin.routing.module'
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -41,17 +45,20 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     AccountEnterpriseComponent,
     ConfirmDirective
   ],
-  imports: [
-    SharedModule,
+  imports: [    
+    RouterModule.forRoot([], {useHash: true}),
     AppRoutingModule,
     MapRouteMenuRoutingModule,
-    MapRouteItemRoutingModule,
-    AccountMenuModule,
+    SigninRoutingModule,
     AccountMenuRoutingModule,
+    AccountEnterpriseRoutingModule,
+    SharedModule,    
+    MapRouteDetailsRoutingModule,
+    AccountMenuModule,
     AccountEnterpriseModule,
-    AccountEnterpriseRoutingModule
+    SigninModule
   ],
-  providers: [],
+  providers: [NotificationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

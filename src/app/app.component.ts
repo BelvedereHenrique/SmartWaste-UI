@@ -10,6 +10,7 @@ import { BottomNavigationButton } from "./_shared/_models/BottomNavigationButton
 })
 export class AppComponent {
     public showMenu: boolean = true;
+    public searchQuery: string = "";
 
     constructor(private router: Router) {
         router.events.subscribe((val) => {
@@ -24,7 +25,11 @@ export class AppComponent {
             this.showMenu = true;
     }
 
+    public onSearch(query: string): void {        
+        this.searchQuery = query;
+    }
+
     public onNavigationClick2(button: BottomNavigationButton) : void {
-        this.showMenu = button.showMenu;
+        
     };
 }

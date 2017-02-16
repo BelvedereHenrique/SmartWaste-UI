@@ -1,8 +1,7 @@
 <div class="app-wrapper">
-    
-     <search></search> 
+    <search (onSearch)="onSearch($event)"></search>
 
-     <map></map>
+    <map [searchQuery]="searchQuery" ></map>
 
     <div [ngClass]="{ 'active' : showMenu }" class="menu-wrapper z1">        
         <router-outlet></router-outlet>

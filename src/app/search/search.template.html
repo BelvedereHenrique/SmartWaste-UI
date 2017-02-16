@@ -1,6 +1,7 @@
 <div class="search-content z1">
-    <span class="material-icons">search</span>
+    <img class="logo" _ngcontent-elu-2="" src="../../assets/img/logo_48.png">    
+    <span class="material-icons icon">search</span>
     <div class="search-input-content">
-        <input placeholder="Pesquise" />
+        <input #search (keydown)="onSeachKepress(search.value)" placeholder="Pesquise" />
     </div>
 </div>

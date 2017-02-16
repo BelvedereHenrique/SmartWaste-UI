@@ -5,14 +5,28 @@
   <title>SmartWaste</title>
   <base href="/">
 
+  <link rel="manifest" href="/assets/manifest.json">
+
+  <meta name="theme-color" content="#FF9800">
+  <meta name="background-color" content="#009688">
+  <link rel="icon" sizes="192x192" href="/assets/img/logo_192.png">
+  <link rel="icon" sizes="48x48" href="/assets/img/logo_48.png">
+  <link rel="icon" sizes="96x96" href="/assets/img/logo_96.pngg">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">  
 </head>
 <body>
-  <app-root>Loading...</app-root>
+  <app-root>
+     <div class="loading-app-content">
+          <img src="../assets/img/logo_192.png" />
+          <div><span>Smart</span><span>Waste</span></div>
+      </div>
+  </app-root>
+  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

@@ -2,7 +2,7 @@ export class BottomNavigationButton {
     public icon: String;
     public text: String;
     public link: String;
-    public showMenu: boolean;
+    public visible: boolean;
     public onClick: any;
     public active: boolean;
 
@@ -11,7 +11,11 @@ export class BottomNavigationButton {
         this.text = _text;
         this.link = _link;
         this.onClick = onClick;
-        this.showMenu = _showMenu;
+        this.visible = _showMenu;
+    }
+
+    public setVisible(showMenu: boolean): void {
+        this.visible = showMenu;
     }
 
     setActive = function (active: boolean) {

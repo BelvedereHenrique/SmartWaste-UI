@@ -4,28 +4,36 @@
     This component manages the Bing Maps V8.
 */
 
-import { Component } from '@angular/core';
+import { Component, OnChanges, Input, SimpleChanges } from '@angular/core';
 import { ViewChild } from '@angular/core';
 
+
+import { NotificationService, Notification, NotificationResult, NotificationButton } from "../_shared/_services/notification.service";
 @Component({
     selector: 'map',
     templateUrl: './map.template.html',
     styleUrls: ['./map.component.css']
 })
 
-export class MapComponent {
+export class MapComponent implements OnChanges {
+    @Input() searchQuery;
     @ViewChild('map') public map;
     private instance: Microsoft.Maps.Map;
     private pushpins: Microsoft.Maps.Pushpin[];
 
     private mapIconSize: number = 24;
 
-    constructor() {
+    constructor(private _notificationService: NotificationService) {
         this.pushpins = [];
     }
 
     ngAfterViewInit() {
-        this.loadMap();
+        this.loadMap();        
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes["searchQuery"].currentValue != changes["searchQuery"].previousValue)
+            this.search(changes["searchQuery"].currentValue);
     }
 
     private getLocationFromPixel(x: number, y: number): Microsoft.Maps.Location {
@@ -47,27 +55,35 @@ export class MapComponent {
         var push = new PushPinBuilder(location, PushPinType.CollectPoint, PushPinMaterialType.Paper).build();
 
         this.addPushpin(push);
+
+        this.makeRoute(location);
     }
 
-    public makeRoute(location: Microsoft.Maps.Location): void {
-        Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function addWaypoint() {
-            var directionsManager = new Microsoft.Maps.Directions.DirectionsManager(this.instance);
+    /* NOTE: Docs for routes: https://msdn.microsoft.com/en-us/library/mt750406.aspx */
+    public route: Microsoft.Maps.Directions.DirectionsManager;
 
-            directionsManager.clearAll();
-            var seattleWaypoint = new Microsoft.Maps.Directions.Waypoint({ location: location });
-            directionsManager.addWaypoint(seattleWaypoint);
-            var tacomaWaypoint = new Microsoft.Maps.Directions.Waypoint({ address: 'Mat�o, SP'/*, location: new Microsoft.Maps.Location(47.255134, -122.441650) */ });
-            directionsManager.addWaypoint(tacomaWaypoint);
+    public makeRoute(location: Microsoft.Maps.Location): void {        
+        Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {
 
-            // Insert a waypoint
-            directionsManager.addWaypoint(new Microsoft.Maps.Directions.Waypoint({ address: 'Issaquah, WA', location: new Microsoft.Maps.Location(47.530094, -122.033798) }), 1);
-            // Set the element in which the itinerary will be rendered
-            //directionsManager.setRenderOptions({ itineraryContainer: document.getElementById('printoutPanel') });
-            directionsManager.calculateDirections();
+            if (this.route == null) {
+                this.route = new Microsoft.Maps.Directions.DirectionsManager(this.instance);                
+            }
+
+            this.route.setRenderOptions({
+                autoUpdateMapView: false
+            });
+                        
+            var waypoint = new Microsoft.Maps.Directions.Waypoint({ location: location });
+            this.route.addWaypoint(waypoint);
+
+            this.route.calculateDirections();
         }.bind(this));
+        
     }
 
     public search(query: string): void {
+        if (!this.instance) return;
+
         Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
             var searchManager = new Microsoft.Maps.Search.SearchManager(this.instance);
             var requestOptions = {
@@ -79,15 +95,24 @@ export class MapComponent {
                 }.bind(this)
             };
             searchManager.geocode(requestOptions);
+
+            console.log(JSON.stringify(this.instance.getBounds()));
         }.bind(this));
     };
 
-    addPushpin = function (pushpin: Microsoft.Maps.Pushpin) {
+    public addPushpin(pushpin: Microsoft.Maps.Pushpin): void {
         this.instance.entities.push(pushpin);
         this.pushpins.push(pushpin);
+
+        var n: Notification = new Notification("Added pushpin! :)", [], 5000);
+        n.AddButton("Undo", () => {
+            this.instance.entities.remove(pushpin);
+        });
+
+        this._notificationService.notify(n);
     }
 
-    loadMap = function (): void {
+    public loadMap(): void {
         console.debug(this.map);
 
         // Store a copy of the ZoneAwarePromise defined above
@@ -107,6 +132,7 @@ export class MapComponent {
             this.search("Dobrada");
 
             Microsoft.Maps.Events.addHandler(this.instance, "click", this.onMapClick.bind(this));
+
         }.bind(this);
 
         script.src = "https://www.bing.com/api/maps/mapcontrol?branch=release&callback=onBingLoad";
