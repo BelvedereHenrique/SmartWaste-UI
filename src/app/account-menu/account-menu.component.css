@@ -1,0 +1,22 @@
+.account-item {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+}
+.no-padding{
+    padding:0px;
+    margin:0px;
+}
+
+.pointer{
+    cursor:pointer;
+}
+.account-item:hover{
+    background: #ECEFF1;
+}
+
+.account-item .account-title {
+    font-weight: bold;
+    font-size: 15px;
+}

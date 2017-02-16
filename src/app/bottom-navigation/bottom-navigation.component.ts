@@ -16,7 +16,7 @@ export class BottomNavigationComponent {
         this.AddButton(new BottomNavigationButton('map', 'Map', this.onClick, "/", false));
         this.AddButton(new BottomNavigationButton('directions', 'Routes', this.onClick, "/routes", true));
         this.AddButton(new BottomNavigationButton('history', 'History', this.onClick, "", true));
-        this.AddButton(new BottomNavigationButton('account_circle', 'Account', this.onClick, "", true));
+        this.AddButton(new BottomNavigationButton('account_circle', 'Account', this.onClick, "/account", true));
     }
 
     public AddButton(button: BottomNavigationButton): void {

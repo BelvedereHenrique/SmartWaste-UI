@@ -17,7 +17,7 @@ export class MapRouteItemComponent {
     private routeID: String = "654";
     
     public onItemClick(): void {
-        this.router.navigate(["Routes", this.routeID]);
+        this.router.navigate(["routes", this.routeID]);
         //this.n.Notify(new Notification("Teste", [], 15000));
     }
 }

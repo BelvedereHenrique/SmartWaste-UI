@@ -9,9 +9,16 @@ import { MapRouteDetailsComponent } from './map-route-details/map-route-details.
 import { NotificationComponent } from './notification/notification.component';
 import { BottomNavigationComponent } from './bottom-navigation/bottom-navigation.component';
 import { RoutePointComponent } from './route-point/route-point.component';
+import { AccountMenuComponent } from './account-menu/account-menu.component';
+import { AccountEnterpriseComponent } from './account-enterprise/account-enterprise.component';
 
 import { BottomNavigationModule } from './bottom-navigation/bottom-navigation.module';
 import { MapRouteMenuRoutingModule } from './map-route-menu/map-route-menu-routing.module';
+import { MapRouteItemRoutingModule } from './map-route-item/map-route-item-routing.module';
+import { AccountMenuModule } from './account-menu/account-menu.module';
+import { AccountMenuRoutingModule } from './account-menu/account-menu-routing.module';
+import { AccountEnterpriseModule } from './account-enterprise/account-enterprise.module';
+import { AccountEnterpriseRoutingModule } from './account-enterprise/account-enterprise-routing.module';
 import { SharedModule} from './_shared/shared.module';
 import { SearchModule} from './search/search.module';
 
@@ -30,12 +37,19 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     BottomNavigationComponent,
     RoutePointComponent,
     NotificationComponent,
+    AccountMenuComponent,
+    AccountEnterpriseComponent,
     ConfirmDirective
   ],
   imports: [
     SharedModule,
     AppRoutingModule,
-    MapRouteMenuRoutingModule
+    MapRouteMenuRoutingModule,
+    MapRouteItemRoutingModule,
+    AccountMenuModule,
+    AccountMenuRoutingModule,
+    AccountEnterpriseModule,
+    AccountEnterpriseRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
