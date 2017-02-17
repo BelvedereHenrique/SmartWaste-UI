@@ -7,7 +7,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class AccountEnterpriseService{
     
-private url = 'http://localhost:3000/todo/';
+private url = AppSettings.API_ENDPOINT;
 private headers = new Headers({ 'Content-Type': 'application/json' });
 private options = new RequestOptions({ headers: this.headers });
 
@@ -15,7 +15,17 @@ private options = new RequestOptions({ headers: this.headers });
   }
 
   getCountries () {
-    return this.http.get("http://localhost:15538/Account/GetCountries")
+    return this.http.get(this.url+"/Account/GetCountries")
+                    .map(this.extractData)
+                    .catch(this.handleError);
+  }
+  getStates (countryID: number) {
+    return this.http.get(this.url+"/Account/GetStates?countryID="+countryID)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+  }
+  getCities (stateID: number) {
+    return this.http.get(this.url+"/Account/GetCities?stateID="+stateID)
                     .map(this.extractData)
                     .catch(this.handleError);
   }

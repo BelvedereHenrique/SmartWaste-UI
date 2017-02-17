@@ -10,12 +10,22 @@
             <input type="text" class="form-control" placeholder="CNPJ">
         </div>
         <div class="col col-lg-12 form-group">
-            <label>CNPJ</label><br />
-            <input type="text" class="form-control" placeholder="CNPJ">
+            <label>Country</label><br />
+            <select class="form-control" [disabled]="Countries.length == 0"  (change)="onCountryChange($event.target.value)">
+                <option *ngFor="let country of Countries" value="{{country.ID}}">{{country.Name}}</option>
+            </select>
         </div>
         <div class="col col-lg-12 form-group">
-            <label>CNPJ</label><br />
-            <input type="text" class="form-control" placeholder="CNPJ">
+            <label>State</label><br />
+            <select class="form-control" [disabled]="States.length == 0"  (change)="onStateChange($event.target.value)">
+                <option *ngFor="let state of States" value="{{state.ID}}">{{state.Name}}</option>
+            </select>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <label>City</label><br />
+            <select class="form-control" [disabled]="Cities.length == 0">
+                <option *ngFor="let city of Cities" value="{{city.ID}}">{{city.Name}}</option>
+            </select>
         </div>
 
     </div>
