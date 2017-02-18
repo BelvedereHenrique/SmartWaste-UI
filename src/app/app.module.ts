@@ -13,7 +13,8 @@ import { AccountMenuComponent } from './account-menu/account-menu.component';
 import { AccountEnterpriseComponent } from './account-enterprise/account-enterprise.component';
 
 import { NotificationService } from './_shared/_services/notification.service'
- 
+import { ServiceHelpersService } from './_shared/_services/service-helpers.service'
+
 import { BottomNavigationModule } from './bottom-navigation/bottom-navigation.module';
 import { MapRouteMenuRoutingModule } from './map-route-menu/map-route-menu-routing.module';
 import { MapRouteDetailsRoutingModule } from './map-route-details/map-route-details-routing.module';
@@ -58,7 +59,7 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     AccountEnterpriseModule,
     SigninModule
   ],
-  providers: [NotificationService],
+  providers: [NotificationService, ServiceHelpersService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
