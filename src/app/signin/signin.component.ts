@@ -73,6 +73,6 @@ export class SigninComponent implements OnInit {
     }
 
     public onCreateAccountClick(): void {
-
+        this._router.navigateByUrl("account/personal");
     }
 }

@@ -21,6 +21,10 @@ export class AccountMenuComponent {
         this.router.navigateByUrl("account/enterprise");
         //this.n.Notify(new Notification("Teste", [], 15000));
     }
+    public onRequestPersonalPermissionClick(): void {
+        this.router.navigateByUrl("account/personal");
+        //this.n.Notify(new Notification("Teste", [], 15000));
+    }
 
     public currentUser: User = new User();
     

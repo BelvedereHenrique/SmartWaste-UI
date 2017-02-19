@@ -33,6 +33,11 @@ export class ServiceHelpersService {
                 .map(this.extractData)
                 .catch(this.handleError.bind(this));
     }
+    public put<T>(url: string, data: any, addToken: boolean = true, contentType: ContentTypeEnum = ContentTypeEnum.JSON) : Observable<T>{
+        return this._http.put(this.joinEndPoint(url), data, this.getOptions(RequestMethod.Post, null, contentType, addToken))
+                .map(this.extractData)
+                .catch(this.handleError.bind(this));
+    }
 
     public getOptions(method: RequestMethod, params : URLSearchParams, contentType: ContentTypeEnum, addToken: boolean) : RequestOptions{        
         let headers =new Headers({ 
