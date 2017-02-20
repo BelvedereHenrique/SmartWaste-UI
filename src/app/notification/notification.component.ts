@@ -13,12 +13,10 @@ export class NotificationComponent {
     constructor(private _notificationService: NotificationService, private ngZone: NgZone) {
         console.log("NotificationComponent Initalized!");
 
-        this._notificationService.setOnNotify(this.onNotify.bind(this));
-        this._notificationService.setOnHide(this.onHide.bind(this));
+        this._notificationService.onHide$.subscribe(this.onHide.bind(this));
+        this._notificationService.onNotify$.subscribe(this.onNotify.bind(this));
 
         this.showingNotification = new Notification("", []);
-
-        this._notificationService.ready();
     }
 
     public onHide(): void {

@@ -1,4 +1,5 @@
 export class BottomNavigationButton {
+    public name: String;
     public icon: String;
     public text: String;
     public link: String;
@@ -6,16 +7,17 @@ export class BottomNavigationButton {
     public onClick: any;
     public active: boolean;
 
-    constructor(_icon: String, _text: String, onClick: Function, _link: String, _showMenu: boolean) {
-        this.icon = _icon;
-        this.text = _text;
-        this.link = _link;
+    constructor(name: string, icon: String, text: String, onClick: Function, link: String, visible: boolean) {
+        this.name = name;
+        this.icon = icon;
+        this.text = text;
+        this.link = link;
         this.onClick = onClick;
-        this.visible = _showMenu;
+        this.visible = visible;        
     }
 
-    public setVisible(showMenu: boolean): void {
-        this.visible = showMenu;
+    public setVisible(visible: boolean): void {
+        this.visible = visible;
     }
 
     setActive = function (active: boolean) {

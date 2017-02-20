@@ -57,7 +57,6 @@ public onStateChange(value){
   }
 
     getCities(stateID) {
-      debugger;
     this._service.getCities(stateID).subscribe(
       data => {
           if(data.Success == true){

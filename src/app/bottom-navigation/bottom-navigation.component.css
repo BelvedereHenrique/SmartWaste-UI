@@ -31,3 +31,7 @@
             color: #ffffff;
             background: #00897B;
         }
+
+        .bottom-navigation button:not(.visible){
+            display: none;
+        }

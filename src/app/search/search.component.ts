@@ -1,5 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 
+import { MapService } from "../_shared/_services/map.service";
+
 @Component({
   selector: 'search',
   templateUrl: './search.template.html',
@@ -7,10 +9,12 @@ import { Component, Output, EventEmitter } from '@angular/core';
 })
 
 export class SearchComponent {
-    @Output() onSearch: EventEmitter<string> = new EventEmitter();
-
     private timer: number;
     private lastChange: Date;
+
+    constructor(private _mapService : MapService){
+
+    }
 
     public onSeachKepress(query: string): void {
         var now = new Date();
@@ -23,6 +27,6 @@ export class SearchComponent {
 
     private callOnSearchEvent(query: string, now: Date): void {
         if (!query) return;
-        this.onSearch.emit(query);
+        this._mapService.search(query);
     }
 }

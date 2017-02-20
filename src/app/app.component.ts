@@ -1,21 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 
 import { BottomNavigationButton } from "./_shared/_models/BottomNavigationButton.model";
+import { SecurityManagerService } from "./_shared/_services/security-manager.service";
 
 @Component({
     selector: 'app-root',
     templateUrl: "./app.template.html",
     styleUrls: ["./app.component.css"]
 })
-export class AppComponent {
-    public showMenu: boolean = true;
-    public searchQuery: string = "";
+export class AppComponent implements OnInit {
+    public showMenu: boolean = true;    
 
-    constructor(private router: Router) {
-        router.events.subscribe((val) => {
+    constructor(private _router: Router,
+                private _securityManager: SecurityManagerService) {
+        this._router.events.subscribe((val) => {
             this.VerifyMenuForUrl(val.url);
         });
+    }
+
+    ngOnInit() {
+        // NOTE: Check if the user is authenticated and setup the app;        
+        this._securityManager.checkAuth();
     }
 
     private VerifyMenuForUrl(url: string) {
@@ -23,10 +29,6 @@ export class AppComponent {
             this.showMenu = false;
         else
             this.showMenu = true;
-    }
-
-    public onSearch(query: string): void {        
-        this.searchQuery = query;
     }
 
     public onNavigationClick2(button: BottomNavigationButton) : void {

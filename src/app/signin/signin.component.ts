@@ -1,20 +1,33 @@
-import { Component } from "@angular/core"
+import { Component, OnInit } from "@angular/core"
+import { Router, ActivatedRoute, Params } from "@angular/router"
 
 import { NotificationService, Notification, NotificationButton, NotificationResult } from "../_shared/_services/notification.service";
 import { AccountService } from "../_shared/_services/account.service";
+import { JwtService } from "../_shared/_services/jwt.service";
+import { SecurityManagerService } from "../_shared/_services/security-manager.service";
 
 @Component({
     selector: "signin",
     templateUrl: "./signin.template.html",
-    styleUrls: ["./signin.component.css"]
+    styleUrls: ["./signin.component.css"],
+    providers: [JwtService]
 })
 
-export class SigninComponent {
+export class SigninComponent implements OnInit {
     public title: string = "Sign in";
     public subtitle: string = "Use your personal/corporative e-mail to sign in";
 
-    constructor(private _notificationService: NotificationService, private _accountService: AccountService) {
+    constructor(private _notificationService: NotificationService, 
+                private _accountService: AccountService,
+                private _activatedRoute: ActivatedRoute,                
+                private _router: Router,
+                private _securityManager: SecurityManagerService) {
+        
+    }
 
+    ngOnInit() {
+        if (this._securityManager.isAuthenticated())
+            this._router.navigate(['/']);
     }
 
     public onSignInClick(email: string, password: string): void {
@@ -27,21 +40,23 @@ export class SigninComponent {
             new Notification("Signing in...", [], 0)
         );
         
-
         this._accountService.SignIn(email, password).subscribe((result) => {
-            console.debug(JSON.stringify(result.json()));
-
             notification.Cancel();
 
+            if (result.access_token) {
+                this._securityManager.signin(result);                
 
-            if (result.Success) {
-                this._notificationService.notify(new Notification("Signed in!", [], 1000));
+                this._notificationService.notify(new Notification("Signed in!", [], 3000));
+
+                this._router.navigate(["/"],);
             } else {
+                this._securityManager.checkAuth();
                 this._notificationService.notify(new Notification("Error to sign in!", [], 1000));
             }
         }, (error) => {
-            this._notificationService.notify(new Notification("Error to sign in!", [], 1000));
             notification.Cancel();
+            this._notificationService.notify(new Notification(error.error_description, [], 5000));            
+            this._securityManager.checkAuth();
         });
     }
 

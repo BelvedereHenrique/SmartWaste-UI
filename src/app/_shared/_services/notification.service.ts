@@ -1,10 +1,15 @@
 import { Injectable } from "@angular/core";
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class NotificationService {
-    private notifications: Notification[] = [];
-    private onNotifyCallback: Function;
-    private onHideCallback: Function;
+    private onNotify = new Subject<Notification>();
+    private onHide = new Subject();
+
+    public onNotify$ = this.onNotify.asObservable();
+    public onHide$ = this.onHide.asObservable();
+
+    private notifications: Notification[] = [];    
 
     public notificationAnimation: number = 300;
     public notificationTimeout: number = 5000;
@@ -12,14 +17,6 @@ export class NotificationService {
     public index: number = -1;
 
     public showingNotification: Notification;
-
-    constructor() {
-        console.log("NotificationService Initalized!");
-    }
-
-    public ready(): void {
-
-    }
 
     public notify(notification: Notification): NotificationResult {
         notification.SetOnButtonClickCallback(this.onButtonNotificationClickCallback.bind(this));
@@ -33,23 +30,6 @@ export class NotificationService {
             this.CheckQueue();
             return new NotificationResult(this.index, this.OnNotificationCancel.bind(this));
         }
-    }
-
-    private callOnNotifyCallback(notification: Notification): void {
-        this.onNotifyCallback(notification);
-    }
-
-    private callOnHideCallback(): void {
-        if (this.onHideCallback)
-            return this.onHideCallback();
-    }
-
-    public setOnNotify(callback: Function): void {
-        this.onNotifyCallback = callback;
-    }
-
-    public setOnHide(callback: Function): void {
-        this.onHideCallback = callback;
     }
 
     private CheckQueue(): void {
@@ -69,7 +49,9 @@ export class NotificationService {
         }
 
         this.showingNotification = this.notifications[this.index];
-        this.callOnNotifyCallback(this.showingNotification);
+
+        this.onNotify.next(this.showingNotification);
+
         this.showNotification = true;
 
         //setTimeout(() => {
@@ -81,7 +63,7 @@ export class NotificationService {
     private HideNotification(index: number) {
         if (index != this.index) return;
                 
-        this.callOnHideCallback();
+        this.onHide.next();
 
         setTimeout(() => {
             this.showNotification = false;

@@ -4,36 +4,34 @@
     This component manages the Bing Maps V8.
 */
 
-import { Component, OnChanges, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ViewChild } from '@angular/core';
 
-
 import { NotificationService, Notification, NotificationResult, NotificationButton } from "../_shared/_services/notification.service";
+import { MapService } from "../_shared/_services/map.service";
+
 @Component({
     selector: 'map',
     templateUrl: './map.template.html',
     styleUrls: ['./map.component.css']
 })
 
-export class MapComponent implements OnChanges {
-    @Input() searchQuery;
+export class MapComponent {    
     @ViewChild('map') public map;
     private instance: Microsoft.Maps.Map;
     private pushpins: Microsoft.Maps.Pushpin[];
 
     private mapIconSize: number = 24;
 
-    constructor(private _notificationService: NotificationService) {
+    constructor(private _notificationService: NotificationService,
+                private _mapService : MapService) {
         this.pushpins = [];
+
+        this._mapService.onSearch$.subscribe(this.search.bind(this));
     }
 
     ngAfterViewInit() {
         this.loadMap();        
-    }
-
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes["searchQuery"].currentValue != changes["searchQuery"].previousValue)
-            this.search(changes["searchQuery"].currentValue);
     }
 
     private getLocationFromPixel(x: number, y: number): Microsoft.Maps.Location {

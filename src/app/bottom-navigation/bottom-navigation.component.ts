@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 
 import { BottomNavigationButton } from "../_shared/_models/BottomNavigationButton.model";
+import { SecurityManagerService } from "../_shared/_services/security-manager.service";
 
 @Component({
     selector: 'bottom-navigation',
@@ -12,12 +13,28 @@ export class BottomNavigationComponent {
     public buttons: BottomNavigationButton[] = [];
     @Output() onNavigationClick: EventEmitter<BottomNavigationButton> = new EventEmitter();
 
-    constructor() {
-        this.AddButton(new BottomNavigationButton('map', 'Map', this.onClick, "/", true));
-        this.AddButton(new BottomNavigationButton('directions', 'Routes', this.onClick, "/routes", true));
-        this.AddButton(new BottomNavigationButton('history', 'History', this.onClick, "", true));
-        this.AddButton(new BottomNavigationButton('account_circle', 'Account', this.onClick, "/account", true));
-        this.AddButton(new BottomNavigationButton('assignment_ind', 'Sign in', this.onClick, "/signin", true));
+    constructor(private _securityManager: SecurityManagerService) {
+        this.AddButton(new BottomNavigationButton('map', 'map', 'Map', this.onClick, "/", true));
+        this.AddButton(new BottomNavigationButton('routes', 'directions', 'Routes', this.onClick, "/routes", false));
+        this.AddButton(new BottomNavigationButton('history', 'history', 'History', this.onClick, "", false));
+        this.AddButton(new BottomNavigationButton('account', 'account_circle', 'Account', this.onClick, "/account", false));
+        this.AddButton(new BottomNavigationButton('signin', 'assignment_ind', 'Sign in', this.onClick, "/signin", false));
+
+        this._securityManager.onAuthChange$.subscribe(isAuthenticated => {
+            this.setup(isAuthenticated);            
+        });
+    }
+
+    private setup(isAuthenticated: boolean): void {
+        this.getButton("map").setVisible(true);
+        this.getButton("routes").setVisible(isAuthenticated);
+        this.getButton("history").setVisible(isAuthenticated);
+        this.getButton("account").setVisible(isAuthenticated);
+        this.getButton("signin").setVisible(!isAuthenticated);
+    }
+
+    private getButton(name : string) : BottomNavigationButton {
+        return this.buttons.filter(b => b.name == name)[0];
     }
 
     public AddButton(button: BottomNavigationButton): void {
