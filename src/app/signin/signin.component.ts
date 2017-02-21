@@ -55,7 +55,15 @@ export class SigninComponent implements OnInit {
             }
         }, (error) => {
             notification.Cancel();
-            this._notificationService.notify(new Notification(error.error_description, [], 5000));            
+
+            let message: string;
+            
+            if(error.error_description)
+                message = error.error_description;
+            else
+                message = "Something went wrong... Please, try again.";
+
+            this._notificationService.notify(new Notification(message, [], 5000));            
             this._securityManager.checkAuth();
         });
     }
