@@ -4,13 +4,17 @@
 
         <div class="col col-lg-12 form-group">
             <label>Name</label><br />
-            <input type="text" class="form-control" placeholder="Name" name="name" (change)="checkFormValidation()" [(ngModel)]="Form.Fields.Name">
+            <input type="text" class="form-control" placeholder="Name" name="name" (change)="checkFormValidation()" [ngClass]="{invalidField: !validateName(), validField: validateName()}"
+                [(ngModel)]="Form.Fields.Name">
+                <p *ngIf="!validateName()" class="invalidFieldLabel">Invalid name!</p>
         </div>
         <div class="col col-lg-12 form-group">
             <label>E-mail</label><br />
-            <input type="<strong>email</strong>" class="form-control" placeholder="E-mail" name="email" [ngClass]="{invalidField: !validateEmail(), validField: validateEmail()}"
-                [(ngModel)]="Form.Fields.Email">
+            <input type="<strong>email</strong>" class="form-control" placeholder="E-mail" name="email" (change)="checkEmailAvailability()"
+                [ngClass]="{invalidField: !validateEmail() || EmailAlreadyInUse, validField: validateEmail() && !EmailAlreadyInUse}" [(ngModel)]="Form.Fields.Email">
                 <p *ngIf="!validateEmail()" class="invalidFieldLabel">Invalid e-mail!</p>
+                <p *ngIf="EmailAlreadyInUse" class="invalidFieldLabel">E-mail already in use!</p>
+
         </div>
         <div class="col col-lg-12 form-group">
             <label>Password</label><br />
@@ -27,32 +31,58 @@
         </div>
         <div class="col col-lg-12 form-group">
             <label>CPF</label><br />
-            <input type="text" class="form-control" placeholder="CPF" name="cpf" (change)="checkFormValidation()" [ngClass]="{invalidField: !validateCPF(), validField: validateCPF()}"
-                [(ngModel)]="Form.Fields.CPF">
+            <input type="text" class="form-control" placeholder="CPF" name="cpf" (change)="checkFormValidation()" (change)="checkCPFAvailability()"
+                [ngClass]="{invalidField: !validateCPF() || DocumentAlreadyInUse, validField: validateCPF() && !DocumentAlreadyInUse}" [(ngModel)]="Form.Fields.CPF">
                 <p *ngIf="!validateCPF()" class="invalidFieldLabel">This field requires 11 numbers withou special characters!</p>
+                <p *ngIf="DocumentAlreadyInUse" class="invalidFieldLabel">Document already in use!</p>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <label>Address line 1</label><br />
+            <input type="text" class="form-control" placeholder="Line 1" name="line1" [ngClass]="{invalidField: !validateAddressLine1(), validField: validateAddressLine1()}"
+                (change)="checkFormValidation()" [(ngModel)]="Form.Fields.Line1">
+                <p *ngIf="!validateAddressLine1()" class="invalidFieldLabel">Please define an address!</p>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <label>Address line 2</label><br />
+            <input type="text" class="form-control" placeholder="Line 2" name="line2" (change)="checkFormValidation()" [(ngModel)]="Form.Fields.Line2">
+        </div>
+        <div class="col col-lg-12 form-group">
+            <label>Zip code</label><br />
+            <input type="text" class="form-control" placeholder="Zip code" name="zipCode" (change)="validateZipCode()" [ngClass]="{invalidField: !validateZipCode(), validField:validateZipCode()}"
+                [(ngModel)]="Form.Fields.ZipCode">
+                <p *ngIf="!validateZipCode()" class="invalidFieldLabel">Define a ZipCode!</p>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <label>Neighborhood</label><br />
+            <input type="text" class="form-control" placeholder="Neighborhood" name="neighborhood" (change)="validateNeighborhood()" [ngClass]="{invalidField: !validateNeighborhood(), validField:validateNeighborhood()}"
+                [(ngModel)]="Form.Fields.Neighborhood">
+                <p *ngIf="!validateNeighborhood()" class="invalidFieldLabel">Define a Neighborhood!</p>
         </div>
         <div class="col col-lg-12 form-group">
             <label>Country</label><br />
-            <select class="form-control" name="country" [disabled]="Countries.length == 0" (change)="onCountryChange($event.target.value)"
-                [(ngModel)]="Form.Fields.Country">
+            <select class="form-control" name="country" [disabled]="Countries.length == 0" [ngClass]="{invalidField: !validateCountry(), validField: validateCountry()}"
+                (change)="onCountryChange($event.target.value)" [(ngModel)]="Form.Fields.Country">
                 <option *ngFor="let country of Countries" value="{{country.ID}}">{{country.Name}}</option>
                 </select>
-                <p *ngIf="validateCountry()" class="invalidFieldLabel">Choose a country!</p>
+                <p *ngIf="!validateCountry()" class="invalidFieldLabel">Choose a country!</p>
         </div>
         <div class="col col-lg-12 form-group">
             <label>State</label><br />
-            <select class="form-control" name="state" [disabled]="States.length == 0" (change)="onStateChange($event.target.value)" [(ngModel)]="Form.Fields.State">
+            <select class="form-control" name="state" [disabled]="States.length == 0" [ngClass]="{invalidField: !validateState(), validField: validateState()}"
+                (change)="onStateChange($event.target.value)" [(ngModel)]="Form.Fields.State">
                 <option *ngFor="let state of States" value="{{state.ID}}">{{state.Name}}</option>
-            </select>
-            <p *ngIf="validateState()" class="invalidFieldLabel">Choose a state!</p>
+                </select>
+                <p *ngIf="!validateState()" class="invalidFieldLabel">Choose a state!</p>
         </div>
         <div class="col col-lg-12 form-group">
             <label>City</label><br />
-            <select class="form-control" name="city" [disabled]="Cities.length == 0" (change)="onCityChange($event.target.value)" [(ngModel)]="Form.Fields.City">
+            <select class="form-control" name="city" [disabled]="Cities.length == 0" [ngClass]="{invalidField: !validateCity(), validField: validateCity()}"
+                (change)="onCityChange($event.target.value)" [(ngModel)]="Form.Fields.City">
                 <option *ngFor="let city of Cities" value="{{city.ID}}">{{city.Name}}</option>
-            </select>
-            <p *ngIf="validateCity()" class="invalidFieldLabel">Choose a city!</p>
+                </select>
+                <p *ngIf="!validateCity()" class="invalidFieldLabel">Choose a city!</p>
         </div>
+
         <div class="col col-lg-12 form-group pull-right">
             <button type="submit" class="btn btn-success" name="saveButton" (click)='saveRequest()' [disabled]="!Form.IsValid">Request</button>
         </div>

@@ -28,4 +28,14 @@ export class AccountPersonalService {
   saveRequest(data: any) {
     return this.serviceHelpers.post<any>("Account/SavePersonalProfile", data, false, ContentTypeEnum.JSON)
   }
+  checkEmailAvailability(email: string) {
+    let params = new URLSearchParams();
+    params.set("email", email)
+    return this.serviceHelpers.get<any>("Account/CheckEmailAvailability", params);
+  }
+  checkCPFAvailability(cpf: string) {
+    let params = new URLSearchParams();
+    params.set("cpf", cpf)
+    return this.serviceHelpers.get<any>("Account/CheckCPFAvailability", params);
+  }
 }

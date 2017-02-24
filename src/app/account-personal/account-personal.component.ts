@@ -2,6 +2,9 @@ import { Component } from "@angular/core"
 import { ActivatedRoute } from "@angular/router"
 import { Http } from '@angular/http';
 import { AccountPersonalService } from '../_shared/_services/account-personal.service';
+import {ViewChild} from '@angular/core';
+import {NotificationService, Notification} from '../_shared/_services/notification.service';
+import { Router } from "@angular/router"
 
 @Component({
   selector: "account-personal-details",
@@ -25,14 +28,24 @@ export class AccountPersonalComponent {
       CPF: "",
       Country: "",
       State: "",
-      City: ""
+      City: "",
+      Line1: "",
+      Line2: "",
+      ZipCode: "",
+      Neighborhood:""
     },
+    
+    
     IsValid: false,
   }
+  EmailAlreadyInUse = false;
+  DocumentAlreadyInUse = false;
   private isLoading = true;
 
   constructor(private http: Http,
-    private _service: AccountPersonalService) {
+    private _service: AccountPersonalService,
+    private _notificationService: NotificationService,
+    private _router: Router) {
     this.getCountries();
   }
 
@@ -51,7 +64,7 @@ export class AccountPersonalComponent {
 
   }
 
-  getCountries() {
+  public getCountries() {
     this._service.getCountries().subscribe(
       data => {
         if (data.Success == true) {
@@ -64,7 +77,7 @@ export class AccountPersonalComponent {
     );
   }
 
-  getStates(countryID) {
+  public getStates(countryID) {
     this._service.getStates(countryID).subscribe(
       data => {
         if (data.Success == true) {
@@ -91,16 +104,36 @@ export class AccountPersonalComponent {
   public saveRequest() {
     this._service.saveRequest(this.Form).subscribe(
       data => {
-        if (data == true) {
-          alert("success")
+        if (data.Result == true) {
+          this._notificationService.notify(new Notification("User subscribed!",[]))
+          this._router.navigateByUrl("signin/");
         } else {
-          alert()
+          this._notificationService.notify(new Notification("There was an error on subscription: " + data.Rsult,[]))
         }
       });
   }
-  validateEmail() {
+  validateName(): boolean {
+    if (!this.Form.Fields.Name || this.Form.Fields.Name.length < 3) {
+      this.Form.IsValid = false;
+      return false;
+    }
+    return true;
+
+  }
+  public validateEmail() {
     var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return regex.test(this.Form.Fields.Email);
+    var emailRegexResult = regex.test(this.Form.Fields.Email);
+    if (emailRegexResult)
+      return true;
+    else
+      return false;
+  }
+  public validatePasswordLength(): boolean {
+    if (this.Form.Fields.Password.length < 8) {
+      this.Form.IsValid = false;
+      return false;
+    }
+    return true;
   }
   public validatePassword(): boolean {
     if ((this.Form.Fields.Password && this.Form.Fields.PasswordConfirmation.Value) && (this.Form.Fields.Password == this.Form.Fields.PasswordConfirmation.Value)) {
@@ -113,36 +146,39 @@ export class AccountPersonalComponent {
       return false;
     }
   }
-  validatePasswordLength(): boolean {
-    if (this.Form.Fields.Password.length < 8) {
-      this.Form.IsValid = false;
-      return false;
-    }
-    return true;
-  }
-  validateCPF(): boolean {
+
+  public validateCPF(): boolean {
     if (this.Form.Fields.CPF.length != 11) {
       this.Form.IsValid = false;
       return false;
     }
     return true;
   }
-  validateCountry(): boolean {
-    
-      return false;
-    
-  }
-  validateState(): boolean {
-   
-      return false;
-    
-  }
-  validateCity(): boolean {
-  
-      return false;
+  public validateCountry(): boolean {
 
+    if (!this.Form.Fields.Country) {
+      this.Form.IsValid = false;
+      return false
+    }
+    return true;
   }
-  
+  public validateState(): boolean {
+
+    if (!this.Form.Fields.State) {
+      this.Form.IsValid = false;
+      return false
+    }
+    return true;
+  }
+  public validateCity(): boolean {
+
+    if (!this.Form.Fields.City) {
+      this.Form.IsValid = false;
+      return false
+    }
+    return true;
+  }
+
   public checkFormValidation(): void {
     if (this.Form.Fields.Name &&
       this.Form.Fields.Email &&
@@ -159,5 +195,67 @@ export class AccountPersonalComponent {
     else
       this.Form.IsValid = false;
   }
-  
+
+  public checkEmailAvailability(): boolean {
+    if (this.validateEmail()) {
+      this._service.checkEmailAvailability(this.Form.Fields.Email).subscribe(
+        data => {
+          if (data.Result == true) {
+            this.EmailAlreadyInUse = false;
+            return true;
+          } else {
+            this.EmailAlreadyInUse = true;
+            this.Form.IsValid = false;
+            return false;
+          }
+        }
+      );
+    } else {
+      this.Form.IsValid = false;
+      return false;
+    }
+  }
+  public checkCPFAvailability(): boolean {
+    if (this.validateCPF()) {
+      this._service.checkCPFAvailability(this.Form.Fields.CPF).subscribe(
+        data => {
+          if (data.Result == true) {
+            this.DocumentAlreadyInUse = false;
+            return true;
+          } else {
+            this.DocumentAlreadyInUse = true;
+            return false;
+          }
+        }
+      );
+    } else {
+      this.Form.IsValid = false;
+      return false;
+    }
+  }
+  public validateAddressLine1(): boolean {
+    if (!this.Form.Fields.Line1) {
+      this.Form.IsValid = false;
+      return false;
+    }
+    return true;
+
+  }
+  public validateZipCode(): boolean {
+    if (!this.Form.Fields.ZipCode) {
+      this.Form.IsValid = false;
+      return false;
+    }
+    return true;
+
+  }
+  public validateNeighborhood(): boolean {
+    if (!this.Form.Fields.Neighborhood) {
+      this.Form.IsValid = false;
+      return false;
+    }
+    return true;
+
+  }
+
 }
