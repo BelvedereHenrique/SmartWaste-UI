@@ -4,6 +4,8 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
 
 import { MapTypeEnum } from '../_models/map-type.enum'
+import { PointService, PointSearch, PointCoordinator } from "./point.service"
+
 
 @Injectable()
 export class MapService {
@@ -14,6 +16,10 @@ export class MapService {
     private onClear = new Subject();
     public onPositionChange = new Subject<Microsoft.Maps.Location>();
     public onLoad = new ReplaySubject(1);
+    private onCreateRoute = new Subject<Microsoft.Maps.Directions.DirectionsManager>();
+    public onViewChange = new Subject<ViewChangeResult>();
+    public onAddLayer = new Subject<Microsoft.Maps.Layer>();
+    public onRemoveLayer = new Subject<Microsoft.Maps.Layer>();
 
     onSearch$ = this.onSearch.asObservable();
     onSetup$ = this.onSetup.asObservable();
@@ -22,7 +28,16 @@ export class MapService {
     onClear$ = this.onClear.asObservable();
     onPositionChange$ = this.onPositionChange.asObservable();
     onLoad$ = this.onLoad.asObservable();
+    onCreateRoute$ = this.onCreateRoute.asObservable();
+    onViewChange$ = this.onViewChange.asObservable();
+    onAddLayer$ = this.onAddLayer.asObservable();
+    onRemoveLayer$ = this.onRemoveLayer.asObservable();
+
     
+    constructor(private _routesService: PointService){
+        
+    }
+
     public search(query : string) : void {
         this.onSearch.next(query);
     }
@@ -35,8 +50,20 @@ export class MapService {
         this.onAddPushpin.next(pushpin);
     }
 
+    public createRoute() : void {
+        this.onCreateRoute.next();
+    }
+
     public clear() : void{
         this.onClear.next();
+    }
+
+    public addLayer(layer: Microsoft.Maps.Layer) : void{
+        this.onAddLayer.next(layer);
+    }
+
+    public removeLayer(layer: Microsoft.Maps.Layer) : void{
+        this.onRemoveLayer.next(layer);
     }
 }
 
@@ -45,6 +72,7 @@ export class PushPinBuilder {
     private _material: PushPinMaterialType;
     private _location: Microsoft.Maps.Location;
     private size: number = 24;
+    private _onClick : Function = null;
 
     constructor(location: Microsoft.Maps.Location, type: PushPinType, material: PushPinMaterialType) {
         this._location = location;
@@ -53,9 +81,27 @@ export class PushPinBuilder {
     }
 
     public build(): Microsoft.Maps.Pushpin {
-        return new Microsoft.Maps.Pushpin(this._location, {
-            icon: this.getSvgIcon()
+        var pushPin : Microsoft.Maps.Pushpin = new Microsoft.Maps.Pushpin(this._location, {
+            icon: this.getSvgIcon(),
+            anchor: new Microsoft.Maps.Point(this.size / 2, this.size)
         });
+
+        Microsoft.Maps.Events.addHandler(pushPin, 'click', this.onClick);
+
+        return pushPin;
+    }
+
+    public setSizeForZoom(zoom: number) : void{        
+        this.size = Math.pow(zoom, 2) / 15;
+    }
+
+    private onClick() : void{
+        if(this._onClick)
+            this._onClick(this);
+    }
+
+    public setOnClick(onClick : Function){
+        this._onClick = onClick;
     }
 
     private getSvgIcon(): string {
@@ -97,4 +143,14 @@ export enum PushPinMaterialType {
     Plastic = 3,
     Organic = 4,
     Paper = 5
+}
+
+export class ViewChangeResult{
+    public bounds: Microsoft.Maps.LocationRect;
+    public zoom: number;
+
+    constructor(bounds: Microsoft.Maps.LocationRect, zoom: number){
+        this.bounds = bounds;
+        this.zoom = zoom;
+    }
 }

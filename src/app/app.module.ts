@@ -17,6 +17,7 @@ import { ServiceHelpersService } from './_shared/_services/service-helpers.servi
 import { JwtService } from './_shared/_services/jwt.service'
 import { SecurityManagerService } from './_shared/_services/security-manager.service';
 import { MapService } from "./_shared/_services/map.service";
+import { PointService } from "./_shared/_services/point.service"
 
 import { BottomNavigationModule } from './bottom-navigation/bottom-navigation.module';
 import { MapRouteMenuRoutingModule } from './map-route-menu/map-route-menu-routing.module';
@@ -62,7 +63,12 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     AccountEnterpriseModule,
     SigninModule
   ],
-  providers: [NotificationService, ServiceHelpersService, JwtService, SecurityManagerService, MapService],
+  providers: [NotificationService, 
+              ServiceHelpersService, 
+              JwtService, 
+              SecurityManagerService, 
+              MapService,
+              PointService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

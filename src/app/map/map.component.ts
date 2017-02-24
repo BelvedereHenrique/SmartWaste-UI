@@ -10,7 +10,7 @@ import { Component, Input, SimpleChanges } from '@angular/core';
 import { ViewChild } from '@angular/core';
 
 import { NotificationService, Notification, NotificationResult, NotificationButton } from "../_shared/_services/notification.service";
-import { MapService } from "../_shared/_services/map.service";
+import { MapService, ViewChangeResult } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
 
 @Component({
@@ -37,6 +37,10 @@ export class MapComponent {
         this._mapService.onSetup$.subscribe(this.setup.bind(this));
         this._mapService.onAddPushpin$.subscribe(this.addPushpin.bind(this));
         this._mapService.onClear$.subscribe(this.clear.bind(this));        
+        this._mapService.onCreateRoute$.subscribe(this.createRoute.bind(this));      
+        this._mapService.onAddLayer$.subscribe(this.addLayer.bind(this));      
+        this._mapService.onRemoveLayer$.subscribe(this.removeLayer.bind(this));      
+
     }
 
     ngAfterViewInit() {
@@ -46,8 +50,15 @@ export class MapComponent {
     private setup(type: MapTypeEnum): void {
         this.clear();
         this.mapType = type;       
-
     }   
+
+    private addLayer(layer: Microsoft.Maps.Layer) : void {        
+        this.instance.layers.insertAll([layer]);
+    }
+
+    private removeLayer(layer: Microsoft.Maps.Layer) : void {
+        this.instance.layers.remove(layer);
+    }
 
     private clear(): void {
         this.mapType = null;
@@ -82,23 +93,21 @@ export class MapComponent {
         var location = this.getLocationFromPixel(e.getX(), e.getY());
 
         this._mapService.onClick.next(location);
-
-        //var push = new PushPinBuilder(location, PushPinType.CollectPoint, PushPinMaterialType.Paper).build();
-
-        //this.addPushpin(push);
-
-        //this.makeRoute(location);
     }
 
-    public createRoute() : void {
-        Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {
-            return new Microsoft.Maps.Directions.DirectionsManager(this.instance);                            
-        });
+    public onViewChange(): void{        
+        this._mapService.onViewChange.next(new ViewChangeResult(this.instance.getBounds(), this.instance.getZoom()));
     }
 
     /* NOTE: Docs for routes: https://msdn.microsoft.com/en-us/library/mt750406.aspx */
-    public route: Microsoft.Maps.Directions.DirectionsManager;
-
+    public createRoute() : void {
+        Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {            
+            this._mapService.onCreateRoute$.next(
+                new Microsoft.Maps.Directions.DirectionsManager(this.instance)
+            );
+        }.bind(this));
+    }
+    
     public makeRoute(location: Microsoft.Maps.Location): void {        
         Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {
 
@@ -111,11 +120,11 @@ export class MapComponent {
             });
                         
             var waypoint = new Microsoft.Maps.Directions.Waypoint({ location: location });
+        
             this.route.addWaypoint(waypoint);
 
             this.route.calculateDirections();
         }.bind(this));
-        
     }
 
     public search(query: string): void {
@@ -128,12 +137,11 @@ export class MapComponent {
                 where: query,
                 callback: function (answer, userData) {
                     this.instance.setView({ bounds: answer.results[0].bestView });
-                    this.instance.entities.push(new Microsoft.Maps.Pushpin(answer.results[0].location));
+                    //this.instance.entities.push(new Microsoft.Maps.Pushpin(answer.results[0].location));
                 }.bind(this)
             };
-            searchManager.geocode(requestOptions);
 
-            console.log(JSON.stringify(this.instance.getBounds()));
+            searchManager.geocode(requestOptions);
         }.bind(this));
     };
 
@@ -160,7 +168,7 @@ export class MapComponent {
             });
 
             Microsoft.Maps.Events.addHandler(this.instance, "click", this.onMapClick.bind(this));
-
+            Microsoft.Maps.Events.addHandler(this.instance, "viewchangeend", this.onViewChange.bind(this));
             
             this._mapService.onLoad.next();
         }.bind(this);
