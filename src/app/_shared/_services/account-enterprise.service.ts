@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs';
 
-import { ServiceHelpersService } from './service-helpers.service'
+import { ServiceHelpersService, ContentTypeEnum } from './service-helpers.service';
+import { ResultDefault} from '../_models/ResultDefault.model';
 
 @Injectable()
 export class AccountEnterpriseService{
@@ -24,5 +25,11 @@ export class AccountEnterpriseService{
     params.set("stateID", stateID.toString());
 
     return this.serviceHelpers.get<any>("/Account/GetCities", params);
+  }
+  saveEnterprise(enterprise){
+    let params = new URLSearchParams();
+    params.append("enterprise", enterprise);
+    debugger
+    return this.serviceHelpers.post<any>("/Account/SaveEnterprise", enterprise, false, ContentTypeEnum.JSON);
   }
 }

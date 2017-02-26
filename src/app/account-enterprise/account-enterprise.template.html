@@ -1,13 +1,16 @@
 <h1 class="title"><a>Account</a>/Enterprise <small>Request an enterprise account</small></h1>
 <div class="row">
     <div class="container">
+      <form novalidate #heroForm="ngForm">
         <div class="col col-lg-12 form-group">
             <label>Enterprise Name</label><br />
-            <input type="text" class="form-control" placeholder="Enterprise">
+            <input type="text" [(ngModel)]="AccountEnterprise.Name" required name="name" #name="ngModel" class="form-control" placeholder="Enterprise">
+            <div *ngIf="name.errors && (name.dirty || name.touched)" class="alert alert-danger"><div [hidden]="!name.errors.required">Name is required</div></div>
         </div>
         <div class="col col-lg-12 form-group">
             <label>CNPJ</label><br />
-            <input type="text" class="form-control" placeholder="CNPJ">
+            <input type="text" class="form-control" name="cnpj" required #cnpj="ngModel" [(ngModel)]="AccountEnterprise.CNPJ" placeholder="CNPJ">
+            <div *ngIf="cnpj.errors && (cnpj.dirty || cnpj.touched)" class="alert alert-danger"><div [hidden]="!cnpj.errors.required">CNPJ is required</div></div>
         </div>
         <div class="col col-lg-12 form-group">
             <label>Country</label><br />
@@ -23,10 +26,31 @@
         </div>
         <div class="col col-lg-12 form-group">
             <label>City</label><br />
-            <select class="form-control" [disabled]="Cities.length == 0">
-                <option *ngFor="let city of Cities" value="{{city.ID}}">{{city.Name}}</option>
+            <select class="form-control" name="city" #city="ngModel" [(ngModel)]="AccountEnterprise.Address.City" [disabled]="Cities.length == 0">
+                <option *ngFor="let city of Cities" required [ngValue]="city" >{{city.Name}}</option>
             </select>
         </div>
-
+        <div class="col col-lg-12 form-group">
+            <label>Address</label><br />
+            <input type="text" class="form-control" required name="address" #address="ngModel"  [(ngModel)]="AccountEnterprise.Address.Line1" placeholder="Av:... N:123">
+            <div *ngIf="address.errors && (address.dirty || address.touched)" class="alert alert-danger"><div [hidden]="!address.errors.required">Address is required</div></div>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <label>Neighborhood</label><br />
+            <input type="text" class="form-control" required name="neighborhood" #neighborhood="ngModel"  [(ngModel)]="AccountEnterprise.Address.Neighborhood" placeholder="Neighborhood">
+            <div *ngIf="neighborhood.errors && (neighborhood.dirty || neighborhood.touched)" class="alert alert-danger"><div [hidden]="!neighborhood.errors.required">Neighborhood is required</div></div>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <label>ZIP Code</label><br />
+            <input type="text" class="form-control" required name="zipcode" #zipcode="ngModel" [(ngModel)]="AccountEnterprise.Address.ZipCode" placeholder="ZipCode">
+            <div *ngIf="zipcode.errors && (zipcode.dirty || zipcode.touched)" class="alert alert-danger"><div [hidden]="!zipcode.errors.required">ZipCode is required</div></div>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <button type="button" class="btn btn-info" *ngIf="!AccountEnterprise.Address.Latitude && !AccountEnterprise.Address.Longitude" (click)="getCurrentLocation()" >  <i class="glyphicon glyphicon-globe"></i> Get Current Location</button>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <button type="button" class="btn btn-success" (click)="saveEnterprise()" *ngIf="checkAllProperties()">Save</button>
+        </div>
+     </form>
     </div>
 </div>

@@ -1,2 +1,14 @@
-body {
+.ng-valid[required], .ng-valid.required  {
+}
+ .ng-dirty.ng-invalid:not(form)  {
+  border-bottom: 1px solid #a94442; /* red */
+}
+ .ng-touched.ng-invalid:not(form)  {
+  border-bottom: 1px solid #a94442; /* red */
+}
+.alert-danger{
+    border: none;
+    background-color:transparent !important;
+    margin:0;
+    padding: 0;
 }

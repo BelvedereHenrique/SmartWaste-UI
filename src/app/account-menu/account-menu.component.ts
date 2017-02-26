@@ -1,5 +1,7 @@
 import { Component } from "@angular/core"
 import { Router } from "@angular/router"
+
+import { AccountEnterpriseService } from "../_shared/_services/account-enterprise.service";
 //import { NotificationComponent, Notification } from "./notification.component"
 
 @Component({
@@ -9,9 +11,10 @@ import { Router } from "@angular/router"
 })
 
 export class AccountMenuComponent {
-    constructor(private router: Router/*, private n: NotificationComponent*/) {
+    constructor(private router: Router, private _accountService: AccountEnterpriseService) {
         this.mockUser();
         console.log(this.retrieve());
+        //check can make a enterprise
 
     }
     public onRequestEnterprisePermissionClick(): void {
@@ -25,6 +28,21 @@ export class AccountMenuComponent {
         this.currentUser.name = "Felipe";
         this.currentUser.userID = 1234;
         localStorage.setItem("currentUser", JSON.stringify({ user: this.currentUser }));
+    }
+    private CheckUserEnterprise():void{
+      /*this._accountService.CheckUserEnterprise(this.AccountEnterprise).subscribe(
+        data => {
+            if(data.Success == true){
+            
+            }else{
+            
+            }
+          },
+        error => {
+         
+        },
+        () => this.isLoading = false
+      );*/
     }
 
     private retrieve() {
