@@ -6,11 +6,11 @@
 
 import { Observable, Subject, Subscription } from 'rxjs';
 
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges, OnInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
 
 import { NotificationService, Notification, NotificationResult, NotificationButton } from "../_shared/_services/notification.service";
-import { MapService, ViewChangeResult } from "../_shared/_services/map.service";
+import { MapService, ViewChangeResult, ZoomOptions, SearchOptions } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
 
 @Component({
@@ -19,7 +19,7 @@ import { MapTypeEnum } from '../_shared/_models/map-type.enum'
     styleUrls: ['./map.component.css']
 })
 
-export class MapComponent {    
+export class MapComponent{    
     @ViewChild('map') public map;
     private instance: Microsoft.Maps.Map;
     private pushpins: Microsoft.Maps.Pushpin[];
@@ -40,11 +40,45 @@ export class MapComponent {
         this._mapService.onCreateRoute$.subscribe(this.createRoute.bind(this));      
         this._mapService.onAddLayer$.subscribe(this.addLayer.bind(this));      
         this._mapService.onRemoveLayer$.subscribe(this.removeLayer.bind(this));      
-
+        this._mapService.onSetZoom$.subscribe(this.setZoom.bind(this));      
+        this._mapService.onSetUserLocation$.subscribe(this.setUserLocation.bind(this));   
+        this._mapService.onChangeMapType$.subscribe(this.changeMapType.bind(this));   
+        this._mapService.onSetView.subscribe(this.setView.bind(this));
     }
 
     ngAfterViewInit() {
         this.loadMap();        
+    }
+    
+    private setZoom(options : ZoomOptions) : void {        
+        var actual : number = this.instance.getZoom();
+
+        if (options.sum)
+            actual += options.zoom;
+        else
+            actual = options.zoom;
+
+        this.instance.setView({
+            zoom: actual
+        });
+    }
+
+    private changeMapType(type: Microsoft.Maps.MapTypeId) : void {        
+        this.instance.setMapType(type);
+    }
+
+    private setView(view: Microsoft.Maps.IViewOptions) : void{
+        this.instance.setView(view);
+    }
+
+    private setUserLocation() : void {
+        navigator.geolocation.getCurrentPosition((position: Position) => {
+            this.instance.setView({
+                center: new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude)
+            });
+        }, () => {
+            this._notificationService.notify(new Notification("Allow the browser to get your location."));
+        }, { enableHighAccuracy: true });
     }
 
     private setup(type: MapTypeEnum): void {
@@ -127,17 +161,20 @@ export class MapComponent {
         }.bind(this));
     }
 
-    public search(query: string): void {
+    public search(options: SearchOptions): void {
         if (!this.instance) return;
 
         Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
             var searchManager = new Microsoft.Maps.Search.SearchManager(this.instance);
             var requestOptions = {
                 bounds: this.instance.getBounds(),
-                where: query,
-                callback: function (answer, userData) {
-                    this.instance.setView({ bounds: answer.results[0].bestView });
-                    //this.instance.entities.push(new Microsoft.Maps.Pushpin(answer.results[0].location));
+                where: options.query,
+                count: options.count,
+                callback: function (answer, userData) {                    
+                    if(options.callback)
+                        options.callback(answer);
+                    else
+                        this.instance.setView({ bounds: answer.results[0].bestView });                    
                 }.bind(this)
             };
 
@@ -164,7 +201,16 @@ export class MapComponent {
             window["Promise"] = window["zoneAwarePromise"];
 
             this.instance = new Microsoft.Maps.Map(document.getElementById("map"), {
-                credentials: 'AvKQ5s33Ij_kD9Am76fBJGX75CGsW5v7s2Wq8hA8XBg-KTr_xKY1vXHvV4JG16qD'
+                credentials: 'AvKQ5s33Ij_kD9Am76fBJGX75CGsW5v7s2Wq8hA8XBg-KTr_xKY1vXHvV4JG16qD',
+                showMapTypeSelector: false,
+                showLogo: false,
+                showLocateMeButton: false,
+                showBreadcrumb: false,
+                showScalebar: false,
+                showDashboard: false,
+                showZoomButtons: false,
+                showTermsLink: false,
+                showTrafficButton: false
             });
 
             Microsoft.Maps.Events.addHandler(this.instance, "click", this.onMapClick.bind(this));

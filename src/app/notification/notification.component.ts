@@ -21,7 +21,6 @@ export class NotificationComponent {
 
     public onHide(): void {
         this.ngZone.run(() => {
-            console.log("hide");
             this.showNotification = false;
             this.showingNotification = new Notification("", []);
         });        

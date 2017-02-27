@@ -24,10 +24,9 @@ header {
     position: absolute;
     bottom: 0px;
     right: 0px;
-    width: 600px;    
+    width: 600px;        
     border-radius: 5px 0px 0px 0px;
     background: white;
-    padding-bottom: 65px;
     overflow: auto;
     word-break: break-word;
     transition: all 0.5s;
@@ -35,6 +34,7 @@ header {
 
     .menu-wrapper.active {        
         height: 60%;
+        padding-bottom: 250px;
     }
 
     .menu-wrapper:not(.active) {        

@@ -1,0 +1,8 @@
+<div class="map-menu">
+    <button *ngFor="let button of getButtons()" 
+            class="btn-circle-xs btn-default"
+            title="{{button.title}}"
+            (click)="button.onClick()">
+        <i class="material-icons">{{button.icon}}</i>
+    </button>
+</div>

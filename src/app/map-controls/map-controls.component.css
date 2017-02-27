@@ -1,0 +1,7 @@
+.map-menu {
+    position: absolute;
+    top: 61px;
+    width: 52px;
+    right: 5px;
+    z-index: 1000;
+}

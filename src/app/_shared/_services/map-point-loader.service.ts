@@ -7,22 +7,41 @@ import { MapTypeEnum } from '../_models/map-type.enum'
 import { MapService, PushPinBuilder, PushPinType, PushPinMaterialType, ViewChangeResult } from './map.service'
 import { PointService, PointSearch, PointCoordinator } from "./point.service"
 
+import { NotificationService, Notification, NotificationResult } from './notification.service';
 
 @Injectable()
-export class PointLoaderService  {
+export class MapPointLoaderService  {
     private pointsLayer: Microsoft.Maps.EntityCollection = null;
     private pointsSubscription : Subscription = null;
     private limitZoomToShowPoints : number = 14;
+    private canLoad: boolean = false;
+    private isInitialized : boolean = false;
 
     constructor(private _mapService : MapService,
-                private _pointService : PointService){
+                private _pointService : PointService,
+                private _notificationService : NotificationService){
 
-        this._mapService.onLoad.subscribe(() => {
+    }
+
+    public init() : void{
+        if (this.isInitialized) return;
+        
+        this._mapService.onLoad.subscribe(() => {                        
+            this.start();
             this._mapService.onViewChange.subscribe((bounds: ViewChangeResult) => {      
                 this.loadPoints(bounds);                      
             });
-        });
 
+            this.isInitialized = true;
+        });
+    }
+
+    public start() : void {
+        this.canLoad = true;
+    }
+
+    public stop() : void {
+        this.canLoad = false;
     }
 
     private clearPointsLayer() : void{
@@ -33,6 +52,8 @@ export class PointLoaderService  {
     }
 
     private loadPoints(viewChange: ViewChangeResult) : void{
+        if (!this.canLoad) return;
+
         var northWest: Microsoft.Maps.Location = viewChange.bounds.getNorthwest();     
         var southEast: Microsoft.Maps.Location = viewChange.bounds.getSoutheast();
 
@@ -70,12 +91,16 @@ export class PointLoaderService  {
 
                 this._mapService.addLayer(this.pointsLayer);
             }else{
-                
+                var notification = new Notification("There was an error to load the map.");
+                notification.AddButton("Try again", () => {
+                    this.loadPoints(viewChange);
+                });
+                this._notificationService.notify(notification);
             }
         });
     }
 
     private onPushPinClick(pushpin: Microsoft.Maps.Pushpin) : void{
-        console.log("clicked");
+        console.log("clicked");        
     }
 }

@@ -9,7 +9,7 @@ import { PointService, PointSearch, PointCoordinator } from "./point.service"
 
 @Injectable()
 export class MapService {
-    private onSearch = new Subject<string>();
+    private onSearch = new Subject<SearchOptions>();
     private onSetup = new Subject<MapTypeEnum>();
     private onAddPushpin = new Subject<Microsoft.Maps.Pushpin>();
     public onClick = new Subject<Microsoft.Maps.Location>();
@@ -20,6 +20,10 @@ export class MapService {
     public onViewChange = new Subject<ViewChangeResult>();
     public onAddLayer = new Subject<Microsoft.Maps.Layer>();
     public onRemoveLayer = new Subject<Microsoft.Maps.Layer>();
+    public onSetZoom = new Subject<ZoomOptions>();
+    public onSetUserLocation = new Subject();
+    public onChangeMapType = new Subject<Microsoft.Maps.MapTypeId>();
+    public onSetView = new Subject<Microsoft.Maps.IViewOptions>();
 
     onSearch$ = this.onSearch.asObservable();
     onSetup$ = this.onSetup.asObservable();
@@ -32,14 +36,25 @@ export class MapService {
     onViewChange$ = this.onViewChange.asObservable();
     onAddLayer$ = this.onAddLayer.asObservable();
     onRemoveLayer$ = this.onRemoveLayer.asObservable();
+    onSetZoom$ = this.onSetZoom.asObservable();
+    onSetUserLocation$ = this.onSetUserLocation.asObservable();
+    onChangeMapType$ = this.onChangeMapType.asObservable();
+    onSetView$ = this.onSetView.asObservable();
 
-    
     constructor(private _routesService: PointService){
         
     }
 
-    public search(query : string) : void {
-        this.onSearch.next(query);
+    public setView(view: Microsoft.Maps.IViewOptions) : void{
+        this.onSetView.next(view);
+    }
+
+    public search(query : string, callback: Function = null, count: number = null) : void {
+        var options : SearchOptions = new SearchOptions();
+        options.query = query;
+        options.callback = callback;
+        options.count = count;
+        this.onSearch.next(options);
     }
 
     public setup(type: MapTypeEnum): void {        
@@ -65,6 +80,22 @@ export class MapService {
     public removeLayer(layer: Microsoft.Maps.Layer) : void{
         this.onRemoveLayer.next(layer);
     }
+
+    public setZoom(zoom: number, sum: boolean) : void {
+        var options : ZoomOptions = new ZoomOptions();
+        options.zoom = zoom;
+        options.sum = sum;
+
+        this.onSetZoom.next(options);
+    }
+
+    public setUserLocation() : void {
+        this.onSetUserLocation.next();
+    }
+
+    public setMapType(type: Microsoft.Maps.MapTypeId) : void{
+        this.onChangeMapType.next(type);
+    }
 }
 
 export class PushPinBuilder {
@@ -73,6 +104,10 @@ export class PushPinBuilder {
     private _location: Microsoft.Maps.Location;
     private size: number = 24;
     private _onClick : Function = null;
+    private strokeColor: string = "#ffffff";
+    private strokeWidth: number = 7;
+    private userIconPath : string = "m84.171 16.179c-14.306 0-25.893 11.587-25.893 25.893s11.587 25.893 25.893 25.893 25.893-11.587 25.893-25.893-11.587-25.893-25.893-25.893zm0 64.732c-17.283 0-51.785 8.6741-51.785 25.893v12.945h30.031l21.754 21.754 21.754-21.754h30.031v-12.945c0-17.218-34.502-25.893-51.785-25.893z";
+    private companyIconPath : string = "m43.162 127.43c0 7.6987 6.299 13.998 13.998 13.998h55.991c7.6987 0 13.998-6.299 13.998-13.998v-76.822h-83.986zm90.985-104.98h-24.496l-6.9988-6.9988h-34.994l-6.9988 6.9988h-24.496v17.998h97.984z";
 
     constructor(location: Microsoft.Maps.Location, type: PushPinType, material: PushPinMaterialType) {
         this._location = location;
@@ -105,28 +140,31 @@ export class PushPinBuilder {
     }
 
     private getSvgIcon(): string {
-               return "<svg fill='" + this.getColor() + "' height='" + this.size + "' viewBox='0 0 24 24' width='" + this.size + "' xmlns='http://www.w3.org/2000/svg'><path d='M19 2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 3.3c1.49 0 2.7 1.21 2.7 2.7 0 1.49-1.21 2.7-2.7 2.7-1.49 0-2.7-1.21-2.7-2.7 0-1.49 1.21-2.7 2.7-2.7zM18 16H6v-.9c0-2 4-3.1 6-3.1s6 1.1 6 3.1v.9z'/><path d='M0 0h24v24H0z' fill='none'/></svg>";
+        var path : string = "";
+        if(this._type == PushPinType.CollectPoint)
+            path = this.userIconPath;
+        else
+            path = this.companyIconPath;
 
-        //return "<svg xmlns='http://www.w3.org/2000/svg' height='" + this.size + "'width='" + this.size + "' ><g transform='translate(-30.009 -15.66)'><path d='m41.994 15.66c-6.6517 0-11.985 5.3935-11.985 11.985v83.895c0 6.5918 5.3336 11.985 11.985 11.985h23.969l17.977 17.977 17.978-17.977h23.969c6.5918 0 11.985-5.3935 11.985-11.985v-83.895c0-6.5918-5.3935-11.985-11.985-11.985h-83.895zm28.802 9.5214c0.60465 0.002 1.2499 0.0504 1.9415 0.15234l24.902 0.33847c2.5357 0.13041 4.4276 1.3571 5.9181 3.2703l7.3601 10.915 6.6614-2.9928-10.387 17.996-21.304-0.32211 5.4371-3.3878-7.8411-14.058-11.389 19.185-19.018-10.679 9.2286-15.613c2.0265-2.5258 4.2572-4.817 8.4897-4.8048zm48.776 29.423 9.1166 15.676c1.3807 3.4184 2.3585 6.9112-1.1242 11.222l-12.748 21.066c-1.3826 2.0971-3.4086 3.0973-5.8365 3.4118l-13.28 0.81839-0.6976 7.1783-10.635-17.857 10.936-18.007 0.26118 6.3306 16.284 0.34393-11.178-19.306 18.901-10.877zm-59.093 0.42768 10.369 18.33-5.6983-2.9427-8.444 13.715 22.569 0.12093 0.11529 21.558-18.345-0.0641c-3.6967-0.53177-7.2567-1.4434-9.307-6.5689l-12.153-21.405c-1.1531-2.2276-1.0212-4.4555-0.0838-6.6832l5.9203-11.734-5.9627-4.1844 21.02-0.14042z' fill='" + this.getColor() + "'/></g></svg>";
-
+        return "<svg fill='" + this.getColor() + "' height='" + this.size + "' viewBox='0 0 107.8652 125.84255' width='" + this.size + "' xmlns='http://www.w3.org/2000/svg'><g xmlns='http://www.w3.org/2000/svg' transform='translate(-30.009,-15.66)'><path stroke-width='" + this.strokeWidth + "' stroke='" + this.strokeColor + "' d='" + path +"'/></g><path d='M0 0h24v24H0z' fill='none'/></svg>";
     }
 
     private getColor(): string {
         switch (this._material) {
             case PushPinMaterialType.Glass: {
-                return "green";
+                return "#009688";
             }
             case PushPinMaterialType.Steel: {
-                return "yellow";
+                return "#FFC107";
             }
             case PushPinMaterialType.Plastic: {
-                return "red";
+                return "#F44336";
             }
             case PushPinMaterialType.Organic: {
-                return "gray";
+                return "#607D8B";
             }
             case PushPinMaterialType.Paper: {
-                return "blue";
+                return "#3F51B5";
             }
         }
     }
@@ -153,4 +191,15 @@ export class ViewChangeResult{
         this.bounds = bounds;
         this.zoom = zoom;
     }
+}
+
+export class ZoomOptions {
+    zoom: number;
+    sum: boolean;
+}
+
+export class SearchOptions {
+    public query : string;
+    public callback: Function;
+    public count : number;
 }

@@ -1,8 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Observable, Subject } from 'rxjs';
 
+import { FloatActionButtonService } from './float-action-button.service'
+
 @Injectable()
 export class NotificationService {
+    constructor(private _fabService: FloatActionButtonService){
+
+    }
+
     private onNotify = new Subject<Notification>();
     private onHide = new Subject();
 
@@ -53,6 +59,7 @@ export class NotificationService {
         this.onNotify.next(this.showingNotification);
 
         this.showNotification = true;
+        this._fabService.setNotificationShow(true);
 
         //setTimeout(() => {
         if (this.showingNotification.GetTimeout() != 0)
@@ -64,11 +71,12 @@ export class NotificationService {
         if (index != this.index) return;
                 
         this.onHide.next();
-
+        this._fabService.setNotificationShow(false);
+        
         setTimeout(() => {
-            this.showNotification = false;
+            this.showNotification = false;            
             this.showingNotification = new Notification("", []);
-            this.CheckQueue();
+            this.CheckQueue();            
         }, this.notificationAnimation);
     }
 

@@ -45,6 +45,35 @@
     margin: 5px;
 }
 
-.icon {
+.search-content button {
     margin: 10px;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    float: right;
+}
+
+.autocomplete {    
+    transition: linear .1s;
+    overflow: hidden;
+    height: 0px;
+}
+
+.separator {
+    margin-top: 11px;    
+    height: 0px;
+    width: 100%;
+    border-color: #e8e7e7;
+    border-top: 1px solid #e8e7e7;
+}
+
+.autocomplete > div{
+    padding-left: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+}
+
+.autocomplete > div:hover{
+    background: #ECEFF1;
 }
