@@ -1,6 +1,17 @@
-﻿@media screen and (max-width: 600px) {
+﻿@media screen and (min-width: 999px) {
     .notification {
-        width: 100% !important;
+        width: 420px !important;
+        margin-right: 75px !important;
+    }
+    
+    .notification.active {        
+        bottom: 0px !important;        
+        opacity: 1 !important;
+    }
+
+    .notification:not(.active) {        
+        bottom: -65px !important;
+        opacity: 0 !important;
     }
 }
 
@@ -8,10 +19,11 @@
     position: absolute;        
     right: 0;
     color: #ffffff;
-    width: 600px;
+    width: 100%;
     background: #4a4a4a;
     transition: linear 0.3s;    
     padding: 15px;
+    z-index: 4;
 }
 
     .notification.active {        
