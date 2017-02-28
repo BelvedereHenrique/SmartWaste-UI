@@ -31,7 +31,7 @@
         </div>
         <div class="col col-lg-12 form-group">
             <label>CPF</label><br />
-            <input type="text" class="form-control" placeholder="CPF" name="cpf" (change)="checkFormValidation()" (change)="checkCPFAvailability()"
+            <input type="text" class="form-control" placeholder="CPF" name="cpf" (change)="checkCPFAvailability()"
                 [ngClass]="{invalidField: !validateCPF() || DocumentAlreadyInUse, validField: validateCPF() && !DocumentAlreadyInUse}" [(ngModel)]="Form.Fields.CPF">
                 <p *ngIf="!validateCPF()" class="invalidFieldLabel">This field requires 11 numbers withou special characters!</p>
                 <p *ngIf="DocumentAlreadyInUse" class="invalidFieldLabel">Document already in use!</p>
@@ -84,7 +84,7 @@
         </div>
 
         <div class="col col-lg-12 form-group pull-right">
-            <button type="submit" class="btn btn-success" name="saveButton" (click)='saveRequest()' [disabled]="!Form.IsValid">Request</button>
+            <button type="submit" class="btn btn-success" name="saveButton" (click)='saveRequest()' [disabled]="!checkFormValidation()">Request</button>
         </div>
 
     </div>

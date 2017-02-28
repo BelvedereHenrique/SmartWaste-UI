@@ -102,19 +102,24 @@ export class AccountPersonalComponent {
     );
   }
   public saveRequest() {
+    this.checkFormValidation();
+    
     this._service.saveRequest(this.Form).subscribe(
       data => {
         if (data.Result == true) {
           this._notificationService.notify(new Notification("User subscribed!",[]))
-          this._router.navigateByUrl("signin/");
-        } else {
+          
+          this._router.navigateByUrl("signin");
+          
+        
+      } else {
           this._notificationService.notify(new Notification("There was an error on subscription: " + data.Rsult,[]))
         }
       });
   }
   validateName(): boolean {
     if (!this.Form.Fields.Name || this.Form.Fields.Name.length < 3) {
-      this.Form.IsValid = false;
+      
       return false;
     }
     return true;
@@ -130,7 +135,7 @@ export class AccountPersonalComponent {
   }
   public validatePasswordLength(): boolean {
     if (this.Form.Fields.Password.length < 8) {
-      this.Form.IsValid = false;
+      
       return false;
     }
     return true;
@@ -138,18 +143,16 @@ export class AccountPersonalComponent {
   public validatePassword(): boolean {
     if ((this.Form.Fields.Password && this.Form.Fields.PasswordConfirmation.Value) && (this.Form.Fields.Password == this.Form.Fields.PasswordConfirmation.Value)) {
       this.Form.Fields.PasswordConfirmation.IsValid = true;
-      this.checkFormValidation();
       return true;
     } else {
       this.Form.Fields.PasswordConfirmation.IsValid = false;
-      this.checkFormValidation();
       return false;
     }
   }
 
   public validateCPF(): boolean {
     if (this.Form.Fields.CPF.length != 11) {
-      this.Form.IsValid = false;
+      
       return false;
     }
     return true;
@@ -157,7 +160,7 @@ export class AccountPersonalComponent {
   public validateCountry(): boolean {
 
     if (!this.Form.Fields.Country) {
-      this.Form.IsValid = false;
+      
       return false
     }
     return true;
@@ -165,7 +168,7 @@ export class AccountPersonalComponent {
   public validateState(): boolean {
 
     if (!this.Form.Fields.State) {
-      this.Form.IsValid = false;
+      
       return false
     }
     return true;
@@ -173,27 +176,47 @@ export class AccountPersonalComponent {
   public validateCity(): boolean {
 
     if (!this.Form.Fields.City) {
-      this.Form.IsValid = false;
+      
       return false
     }
     return true;
   }
 
-  public checkFormValidation(): void {
-    if (this.Form.Fields.Name &&
+  public checkFormValidation(): boolean {
+    if ((this.Form.Fields.Name &&
       this.Form.Fields.Email &&
       this.Form.Fields.Password &&
       this.Form.Fields.Password.length >= 8 &&
       this.Form.Fields.PasswordConfirmation.Value &&
       this.Form.Fields.PasswordConfirmation.IsValid &&
+      this.Form.Fields.Neighborhood &&
+      this.Form.Fields.Line1 &&
       this.Form.Fields.CPF &&
       this.Form.Fields.Country &&
       this.Form.Fields.State &&
-      this.Form.Fields.City
+      this.Form.Fields.City &&
+      !this.EmailAlreadyInUse &&
+      !this.DocumentAlreadyInUse
+    )&&
+    (this.validateAddressLine1()&&
+    this.validateCity()&&
+    this.validateCountry()&&
+    this.validateCPF()&&
+    this.validateEmail()&&
+    this.validateName()&&
+    this.validateNeighborhood()&&
+    this.validatePassword()&&
+    this.validatePasswordLength()&&
+    this.validateState()&&
+    this.validateZipCode()
     )
+    ){
       this.Form.IsValid = true;
-    else
+      return true;
+    }else{
       this.Form.IsValid = false;
+      return false;
+    }
   }
 
   public checkEmailAvailability(): boolean {
@@ -205,13 +228,12 @@ export class AccountPersonalComponent {
             return true;
           } else {
             this.EmailAlreadyInUse = true;
-            this.Form.IsValid = false;
             return false;
           }
         }
       );
     } else {
-      this.Form.IsValid = false;
+      
       return false;
     }
   }
@@ -224,18 +246,18 @@ export class AccountPersonalComponent {
             return true;
           } else {
             this.DocumentAlreadyInUse = true;
+            
             return false;
           }
         }
       );
     } else {
-      this.Form.IsValid = false;
+      
       return false;
     }
   }
   public validateAddressLine1(): boolean {
     if (!this.Form.Fields.Line1) {
-      this.Form.IsValid = false;
       return false;
     }
     return true;
@@ -243,7 +265,6 @@ export class AccountPersonalComponent {
   }
   public validateZipCode(): boolean {
     if (!this.Form.Fields.ZipCode) {
-      this.Form.IsValid = false;
       return false;
     }
     return true;
@@ -251,7 +272,6 @@ export class AccountPersonalComponent {
   }
   public validateNeighborhood(): boolean {
     if (!this.Form.Fields.Neighborhood) {
-      this.Form.IsValid = false;
       return false;
     }
     return true;
