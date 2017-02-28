@@ -30,6 +30,12 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
 
     ngOnInit(){
         this._fabService.clear();
+        this._fabService.addButton(new FloatActionButton("history", 
+                                                         "History", 
+                                                         "history", 
+                                                         FloatActionButtonType.mini,
+                                                         this.onEditRouteClick.bind(this), 3));
+
         this._fabService.addButton(new FloatActionButton("create", 
                                                          "Edit Route", 
                                                          "edit", 

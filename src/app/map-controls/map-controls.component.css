@@ -1,7 +1,13 @@
+@media screen and (min-width: 999px) {
+    .map-menu {        
+        left: 5px !important;
+        right: initial;
+    }
+}
 .map-menu {
     position: absolute;
     top: 61px;
     width: 52px;
-    right: 5px;
-    z-index: 1000;
+    right: 8px;
+    z-index: 1;    
 }

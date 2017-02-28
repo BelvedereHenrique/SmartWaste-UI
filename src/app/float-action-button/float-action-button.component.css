@@ -4,6 +4,7 @@
     right: 10px;
     width: 50px;
     transition: linear 0.3s;    
+    z-index: 3;
 }
 
 .fab-content.showing-notification{
@@ -21,4 +22,15 @@
   100% {
     transform: scale(1) rotate(0deg);
   } 
+}
+
+@media screen and (min-width: 999px) {
+  .fab-content{
+      bottom: 15px !important;
+      right: 90px !important;
+  }
+
+  .fab-content.showing-notification{
+     bottom: 70px !important;
+  }
 }

@@ -1,7 +1,12 @@
-@media screen and (max-width: 600px) {
-    .bottom-navigation {
+@media screen and (min-width: 999px) {
+    .bottom-navigation{
+        width: 75px !important;
+        height: 100% !important;
+    }
+
+    .bottom-navigation button {
+        height: 80px !important;
         width: 100% !important;
-        /*border-radius: 0px !important;            */
     }
 }
 
@@ -9,21 +14,22 @@
     position: absolute;
     bottom: 0px;
     right: 0px;
-    width: 600px;
+    width: 100% ;
     height: 65px;
     background: #ffffff;
     box-shadow: 0px 0px 2px #989898;
     /*border-radius: 4px 0px 0px 0px !important;        */
     background: #009688;
+    z-index: 4;
 }
 
     .bottom-navigation button {
-        height: 100%;
+        height: 65px;   
         background: none;
         text-align: center;
         border: none;
         color: #ffffff;
-    }
+    }        
 
         .bottom-navigation button.active {
             font-size: 14px;
