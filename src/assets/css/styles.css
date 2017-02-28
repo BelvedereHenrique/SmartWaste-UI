@@ -143,8 +143,41 @@ h1 {
         color: #9E9E9E;
     }
 
+.btn-circle > i,
+.btn-circle-xs > i{
+    line-height: none;
+}
 
+.btn-circle {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    border: none;
+    padding-top: 5px !important;
+    box-shadow: 0px 1px 3px #989898;
+    margin-top: 5px;
 
+    background: #FF9800 !important;
+}
+
+.btn-circle.btn-default:not(.btn-flat),
+.btn-circle-xs.btn-default:not(.btn-flat)
+{
+    background: #ffffff;
+}
+
+.btn-circle-xs {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    border: none;
+    padding-top: 8px !important;
+    box-shadow: 0px 1px 3px #989898;
+    margin-top: 5px; 
+    margin-left: 5px;
+    /*color: #009688;*/
+    color: #FF9800 !important;
+}
 
 /* FORMS */
 

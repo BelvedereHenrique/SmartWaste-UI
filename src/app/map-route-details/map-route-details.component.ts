@@ -1,5 +1,7 @@
-import { Component } from "@angular/core"
+import { Component, OnInit, OnDestroy } from "@angular/core"
 import { ActivatedRoute } from "@angular/router"
+
+import { FloatActionButtonService, FloatActionButton, FloatActionButtonType }  from '../_shared/_services/float-action-button.service'
 
 @Component({
     selector: "map-route-details",
@@ -7,7 +9,7 @@ import { ActivatedRoute } from "@angular/router"
     styleUrls: ["./map-route-details.component.css"]
 })
 
-export class MapRouteDetailsComponent {
+export class MapRouteDetailsComponent implements OnInit, OnDestroy {
     public title: String;
     public subtitle: String;
     public author: String;
@@ -15,8 +17,9 @@ export class MapRouteDetailsComponent {
 
     private routeID: String;
 
-    constructor(private route: ActivatedRoute) {
-        route.params.subscribe(params => {
+    constructor(private _route: ActivatedRoute,
+                private _fabService: FloatActionButtonService) {
+        _route.params.subscribe(params => {
             this.routeID = params["routeID"]
         });
 
@@ -24,5 +27,31 @@ export class MapRouteDetailsComponent {
         this.author = "Juca Pirama";
         this.createdOn = new Date();        
     }
-    
+
+    ngOnInit(){
+        this._fabService.clear();
+        this._fabService.addButton(new FloatActionButton("create", 
+                                                         "Edit Route", 
+                                                         "edit", 
+                                                         FloatActionButtonType.mini,
+                                                         this.onEditRouteClick.bind(this), 2));
+
+        this._fabService.addButton(new FloatActionButton("navigation", 
+                                                         "Navigate", 
+                                                         "navigate", 
+                                                         FloatActionButtonType.normal,
+                                                         this.onNavigateClick.bind(this), 1));
+    }
+
+    ngOnDestroy() {
+        this._fabService.clear();
+    }
+
+    private onEditRouteClick() : void {
+
+    }
+
+    private onNavigateClick() : void{
+
+    }
 }

@@ -1,11 +1,15 @@
 <div class="app-wrapper">
     <search></search>
 
+    <map-controls></map-controls>
+
     <map></map>
 
     <div [ngClass]="{ 'active' : showMenu }" class="menu-wrapper z1">        
         <router-outlet></router-outlet>
     </div>    
+
+    <float-action-button></float-action-button>
 
     <notification></notification>
 

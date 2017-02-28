@@ -1,27 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router, Event, NavigationStart } from "@angular/router";
 
 import { BottomNavigationButton } from "./_shared/_models/BottomNavigationButton.model";
 import { SecurityManagerService } from "./_shared/_services/security-manager.service";
-import { PointLoaderService } from './_shared/_services/point-loader.service'
+import { MapService } from './_shared/_services/map.service'
+import { MapPointLoaderService } from './_shared/_services/map-point-loader.service'
+import { NotificationService, Notification } from './_shared/_services/notification.service'
 
 @Component({
     selector: 'app-root',
     templateUrl: "./app.template.html",
-    styleUrls: ["./app.component.css"],
-    providers: [PointLoaderService]
+    styleUrls: ["./app.component.css"]
 })
 export class AppComponent implements OnInit {
     public showMenu: boolean = true;    
 
     constructor(private _router: Router,
                 private _securityManager: SecurityManagerService,
-                private _locationLoaderService: PointLoaderService) {
+                private _locationLoaderService: MapPointLoaderService,
+                private _notificationService: NotificationService,
+                private _mapService : MapService) {
 
-        this._router.events.subscribe((val) => {
-            this.VerifyMenuForUrl(val.url);
+        this._router.events.subscribe((val : Event) => {     
+            if(val instanceof NavigationStart)       
+                this.VerifyMenuForUrl(val.url);
         });
 
+        this._locationLoaderService.init();
+
+        this._mapService.onLoad.subscribe(() => {
+            this._mapService.setUserLocation();
+        });        
     }
 
     ngOnInit() {
@@ -30,9 +39,9 @@ export class AppComponent implements OnInit {
     }
 
     private VerifyMenuForUrl(url: string) {
-        if (url == "/")
+        if(url == "/")
             this.showMenu = false;
-        else
+        else 
             this.showMenu = true;
     }
 

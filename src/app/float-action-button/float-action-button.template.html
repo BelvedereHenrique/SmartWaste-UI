@@ -1,0 +1,11 @@
+<div class="fab-content"[ngClass]="{ 'showing-notification': showingNotification == true }">          
+    <button 
+        class="float-action-button"
+        *ngFor="let button of getButtons()" 
+        (click)="button.onClick()"
+        title="{{button.title}}"
+        [ngClass]="{ 'btn-circle btn-success' : button.type == 1,
+                     'btn-circle-xs btn-default' : button.type == 2 }">
+        <i class="material-icons">{{button.icon}}</i>
+    </button>        
+</div>

@@ -11,6 +11,9 @@ import { BottomNavigationComponent } from './bottom-navigation/bottom-navigation
 import { RoutePointComponent } from './route-point/route-point.component';
 import { AccountMenuComponent } from './account-menu/account-menu.component';
 import { AccountEnterpriseComponent } from './account-enterprise/account-enterprise.component';
+import { FloatActionButtonComponent } from './float-action-button/float-action-button.component';
+import { MapControlsComponent } from './map-controls/map-controls.component'
+import { AppMenuComponent }   from './app-menu/app-menu.component'
 
 import { NotificationService } from './_shared/_services/notification.service'
 import { ServiceHelpersService } from './_shared/_services/service-helpers.service'
@@ -18,6 +21,9 @@ import { JwtService } from './_shared/_services/jwt.service'
 import { SecurityManagerService } from './_shared/_services/security-manager.service';
 import { MapService } from "./_shared/_services/map.service";
 import { PointService } from "./_shared/_services/point.service"
+import { MapPointLoaderService } from './_shared/_services/map-point-loader.service'
+import { MapRouteMakerService } from './_shared/_services/map-route-maker.service';
+import { FloatActionButtonService }  from './_shared/_services/float-action-button.service'
 
 import { BottomNavigationModule } from './bottom-navigation/bottom-navigation.module';
 import { MapRouteMenuRoutingModule } from './map-route-menu/map-route-menu-routing.module';
@@ -30,6 +36,8 @@ import { SharedModule} from './_shared/shared.module';
 import { SearchModule} from './search/search.module';
 import { SigninModule } from './signin/signin.module'
 import { SigninRoutingModule } from './signin/signin.routing.module'
+import { FloatActionButtonModule } from './float-action-button/float-action-button.module'
+import { AppMenuRoutingModule }   from './app-menu/app-menu-routing.module'
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -48,7 +56,10 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     NotificationComponent,
     AccountMenuComponent,
     AccountEnterpriseComponent,
-    ConfirmDirective
+    ConfirmDirective,
+    FloatActionButtonComponent,
+    MapControlsComponent,
+    AppMenuComponent
   ],
   imports: [    
     RouterModule.forRoot([], {useHash: true}),
@@ -61,14 +72,18 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     MapRouteDetailsRoutingModule,
     AccountMenuModule,
     AccountEnterpriseModule,
-    SigninModule
+    SigninModule,
+    AppMenuRoutingModule
   ],
   providers: [NotificationService, 
               ServiceHelpersService, 
               JwtService, 
               SecurityManagerService, 
               MapService,
-              PointService],
+              PointService,
+              MapPointLoaderService,
+              MapRouteMakerService,
+              FloatActionButtonService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,6 +1,6 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, NgZone, ViewChild } from '@angular/core';
 
-import { MapService } from "../_shared/_services/map.service";
+import { MapService, SearchOptions } from "../_shared/_services/map.service";
 
 @Component({
   selector: 'search',
@@ -8,25 +8,61 @@ import { MapService } from "../_shared/_services/map.service";
   styleUrls: ['./search.component.css']
 })
 
-export class SearchComponent {
-    private timer: number;
-    private lastChange: Date;
+export class SearchComponent {    
+    @ViewChild("search") private search;
+    private results : any[] = [];
+    private timeout: number;
+    private autocompleteHeight: string = "0px";
+    private autocompleteItemHeight: number = 40;
+    private limitResults: number = 5;
 
-    constructor(private _mapService : MapService){
-
+    constructor(private _mapService : MapService,
+                private _ngZone: NgZone){
+    
     }
 
     public onSeachKepress(query: string): void {
-        var now = new Date();
-
-        if (this.timer)
-            clearTimeout(this.timer);
-
-        this.timer = setTimeout(this.callOnSearchEvent.bind(this, query, now), 500);
+        if(this.timeout)
+            clearTimeout(this.timeout);
+        this.timeout = setTimeout(this.callOnSearchEvent.bind(this, query), 100);        
     }
 
-    private callOnSearchEvent(query: string, now: Date): void {
-        if (!query) return;
-        this._mapService.search(query);
+    private onSuggestionClick(result : any) : void {
+        this._mapService.setView({
+            bounds: result.bestView
+        });
+
+        this.search.nativeElement.value = result.address.formattedAddress;
+        this.results = [];        
+        this.autocompleteHeight = "0px";
+    }
+
+    private onClearSearch() : void{        
+        this.results = [];
+        this.search.nativeElement.value = "";
+        this.autocompleteHeight = "0px";
+    }
+
+    private callOnSearchEvent(query: string): void {        
+        if (!query) {
+            this.onClearSearch();
+            return;   
+        }
+
+        if(query != this.search.nativeElement.value)
+            return;
+
+        this._mapService.onLoad.subscribe(() => {
+            this._mapService.search(query, (result) => {
+                this._ngZone.run(() => {
+                    if (!this.search.nativeElement.value) {
+                        this.onClearSearch();
+                    }else{
+                        this.results = result.results;
+                        this.autocompleteHeight = result.results.length * this.autocompleteItemHeight + "px";
+                    }
+                });            
+            }, this.limitResults); 
+        });        
     }
 }
