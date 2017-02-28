@@ -1,0 +1,14 @@
+.invalidField{
+    border-bottom: 1px solid #a94442;
+    color: #a94442;
+}
+.validField{
+    border-bottom: 1px solid mediumseagreen;
+    color:mediumseagreen;
+}
+.invalidFieldLabel{
+    color:#a94442;
+}
+.validFieldLabel{
+    color:mediumseagreen;
+}

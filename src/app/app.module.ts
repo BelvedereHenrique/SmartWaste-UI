@@ -14,7 +14,7 @@ import { AccountEnterpriseComponent } from './account-enterprise/account-enterpr
 import { FloatActionButtonComponent } from './float-action-button/float-action-button.component';
 import { MapControlsComponent } from './map-controls/map-controls.component'
 import { AppMenuComponent }   from './app-menu/app-menu.component'
-
+import { AccountPersonalComponent } from './account-personal/account-personal.component';
 import { NotificationService } from './_shared/_services/notification.service'
 import { ServiceHelpersService } from './_shared/_services/service-helpers.service'
 import { JwtService } from './_shared/_services/jwt.service'
@@ -32,6 +32,8 @@ import { AccountMenuModule } from './account-menu/account-menu.module';
 import { AccountMenuRoutingModule } from './account-menu/account-menu-routing.module';
 import { AccountEnterpriseModule } from './account-enterprise/account-enterprise.module';
 import { AccountEnterpriseRoutingModule } from './account-enterprise/account-enterprise-routing.module';
+import { AccountPersonalModule } from './account-personal/account-personal.module';
+import { AccountPersonalRoutingModule } from './account-personal/account-personal-routing.module';
 import { SharedModule} from './_shared/shared.module';
 import { SearchModule} from './search/search.module';
 import { SigninModule } from './signin/signin.module'
@@ -59,7 +61,9 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     ConfirmDirective,
     FloatActionButtonComponent,
     MapControlsComponent,
-    AppMenuComponent
+    AppMenuComponent,
+    AccountPersonalComponent,
+    ConfirmDirective
   ],
   imports: [    
     RouterModule.forRoot([], {useHash: true}),
@@ -68,12 +72,15 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     SigninRoutingModule,
     AccountMenuRoutingModule,
     AccountEnterpriseRoutingModule,
+    AccountPersonalRoutingModule,
     SharedModule,    
     MapRouteDetailsRoutingModule,
     AccountMenuModule,
     AccountEnterpriseModule,
     SigninModule,
-    AppMenuRoutingModule
+    AppMenuRoutingModule,
+    AccountPersonalModule,
+    SigninModule
   ],
   providers: [NotificationService, 
               ServiceHelpersService, 
