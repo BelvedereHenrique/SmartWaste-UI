@@ -29,6 +29,8 @@ h1 {
 
     h1.title {
         margin: 10px 10px 20px 10px;
+        border-bottom: 1px solid #f0efea;
+        padding-bottom: 5px;
     }
 
 .menu-wrapper h1 > small {

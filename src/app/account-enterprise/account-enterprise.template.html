@@ -1,4 +1,5 @@
-<h1 class="title"><a>Account</a>/Enterprise <small>Request an enterprise account</small></h1>
+<ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
+<h1 class="title"><a href="#/account">Account</a>/Enterprise <small>Request an enterprise account</small></h1>
 <div class="row">
     <div class="container">
       <form novalidate #heroForm="ngForm">
@@ -32,8 +33,12 @@
         </div>
         <div class="col col-lg-12 form-group">
             <label>Address</label><br />
-            <input type="text" class="form-control" required name="address" #address="ngModel"  [(ngModel)]="AccountEnterprise.Address.Line1" placeholder="Av:... N:123">
+            <input type="text" class="form-control" required name="address" #address="ngModel"  [(ngModel)]="AccountEnterprise.Address.Line1" placeholder="Ex: Fifth avenue 1040">
             <div *ngIf="address.errors && (address.dirty || address.touched)" class="alert alert-danger"><div [hidden]="!address.errors.required">Address is required</div></div>
+        </div>
+        <div class="col col-lg-12 form-group">
+            <label>Complement</label><br />
+            <input type="text" class="form-control"  name="complement" #complement="ngModel"  [(ngModel)]="AccountEnterprise.Address.Line2" placeholder="Apartment A2">
         </div>
         <div class="col col-lg-12 form-group">
             <label>Neighborhood</label><br />
