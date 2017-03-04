@@ -26,10 +26,11 @@ export class AccountEnterpriseService{
 
     return this.serviceHelpers.get<any>("/Account/GetCities", params);
   }
-  saveEnterprise(enterprise){
-    let params = new URLSearchParams();
-    params.append("enterprise", enterprise);
-    debugger
-    return this.serviceHelpers.post<any>("/Account/SaveEnterprise", enterprise, false, ContentTypeEnum.JSON);
+  getUserEnterprise(){
+    return this.serviceHelpers.get<any>("/Account/GetUserEnterprise",null);
+  }
+
+  saveEnterprise(enterprise:any){
+    return this.serviceHelpers.post<any>("/Account/SaveEnterprise", enterprise, true, ContentTypeEnum.JSON);
   }
 }

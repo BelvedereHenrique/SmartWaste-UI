@@ -40,6 +40,7 @@ import { SigninModule } from './signin/signin.module'
 import { SigninRoutingModule } from './signin/signin.routing.module'
 import { FloatActionButtonModule } from './float-action-button/float-action-button.module'
 import { AppMenuRoutingModule }   from './app-menu/app-menu-routing.module'
+import {SlimLoadingBarModule} from 'ng2-slim-loading-bar';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -67,6 +68,7 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
   ],
   imports: [    
     RouterModule.forRoot([], {useHash: true}),
+    SlimLoadingBarModule.forRoot(),
     AppRoutingModule,
     MapRouteMenuRoutingModule,
     SigninRoutingModule,

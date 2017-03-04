@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import { Subscription } from 'rxjs';
 
 import { NotificationService, Notification, NotificationResult, NotificationButton } from '../_shared/_services/notification.service'
+import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
 import { AccountEnterpriseService } from '../_shared/_services/account-enterprise.service';
 import { MapService, PushPinBuilder, PushPinType, PushPinMaterialType } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
@@ -15,11 +16,21 @@ import { MapTypeEnum } from '../_shared/_models/map-type.enum'
 })
 
 export class AccountEnterpriseComponent implements OnDestroy, OnInit {
+  constructor( private http: Http,
+                 private _service: AccountEnterpriseService,
+                 private _mapService: MapService,
+                 private _notificationService: NotificationService,
+                 private _router: Router,
+                 private slimLoadingBarService: SlimLoadingBarService) {
+                  this.getCountries();
+    }
+    
    AccountEnterprise={
       Name: '',
       CNPJ: '',
       Address:{
         Line1:'',
+        Line2:'',
         ZipCode:'',
         Neighborhood:'',
         Latitude:'',
@@ -34,20 +45,11 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
     Countries = [];
     Cities = [];
     States = [];
-    private isLoading = true;
 
+    private isLoading = true;
     private onMapClickSubscription : Subscription;
     private allowClickMap: boolean  = false;
-
-    private notificationResult : NotificationResult;
-
-    constructor( private http: Http,
-                 private _service: AccountEnterpriseService,
-                 private _mapService: MapService,
-                 private _notificationService: NotificationService,
-                 private _router: Router) {
-                  this.getCountries();
-    }
+    private notificationResult : NotificationResult;    
 
     ngOnInit() {
         console.log("ngOnInit");
@@ -66,33 +68,97 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
       if(this.notificationResult)
         this.notificationResult.Cancel();
     }
+
+    public onCountryChange(value){
+      console.log(value);
+    }
+
+    public onStateChange(value){
+      this.Cities = [];
+      this.getCities(value);
+    }
+
+    public getCountries() {
+      this.slimLoadingBarService.start();
+      this._service.getCountries().subscribe(
+        data => {
+            if(data.Success == true){
+              this.Countries = data.Result;        
+              if(this.Countries.length == 1) this.getStates(this.Countries[0].ID);   
+            }
+          },
+        error => this._notificationService.notify(new Notification("An Error Ocurred on Server: Get Countries",[],3000)),
+        () =>     this.slimLoadingBarService.complete()
+      );
+    }
+
+    public getStates(countryID) {     
+      this.slimLoadingBarService.start();
+      this._service.getStates(countryID).subscribe(
+        data => {
+            if(data.Success == true){
+              this.States = data.Result; 
+              if(this.States.length ==1) this.getCities(this.States[0].ID);                     
+            }
+          },
+        error => this._notificationService.notify(new Notification("An Error Ocurred on Server: Get States",[],3000)),
+        () =>this.slimLoadingBarService.complete()
+      );
+    }
+
+    public getCities(stateID) {
+      this.slimLoadingBarService.start();
+      this._service.getCities(stateID).subscribe(
+        data => {
+            if(data.Success == true){
+              this.Cities = data.Result;                  
+            }
+          },
+        error => this._notificationService.notify(new Notification("An Error Ocurred on Server: Get Cities",[],3000)),
+        () =>this.slimLoadingBarService.complete()
+      );
+    }
+    
+    public checkAllProperties(){
+      if (this.AccountEnterprise.Address.City.ID == '') return false;
+      if (this.AccountEnterprise.Address.Latitude =='' || this.AccountEnterprise.Address.Longitude=='') return false;
+      if (this.AccountEnterprise.Address.Line1 == '' || this.AccountEnterprise.Address.Neighborhood == '' || this.AccountEnterprise.Address.ZipCode == '') return false;
+      if (this.AccountEnterprise.CNPJ == '') return false;
+      if (this.AccountEnterprise.Name == '') return false;
+      return true;
+    }
+
     public saveEnterprise(){
+      this.slimLoadingBarService.start();
       let isValid = this.checkAllProperties();
       if(!isValid){
         this._notificationService.notify(new Notification("There're empty fields",[],5000));
+        this.slimLoadingBarService.complete();
         return;
       }
-       this._service.saveEnterprise(this.AccountEnterprise).subscribe(
+      this._service.saveEnterprise(this.AccountEnterprise).subscribe(
         data => {
             if(data.Success == true){
               console.log(data); 
+              this.slimLoadingBarService.complete()
               this._notificationService.notify(new Notification("Success. You'll receive an email with the next instructions.",[],5000));
-              this._router.navigateByUrl("/");
-            }else{
-              debugger
-              //TODO: Show All Messages
-              this._notificationService.notify(new Notification(data.Messages[0].Message));
+              this._router.navigateByUrl("/account");
+            }else{              
+              for(var i = 0; i< data.Messages.length; i++){
+                  this._notificationService.notify(new Notification(data.Messages[i].Message));
+              }
             }
           },
         error => {
           console.log(error);
-          this._notificationService.notify(new Notification("An Error Ocurred on Server",[],3000));
+          this._notificationService.notify(new Notification("An Error Ocurred on Server: Save Enterprise",[],3000));
         },
-        () => this.isLoading = false
+        () => this.slimLoadingBarService.complete()
       );
       console.log(this.AccountEnterprise);
     }
-    getCurrentLocation(){
+
+    public getCurrentLocation(){
       if(this.AccountEnterprise.Address.City.ID != '' && this.AccountEnterprise.Address.City.ID != null){
         let query:string;
         query = this.AccountEnterprise.Address.Line1 + ", " + this.AccountEnterprise.Address.City.Name;
@@ -102,14 +168,6 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
       }else{
         this._notificationService.notify(new Notification("City must not be Empty!!"));
       }
-    }
-    public checkAllProperties(){
-      if (this.AccountEnterprise.Address.City.ID == '') return false;
-      if (this.AccountEnterprise.Address.Latitude =='' || this.AccountEnterprise.Address.Longitude=='') return false;
-      if (this.AccountEnterprise.Address.Line1 == '' || this.AccountEnterprise.Address.Neighborhood == '' || this.AccountEnterprise.Address.ZipCode == '') return false;
-      if (this.AccountEnterprise.CNPJ == '') return false;
-      if (this.AccountEnterprise.Name == '') return false;
-      return true;
     }
 
     private onMapClick(location : Microsoft.Maps.Location) : void {
@@ -122,7 +180,6 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
             this._mapService.clear();
             this.allowClickMap = true;
         });
-
         notification.AddButton("Yes", () => {
             this.allowClickMap = true;
             this.AccountEnterprise.Address.Latitude = location.latitude.toString();
@@ -130,56 +187,4 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
         });
         this.notificationResult = this._notificationService.notify(notification);
     }
-
- public onCountryChange(value){
-   console.log(value);
- }
-
-  public onStateChange(value){
-   this.Cities = [];
-   this.getCities(value);
- }
-
-    
-  getCountries() {
-    this._service.getCountries().subscribe(
-      data => {
-          if(data.Success == true){
-            this.Countries = data.Result;        
-            if(this.Countries.length == 1) this.getStates(this.Countries[0].ID);   
-          }
-        },
-      error => console.log(error),
-      () => this.isLoading = false
-    );
-  }
-
-   getStates(countryID) {
-     
-    this._service.getStates(countryID).subscribe(
-      data => {
-          if(data.Success == true){
-            this.States = data.Result; 
-            if(this.States.length ==1) this.getCities(this.States[0].ID);                     
-          }
-        },
-      error => console.log(error),
-      () => this.isLoading = false
-    );
-  }
-
-    getCities(stateID) {
-    this._service.getCities(stateID).subscribe(
-      data => {
-          if(data.Success == true){
-            this.Cities = data.Result;                  
-          }
-        },
-      error => console.log(error),
-      () => this.isLoading = false
-    );
-  }
-  
-
-
 }
