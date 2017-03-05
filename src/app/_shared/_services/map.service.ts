@@ -99,6 +99,7 @@ export class MapService {
 }
 
 export class PushPinBuilder {
+    private pushpin : Microsoft.Maps.Pushpin = null;
     private _type: PushPinType;
     private _material: PushPinMaterialType;
     private _location: Microsoft.Maps.Location;
@@ -108,6 +109,7 @@ export class PushPinBuilder {
     private strokeWidth: number = 7;
     private userIconPath : string = "m84.171 16.179c-14.306 0-25.893 11.587-25.893 25.893s11.587 25.893 25.893 25.893 25.893-11.587 25.893-25.893-11.587-25.893-25.893-25.893zm0 64.732c-17.283 0-51.785 8.6741-51.785 25.893v12.945h30.031l21.754 21.754 21.754-21.754h30.031v-12.945c0-17.218-34.502-25.893-51.785-25.893z";
     private companyIconPath : string = "m43.162 127.43c0 7.6987 6.299 13.998 13.998 13.998h55.991c7.6987 0 13.998-6.299 13.998-13.998v-76.822h-83.986zm90.985-104.98h-24.496l-6.9988-6.9988h-34.994l-6.9988 6.9988h-24.496v17.998h97.984z";
+    private data : any = null;
 
     constructor(location: Microsoft.Maps.Location, type: PushPinType, material: PushPinMaterialType) {
         this._location = location;
@@ -116,21 +118,41 @@ export class PushPinBuilder {
     }
 
     public build(): Microsoft.Maps.Pushpin {
-        var pushPin : Microsoft.Maps.Pushpin = new Microsoft.Maps.Pushpin(this._location, {
+        if(!this.pushpin){
+            this.pushpin = new Microsoft.Maps.Pushpin(this._location, this.getOptions());
+
+            Microsoft.Maps.Events.addHandler(this.pushpin, 'click', this.onClick.bind(this));
+        }else{
+            this.pushpin.setOptions(this.getOptions());
+        }
+        
+        return this.pushpin;
+    }
+
+    private getOptions() : Microsoft.Maps.IPushpinOptions{
+        return {
             icon: this.getSvgIcon(),
             anchor: new Microsoft.Maps.Point(this.size / 2, this.size)
-        });
+        };
+    }
 
-        Microsoft.Maps.Events.addHandler(pushPin, 'click', this.onClick);
+    public setMaterialType(material: PushPinMaterialType) : void {
+        this._material = material;
+    }
 
-        return pushPin;
+    public setData(data : any) : void {
+        this.data = data;
+    }
+
+    public getData() : any{
+        return this.data;
     }
 
     public setSizeForZoom(zoom: number) : void{        
         this.size = Math.pow(zoom, 2) / 15;
     }
 
-    private onClick() : void{
+    private onClick() : void {
         if(this._onClick)
             this._onClick(this);
     }
@@ -141,7 +163,7 @@ export class PushPinBuilder {
 
     private getSvgIcon(): string {
         var path : string = "";
-        if(this._type == PushPinType.CollectPoint)
+        if(this._type == PushPinType.Person)
             path = this.userIconPath;
         else
             path = this.companyIconPath;
@@ -171,8 +193,8 @@ export class PushPinBuilder {
 }
 
 export enum PushPinType {
-    CollectPoint = 1,
-    PickupPoint = 2
+    Person = 1,
+    Trash = 2
 }
 
 export enum PushPinMaterialType {

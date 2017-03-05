@@ -1,0 +1,36 @@
+<h1 class="title">{{title}} <small>{{subtitle}}</small></h1>
+
+<div class="menu-container">
+    <div class="form-group">
+        <label>Assigned to</label>
+        <select #assignedTo class="form-control">
+            <option value="">Not assigned</option>
+            <option *ngFor="let assignedTo of assignedToList" value="{{assignedTo.ID}}">
+                {{assignedTo.Name}}
+            </option>
+        </select>
+    </div>
+</div>
+
+<div class="stats">
+    <div>
+        <div class="stat-number">{{pushpins.length}} points</div>
+    </div>
+    <div>
+        <div class="stat-number">{{kilometers}} km</div>
+    </div>
+    <div>
+        <div class="stat-number">{{hours | number : '2.0-0'}}:{{minutes | number : '2.0-0'}} min</div>
+    </div>
+</div>
+
+<div class="point-content">    
+    <div class="point" *ngFor="let point of detailedPoints" (click)="onRoutePointClick(point)">
+        <div class="point-image">
+            <i class="material-icons">{{getIcon(point)}}</i>
+        </div>
+        <div class="description">
+            {{getFullAddress(point)}}
+        </div>
+    </div>
+</div>

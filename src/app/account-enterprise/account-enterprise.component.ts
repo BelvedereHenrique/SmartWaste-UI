@@ -173,7 +173,7 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
     private onMapClick(location : Microsoft.Maps.Location) : void {
         if(!this.allowClickMap) return;
         this._mapService.clear();
-        this._mapService.addPushPin(new PushPinBuilder(location, PushPinType.CollectPoint, PushPinMaterialType.Paper).build());
+        this._mapService.addPushPin(new PushPinBuilder(location, PushPinType.Person, PushPinMaterialType.Paper).build());
         
         var notification : Notification = new Notification("Is the pin exactly on your address?", [], 0);
         notification.AddButton("No", () => {

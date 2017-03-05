@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { JsonpModule } from '@angular/http'
 import { RouterModule } from '@angular/router';
 
 import { SearchComponent } from './search/search.component';
@@ -15,15 +16,19 @@ import { FloatActionButtonComponent } from './float-action-button/float-action-b
 import { MapControlsComponent } from './map-controls/map-controls.component'
 import { AppMenuComponent }   from './app-menu/app-menu.component'
 import { AccountPersonalComponent } from './account-personal/account-personal.component';
-import { NotificationService } from './_shared/_services/notification.service'
-import { ServiceHelpersService } from './_shared/_services/service-helpers.service'
-import { JwtService } from './_shared/_services/jwt.service'
+import { RouteBuilderComponent } from './route-builder/route-builder.component'
+
+import { NotificationService } from './_shared/_services/notification.service';
+import { ServiceHelpersService } from './_shared/_services/service-helpers.service';
+import { JwtService } from './_shared/_services/jwt.service';
 import { SecurityManagerService } from './_shared/_services/security-manager.service';
 import { MapService } from "./_shared/_services/map.service";
 import { PointService } from "./_shared/_services/point.service"
-import { MapPointLoaderService } from './_shared/_services/map-point-loader.service'
+import { MapPointLoaderService } from './_shared/_services/map-point-loader.service';
 import { MapRouteMakerService } from './_shared/_services/map-route-maker.service';
-import { FloatActionButtonService }  from './_shared/_services/float-action-button.service'
+import { FloatActionButtonService }  from './_shared/_services/float-action-button.service';
+import { BottomNavigationService } from './_shared/_services/bottom-navigation.service';
+import { RouteService } from './_shared/_services/route.service';
 
 import { BottomNavigationModule } from './bottom-navigation/bottom-navigation.module';
 import { MapRouteMenuRoutingModule } from './map-route-menu/map-route-menu-routing.module';
@@ -41,6 +46,7 @@ import { SigninRoutingModule } from './signin/signin.routing.module'
 import { FloatActionButtonModule } from './float-action-button/float-action-button.module'
 import { AppMenuRoutingModule }   from './app-menu/app-menu-routing.module'
 import {SlimLoadingBarModule} from 'ng2-slim-loading-bar';
+import { RouteBuilderRoutingModule } from './route-builder/route-builder-routing.module'
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -64,7 +70,8 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     MapControlsComponent,
     AppMenuComponent,
     AccountPersonalComponent,
-    ConfirmDirective
+    ConfirmDirective,
+    RouteBuilderComponent
   ],
   imports: [    
     RouterModule.forRoot([], {useHash: true}),
@@ -82,7 +89,9 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     SigninModule,
     AppMenuRoutingModule,
     AccountPersonalModule,
-    SigninModule
+    SigninModule,
+    RouteBuilderRoutingModule,
+    JsonpModule
   ],
   providers: [NotificationService, 
               ServiceHelpersService, 
@@ -92,7 +101,9 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
               PointService,
               MapPointLoaderService,
               MapRouteMakerService,
-              FloatActionButtonService],
+              FloatActionButtonService,
+              BottomNavigationService,
+              RouteService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

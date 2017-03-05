@@ -111,14 +111,25 @@ export class Notification {
     public onClickCallback: Function;
     private timeout: number;
 
-    constructor(title: String, buttons: NotificationButton[] = [], timeout: number = 5000) {
-        this.title = title;
+    constructor(title: String | String[] | any[], buttons: NotificationButton[] = [], timeout: number = 5000) {
+        this.title = this.getTitle(title);
         this.buttons = buttons || [];
         this.timeout = timeout || 0;
         this.status = NotificationStatusEnum.Active;
 
         for (let i = 0; i < buttons.length; i++)
             this.AddButtonInternal(this.buttons[i]);
+    }
+
+    private getTitle(title: String | String[] | any[]) : String {
+        var result : String = "";
+
+        if(typeof title == "string")
+            result = title;
+        else
+            (title as any[]).forEach((t) => result += " " + typeof t == "string" ? t : t.Message);
+
+        return result;
     }
 
     public AddButton(text: string, callback: Function): void {

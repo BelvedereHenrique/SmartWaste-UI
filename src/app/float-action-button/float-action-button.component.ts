@@ -1,7 +1,7 @@
 import { Component, Input, SimpleChanges, NgZone } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 
-import { FloatActionButtonService, FloatActionButton }  from '../_shared/_services/float-action-button.service'
+import { FloatActionButtonService, FloatActionButton, IVisibleConfig }  from '../_shared/_services/float-action-button.service'
 
 @Component({
     selector: 'float-action-button',
@@ -19,10 +19,21 @@ export class FloatActionButtonComponent {
         _fabService.onAddButton$.subscribe(this.addButton.bind(this));
         _fabService.onClear$.subscribe(this.clear.bind(this));
         _fabService.onNotificationShow$.subscribe(this.setNotificationShow.bind(this));
+        _fabService.onSetVisible$.subscribe(this.setVisible.bind(this));
     }
 
     public clear() : void {
         this.buttons = [];
+    }
+
+    public setVisible(config: IVisibleConfig) : void{
+        var button : FloatActionButton = this.buttons.find((b) => b.getName() == config.name);
+
+        if(button){
+            this._ngZone.run(() => {
+                button.setVisible(config.visible);
+            });
+        }
     }
 
     public addButton(button : FloatActionButton) : void{
@@ -36,7 +47,7 @@ export class FloatActionButtonComponent {
     }
 
     public getButtons(): FloatActionButton[]{        
-        return this.buttons.sort((a, b) => { 
+        return this.buttons.filter((b) => b.isVisible()).sort((a, b) => { 
             return b.position - a.position;
         });
     }
