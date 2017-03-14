@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from "@angular/core"
-import { ActivatedRoute } from "@angular/router"
+import { ActivatedRoute, Router } from "@angular/router"
 
 import { FloatActionButtonService, FloatActionButton, FloatActionButtonType }  from '../_shared/_services/float-action-button.service'
+import { RouteService, RouteFilterContract } from '../_shared/_services/route.service';
+import { RouteContract } from "../_shared/_models/route.model"
 
 @Component({
     selector: "map-route-details",
@@ -15,13 +17,15 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
     public author: String;
     public createdOn: Date;
 
-    private routeID: String;
+    private route : RouteContract = new RouteContract();
 
-    constructor(private _route: ActivatedRoute,
+    private routeID: string;
+
+    constructor(private _activatedRoute: ActivatedRoute,
+                private _router : Router,
+                private _routeService : RouteService,
                 private _fabService: FloatActionButtonService) {
-        _route.params.subscribe(params => {
-            this.routeID = params["routeID"]
-        });
+
 
         this.title = "Rota 1";
         this.author = "Juca Pirama";
@@ -47,14 +51,35 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
                                                          "navigate", 
                                                          FloatActionButtonType.normal,
                                                          this.onNavigateClick.bind(this), 1));
+
+        this._activatedRoute.params.subscribe(params => {
+            this.routeID = params["routeID"]
+            this.init();
+        });
     }
 
     ngOnDestroy() {
         this._fabService.clear();
     }
 
-    private onEditRouteClick() : void {
+    private init() {
+        var filter : RouteFilterContract = new RouteFilterContract();
+        filter.ID = this.routeID;
 
+        this._routeService.Get(filter).subscribe((jsonModel) => {
+            if(jsonModel.Success){
+                this.route = jsonModel.Result;
+            }else{
+
+            }
+        }, (jsonModelError) => {
+
+        });
+    }
+
+    private onEditRouteClick() : void {
+        if(this.routeID)
+            this._router.navigate(["route", "builder", this.routeID]);
     }
 
     private onNavigateClick() : void{

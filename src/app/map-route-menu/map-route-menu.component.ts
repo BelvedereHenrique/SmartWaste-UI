@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core"
+import { Router } from "@angular/router"
 
 import { FloatActionButtonService, FloatActionButton, FloatActionButtonType }  from '../_shared/_services/float-action-button.service'
 
@@ -11,7 +12,8 @@ import { FloatActionButtonService, FloatActionButton, FloatActionButtonType }  f
 export class MapRouteMenuComponent implements OnInit{
     title = "TODO: We need to list here the user routes.";
 
-    constructor(private _fabService : FloatActionButtonService){
+    constructor(private _fabService : FloatActionButtonService,
+                private _router : Router){
 
     }
 
@@ -30,6 +32,6 @@ export class MapRouteMenuComponent implements OnInit{
     }
 
     private onAddRouteClick() : void{
-        
+        this._router.navigate(["/route/builder"]);
     }
 }

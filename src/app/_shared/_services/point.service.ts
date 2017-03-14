@@ -5,6 +5,13 @@ import { Observable } from 'rxjs';
 import { ServiceHelpersService, ContentTypeEnum } from './service-helpers.service';
 import { JwtModel } from '../_models/jwt.model'
 
+import { PointStatusEnum } from "../_models/point-status.enum"
+import { PointRouteStatusEnum } from "../_models/point-route-status.enum"
+import { PointTypeEnum } from "../_models/point-type.enum"
+import { PointContract } from "../_models/point.model"
+import { PointDetailedContract } from "../_models/point-detailed.model"
+import { JsonModel } from "../_models/json-model"
+
 import 'rxjs/add/operator/map';
 
 @Injectable()
@@ -13,17 +20,38 @@ export class PointService {
         
     }
 
-    public GetList(search: PointSearch): Observable<any> {
-        return this.serviceHelper.post<any>("/Point/GetList", search, true, ContentTypeEnum.JSON);
+    public GetList(search: PointSearch): Observable<JsonModel<PointContract[]>> {
+        return this.serviceHelper.post<JsonModel<PointContract[]>>("/Point/GetList", search, true, ContentTypeEnum.JSON);
     }
+
+    public GetDetailedList(search: PointSearch) : Observable<JsonModel<PointDetailedContract[]>>{
+        return this.serviceHelper.post<JsonModel<PointDetailedContract[]>>("/Point/GetDetailedList", search, true, ContentTypeEnum.JSON);
+    }
+
+    public GetPeopleFromCompany() : Observable<any>{
+        return this.serviceHelper.post<any>("/Point/GetPeopleFromCompany", null, true, ContentTypeEnum.JSON);
+    } 
 }
 
 export class PointSearch {
-    public northWest: PointCoordinator;
-    public southEast: PointCoordinator;
+    constructor (){
+        this.IDs = [];
+        this.NotIDs = [];
+        this.AlwaysIDs = [];
+    }
+
+    public Northwest: PointCoordinator;
+    public Southeast: PointCoordinator;
+    public IDs: string[];
+    public NotIDs: string[];
+    public AlwaysIDs: string[];
+    public PersonID: string;
+    public Status : PointStatusEnum;
+    public PointRouteStatus : PointRouteStatusEnum;
+    public Type : PointTypeEnum;
 }
 
 export class PointCoordinator{
-    public latitude: number;
-    public longitude: number;
+    public Latitude: number;
+    public Longitude: number;
 }

@@ -1,5 +1,30 @@
-.map-content{
-    width: 100%;
-    height: auto;
-    position: initial !important;
+.map-content {
+    top: 0;    
+    left: 0;
+    position: absolute;
+    background: #f0efea;
+    /*transition: all 0.5s;*/
+}
+
+.map-content:not(.menu-opened) {
+    right: 0;
+    bottom: 0;
+}
+
+@media screen and (min-width: 999px) {
+    .map-content.menu-opened {
+        right: 495px;
+        bottom: 0;
+    }
+}
+
+@media screen and (max-width: 998px) {
+    .map-content.menu-opened {
+        right: 0;
+        bottom: 60%;
+    }
+
+    .map-content:not(.menu-opened) {        
+        bottom: 65px;
+    }
 }

@@ -12,6 +12,7 @@ import { ViewChild } from '@angular/core';
 import { NotificationService, Notification, NotificationResult, NotificationButton } from "../_shared/_services/notification.service";
 import { MapService, ViewChangeResult, ZoomOptions, SearchOptions } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
+import { BottomNavigationService } from '../_shared/_services/bottom-navigation.service'
 
 @Component({
     selector: 'map',
@@ -24,12 +25,15 @@ export class MapComponent{
     private instance: Microsoft.Maps.Map;
     private pushpins: Microsoft.Maps.Pushpin[];
 
+    private menuOpened: boolean;
+
     private mapIconSize: number = 24;
 
     private mapType : MapTypeEnum = null;
 
     constructor(private _notificationService: NotificationService,
-                private _mapService : MapService) {
+                private _mapService : MapService,
+                private _bottomNavigationService: BottomNavigationService) {
                     
         this.pushpins = [];
 
@@ -44,6 +48,8 @@ export class MapComponent{
         this._mapService.onSetUserLocation$.subscribe(this.setUserLocation.bind(this));   
         this._mapService.onChangeMapType$.subscribe(this.changeMapType.bind(this));   
         this._mapService.onSetView.subscribe(this.setView.bind(this));
+
+        this._bottomNavigationService.onToggle$.subscribe(this.onMenuToggle.bind(this));
     }
 
     ngAfterViewInit() {
@@ -134,7 +140,7 @@ export class MapComponent{
     }
 
     /* NOTE: Docs for routes: https://msdn.microsoft.com/en-us/library/mt750406.aspx */
-    public createRoute() : void {
+    public createRoute() : void {                 
         Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {            
             this._mapService.onCreateRoute$.next(
                 new Microsoft.Maps.Directions.DirectionsManager(this.instance)
@@ -225,6 +231,10 @@ export class MapComponent{
 
         console.debug("loadmap ending");
  
+    }
+
+    private onMenuToggle(opened: boolean) : void{
+        this.menuOpened = opened;
     }
 }
 

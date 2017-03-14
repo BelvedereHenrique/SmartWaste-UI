@@ -22,14 +22,3 @@ export class AccountService {
         return this.serviceHelper.post<JwtModel>("/token", params, false, ContentTypeEnum.FORM);
     }
 }
-
-export class JsonResult<T> {
-    public Success: boolean;
-    public Messages: JsonResultMessage[];
-    public Result: T;
-}
-
-export class JsonResultMessage {
-    public IsError: boolean;
-    public Message: string;
-}

@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from "@angular/router";
+
+import { PointDetailedContract } from '../_shared/_models/point-detailed.model'
 
 @Component({
     selector: 'route-point',
@@ -8,10 +10,13 @@ import { Router } from "@angular/router";
 })
 
 export class RoutePointComponent {
+    @Input("point") point : PointDetailedContract = new PointDetailedContract();
+
     constructor(private router: Router) { }
 
-    routeID = 123231;
-    title = "1º Ponto de Coleta";
-    address = "Av. Gulmão Paraíba, 666, Centro Oeste, Dobrada - SP"
+    public getFullAddress(point : PointDetailedContract) : string{
+        return PointDetailedContract.getFullAddress(point);
+    }
+
     imgUrl = "../../assets/img/reciclagem.png";
 } 
