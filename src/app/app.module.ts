@@ -43,9 +43,8 @@ import { SharedModule} from './_shared/shared.module';
 import { SearchModule} from './search/search.module';
 import { SigninModule } from './signin/signin.module'
 import { SigninRoutingModule } from './signin/signin.routing.module'
-import { FloatActionButtonModule } from './float-action-button/float-action-button.module'
 import { AppMenuRoutingModule }   from './app-menu/app-menu-routing.module'
-import {SlimLoadingBarModule} from 'ng2-slim-loading-bar';
+import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 import { RouteBuilderRoutingModule } from './route-builder/route-builder-routing.module'
 
 import { AppComponent } from './app.component';

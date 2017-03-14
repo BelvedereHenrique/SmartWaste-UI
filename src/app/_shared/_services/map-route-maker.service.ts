@@ -61,7 +61,7 @@ export class MapRouteMakerService  {
     }
 
     public getDirectionsFromPoints(points : PointDetailedContract[]) : Observable<any> {
-        let url : string = "http://dev.virtualearth.net/REST/v1/Routes?";
+        let url : string = "https://dev.virtualearth.net/REST/v1/Routes?";
         let query : string = "";
 
         for(let i = 0; i < points.length; i++){
