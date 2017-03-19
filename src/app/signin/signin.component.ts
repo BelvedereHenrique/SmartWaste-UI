@@ -69,7 +69,7 @@ export class SigninComponent implements OnInit {
     }
 
     public onForgotPasswordClick(): void {
-
+      this._router.navigateByUrl("password")
     }
 
     public onCreateAccountClick(): void {

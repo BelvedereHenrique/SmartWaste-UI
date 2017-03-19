@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-
+import { Router } from '@angular/router';
 import { BottomNavigationButton } from "../_shared/_models/BottomNavigationButton.model";
 import { SecurityManagerService } from "../_shared/_services/security-manager.service";
 
@@ -19,6 +19,7 @@ export class BottomNavigationComponent {
         this.AddButton(new BottomNavigationButton('history', 'history', 'History', this.onClick, "", false));
         this.AddButton(new BottomNavigationButton('account', 'account_circle', 'Account', this.onClick, "/account", false));
         this.AddButton(new BottomNavigationButton('signin', 'assignment_ind', 'Sign in', this.onClick, "/signin", false));
+        this.AddButton(new BottomNavigationButton('signout', 'power_settings_new', 'Sign out', this.signout, "/signin", false));
 
         this._securityManager.onAuthChange$.subscribe(isAuthenticated => {
             this.setup(isAuthenticated);            
@@ -31,6 +32,7 @@ export class BottomNavigationComponent {
         this.getButton("history").setVisible(isAuthenticated);
         this.getButton("account").setVisible(isAuthenticated);
         this.getButton("signin").setVisible(!isAuthenticated);
+      this.getButton("signout").setVisible(isAuthenticated);
     }
 
     private getButton(name : string) : BottomNavigationButton {
@@ -47,7 +49,11 @@ export class BottomNavigationComponent {
 
         return (100 / this.buttons.filter(button => button.visible).length).toString() + "%";
     }
-
+    signout = function () {
+      localStorage.removeItem('jwt');
+      location.reload();
+    }
+    
     onClick = function (button: BottomNavigationButton) {
         for (var i: number = 0; i < this.buttons.length; i++) {
             this.buttons[i].setActive(false);
