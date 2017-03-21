@@ -7,6 +7,7 @@ import { MapService } from './_shared/_services/map.service'
 import { MapPointLoaderService } from './_shared/_services/map-point-loader.service'
 import { NotificationService, Notification } from './_shared/_services/notification.service'
 import { BottomNavigationService } from './_shared/_services/bottom-navigation.service'
+import { SecurityService } from './_shared/_services/security.service'
 
 @Component({
     selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit {
                 private _locationLoaderService: MapPointLoaderService,
                 private _notificationService: NotificationService,
                 private _mapService : MapService,
-                private _bottomNavigationService: BottomNavigationService) {
+                private _bottomNavigationService: BottomNavigationService,
+                private _securityService : SecurityService) {
 
         this._router.events.subscribe((val : Event) => {     
             if(val instanceof NavigationStart)       
@@ -39,7 +41,8 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         // NOTE: Check if the user is authenticated and setup the app;        
-        this._securityManager.checkAuth();
+        //this._securityManager.checkAuth();
+        this._securityService.updateUserInformation();
     }
 
     private toggleMenu(open : boolean) : void{
@@ -52,7 +55,7 @@ export class AppComponent implements OnInit {
         else 
             this._bottomNavigationService.toggle(true);            
     }
-
+ 
     public onNavigationClick2(button: BottomNavigationButton) : void {
         
     };

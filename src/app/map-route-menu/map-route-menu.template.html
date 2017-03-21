@@ -1,8 +1,4 @@
-﻿<h1 class="title">Routes <small>here there are your routes</small></h1>
+﻿<ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
+<h1 class="title">Routes <small>here there are your routes</small></h1>
 
-<map-route-item></map-route-item>
-<map-route-item></map-route-item>
-<map-route-item></map-route-item>
-<map-route-item></map-route-item>
-<map-route-item></map-route-item>
-<map-route-item></map-route-item>
+<map-route-item *ngFor="let route of routes" [route]="route"></map-route-item>

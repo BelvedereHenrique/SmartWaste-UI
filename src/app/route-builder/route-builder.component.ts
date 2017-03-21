@@ -3,6 +3,8 @@
 import { Subscription } from 'rxjs';
 import { Component, NgZone, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
+
+import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { MapService, PushPinBuilder, PushPinMaterialType, PushPinType } from '../_shared/_services/map.service'
 import { MapPointLoaderService } from '../_shared/_services/map-point-loader.service'
 import { MapRouteMakerService } from '../_shared/_services/map-route-maker.service'
@@ -13,8 +15,10 @@ import { PointRouteStatusEnum } from "../_shared/_models/point-route-status.enum
 import { PointTypeEnum } from "../_shared/_models/point-type.enum"
 import { FloatActionButtonService, FloatActionButton, FloatActionButtonType } from '../_shared/_services/float-action-button.service'
 import { RouteService, RouteFilterContract } from '../_shared/_services/route.service';
-import { PointDetailedContract } from "../_shared/_models/point-detailed.model"
-import { RouteContract } from '../_shared/_models/route.model'
+import { PointDetailedContract } from "../_shared/_models/point-detailed.model";
+import { RouteDetailedContract } from '../_shared/_models/route-detailed.model';
+import { SecurityManagerService } from '../_shared/_services/security-manager.service';
+import { SecurityModel } from '../_shared/_models/security.model';
 
 @Component({
     selector: 'route-builder',
@@ -34,8 +38,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     private assignedToList : any[] = [];
     private getDetailedListSubscription: Subscription = null;
     private route : Microsoft.Maps.Directions.DirectionsManager = null;
-    private kilometers: number = 0;
-    private hours : number = 0;   
+    private kilometers: number = 0;    
     private minutes : number = 0;
     private pushpins : PushPinBuilder[] = [];
     private detailedPoints : PointDetailedContract[] = [];
@@ -54,19 +57,28 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
                 private _pointService : PointService,
                 private _fabService : FloatActionButtonService,
                 private _routeService : RouteService,
-                private _ngZone: NgZone) { 
+                private _ngZone: NgZone,
+                private _loadingBar : SlimLoadingBarService,
+                private _securityManagerService : SecurityManagerService) { 
 
     }
 
     ngOnInit() {
         this.reset();
 
-        this.createFloatActionButtons();
-        this.loadAssigedTo();
+        this._securityManagerService.onAuthChange$.subscribe((securityModel : SecurityModel) => {            
+            if(!securityModel || !securityModel.CanSaveRoutes){
+                this._router.navigate(["/"]);
+                return;
+            }
 
-        this._activatedRouter.params.subscribe((params) => {
-            this.routeID = params["routeID"];         
-            this.init(this.routeID);   
+            this.createFloatActionButtons();
+            this.loadAssigedTo();
+
+            this._activatedRouter.params.subscribe((params) => {
+                this.routeID = params["routeID"];         
+                this.init(this.routeID);   
+            });
         });
     }
 
@@ -75,6 +87,8 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     }
 
     private createFloatActionButtons() : void{
+        this._fabService.clear();
+        
         this._fabService.addButton(new FloatActionButton(
             "done",
             "Save route",
@@ -180,11 +194,10 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
         let filter : RouteFilterContract = new RouteFilterContract();
         filter.ID = routeID;
 
-        let notification : Notification = new Notification("Loading route...", [], 0);
-        let notificationResult : NotificationResult = this._notificationService.notify(notification);
+        this._loadingBar.start();
 
-        this._routeService.Get(filter).subscribe((jsonModel) =>{
-            notificationResult.Cancel();
+        this._routeService.GetDetailed(filter).subscribe((jsonModel) =>{
+            this._loadingBar.complete();
             if(jsonModel.Success){
                 this.loadRoute(jsonModel.Result);
             }else{
@@ -192,13 +205,13 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
                 this._router.navigate(["routes"]);
             }
         }, (jsonModelError) => {
-            notificationResult.Cancel();
+            this._loadingBar.complete();
             this._notificationService.notify(new Notification("It was not possible to edit the route."));
             this._router.navigate(["routes"]);
         });        
     }
 
-    private loadRoute(route : RouteContract) : void {
+    private loadRoute(route : RouteDetailedContract) : void {
         this._pointLoaderService.setFilter(this.getPointsFilterForRoute(route));
 
         this.detailedPoints = route.Points;
@@ -262,15 +275,13 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     private setRouteStats(kilometers: number, totalMinutes: number) : void{
         this._ngZone.run(() => {
             this.kilometers = kilometers;
-            this.hours = Math.floor(totalMinutes / 60);
-            this.minutes = ((totalMinutes / 60) - this.hours) * 60;
+            this.minutes = totalMinutes;
         });
     }
 
     private resetRouteStats() : void{
         this._ngZone.run(() => {
             this.kilometers = 0;
-            this.hours = 0;
             this.minutes = 0;
         });
     }
@@ -515,12 +526,10 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
         var loading : Notification = new Notification("Saving route...", [], 0);
         var loadingResult : NotificationResult = this._notificationService.notify(loading);
 
-        let expectedMinutes : number = (this.hours * 60) + this.minutes;
-
         if(this.isEditing())
-            this.recreateRoute(this.routeID, assignedToID, pointIDs, loadingResult, this.kilometers, expectedMinutes);
+            this.recreateRoute(this.routeID, assignedToID, pointIDs, loadingResult, this.kilometers, this.minutes);
         else
-            this.createRoute(assignedToID, pointIDs, loadingResult, this.kilometers, expectedMinutes);
+            this.createRoute(assignedToID, pointIDs, loadingResult, this.kilometers, this.minutes);
     }
 
     private createRoute(assignedToID: string, pointIDs : string[], loadingResult : NotificationResult, expectedKilometers: number, expectedMinutes: number) : void{
@@ -563,7 +572,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
 
                 this._router.navigate(["routes"]);
             }else{
-                this._notificationService.notify(new Notification(jsonModel.Success ? jsonModel.Messages : jsonModel.Result.Messages));
+                this._notificationService.notify(new Notification(jsonModel.Messages.length ? jsonModel.Messages : jsonModel.Result.Messages));
             }
         }, (jsonModelError) => {
             this._notificationService.notify(new Notification("It was not possible to remove the route. Try again."));
@@ -576,9 +585,6 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     }
 
     private getIcon(pointDetailed : PointDetailedContract) : string{
-        if(pointDetailed.Type == PointTypeEnum.User)
-            return "person";
-        else 
-            return "delete";
+        return PointDetailedContract.getIconClass(pointDetailed);
     }
 } 

@@ -1,6 +1,11 @@
-﻿<div class="route-item" (click)="onItemClick()">    
-    <div class="route-title">{{title}}</div>
-    <div class="route-subtitle">
-        por <b>{{author}}</b> em {{createdOn | date: 'dd/MM/yyyy hh:mm'}}
+﻿<div class="route-item" (click)="onItemClick(route)">    
+    <div class="route-title">
+        <span>{{getAssignedTo()}}</span>
+        
+    </div>
+    <div class="route-subtitle">                
+        <span>{{route.ExpectedKilometers}} km</span>
+        <span>{{route.ExpectedMinutes | duration}} min</span>
+        <span> {{route.CreatedOn | amTimeAgo }}</span>
     </div>
 </div>

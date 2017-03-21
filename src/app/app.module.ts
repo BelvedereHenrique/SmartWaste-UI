@@ -16,7 +16,8 @@ import { FloatActionButtonComponent } from './float-action-button/float-action-b
 import { MapControlsComponent } from './map-controls/map-controls.component'
 import { AppMenuComponent }   from './app-menu/app-menu.component'
 import { AccountPersonalComponent } from './account-personal/account-personal.component';
-import { RouteBuilderComponent } from './route-builder/route-builder.component';
+import { RouteBuilderComponent } from './route-builder/route-builder.component'
+import { HistoryComponent } from './history/history.component'
 import { PasswordComponent } from './password/password.component';
 
 import { NotificationService } from './_shared/_services/notification.service';
@@ -30,6 +31,7 @@ import { MapRouteMakerService } from './_shared/_services/map-route-maker.servic
 import { FloatActionButtonService }  from './_shared/_services/float-action-button.service';
 import { BottomNavigationService } from './_shared/_services/bottom-navigation.service';
 import { RouteService } from './_shared/_services/route.service';
+import { SecurityService } from './_shared/_services/security.service';
 import { PasswordService } from './_shared/_services/password.service';
 
 import { BottomNavigationModule } from './bottom-navigation/bottom-navigation.module';
@@ -43,12 +45,15 @@ import { AccountPersonalModule } from './account-personal/account-personal.modul
 import { AccountPersonalRoutingModule } from './account-personal/account-personal-routing.module';
 import { SharedModule} from './_shared/shared.module';
 import { SearchModule} from './search/search.module';
-import { SigninModule } from './signin/signin.module'
-import { SigninRoutingModule } from './signin/signin.routing.module'
-import { AppMenuRoutingModule }   from './app-menu/app-menu-routing.module'
+import { SigninModule } from './signin/signin.module';
+import { SigninRoutingModule } from './signin/signin.routing.module';
+import { AppMenuRoutingModule }   from './app-menu/app-menu-routing.module';
 import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
-import { RouteBuilderRoutingModule } from './route-builder/route-builder-routing.module'
-import { PasswordRoutingModule } from './password/password.routing.module'
+import { RouteBuilderRoutingModule } from './route-builder/route-builder-routing.module';
+import { PasswordRoutingModule } from './password/password.routing.module';
+import { MomentModule } from 'angular2-moment';
+
+import { DurationPipe } from './_shared/_pipes/duration.pipe';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -74,6 +79,8 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     AccountPersonalComponent,
     ConfirmDirective,
     RouteBuilderComponent,
+    HistoryComponent,
+    DurationPipe,
     PasswordComponent
   ],
   imports: [    
@@ -94,13 +101,15 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     AccountPersonalModule,
     SigninModule,
     RouteBuilderRoutingModule,
-    PasswordRoutingModule,
-    JsonpModule
+    PasswordRoutingModule,    
+    JsonpModule,
+    MomentModule
   ],
   providers: [NotificationService, 
               ServiceHelpersService, 
-              JwtService, 
+              JwtService,               
               SecurityManagerService, 
+              SecurityService,
               MapService,
               PointService,
               MapPointLoaderService,

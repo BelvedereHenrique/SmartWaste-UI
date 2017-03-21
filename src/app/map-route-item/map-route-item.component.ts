@@ -1,6 +1,8 @@
-import { Component } from "@angular/core"
+import { Component, Input } from "@angular/core"
 import { Router } from "@angular/router"
 //import { NotificationComponent, Notification } from "./notification.component"
+
+import { RouteDetailedContract } from '../_shared/_models/route-detailed.model'
 
 @Component({
     selector: "map-route-item",
@@ -11,13 +13,16 @@ import { Router } from "@angular/router"
 export class MapRouteItemComponent {
     constructor(private router: Router/*, private n: NotificationComponent*/) { }
 
-    public title: String = "Rota 1";
-    public author: String = "Juca Pirama";
-    public createdOn: Date = new Date();
-    private routeID: String = "654";
-    
-    public onItemClick(): void {
-        this.router.navigate(["routes", this.routeID]);
-        //this.n.Notify(new Notification("Teste", [], 15000));
+    @Input("route") private route : RouteDetailedContract;
+
+    public onItemClick(route : RouteDetailedContract): void {
+        this.router.navigate(["routes", route.ID]);
+    }
+
+    private getAssignedTo() : string {
+        if(this.route.AssignedTo)
+            return "Assigned to " + this.route.AssignedTo.Name;
+        else
+            return "Assigned to nobody";
     }
 }

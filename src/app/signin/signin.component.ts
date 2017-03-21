@@ -5,6 +5,7 @@ import { NotificationService, Notification, NotificationButton, NotificationResu
 import { AccountService } from "../_shared/_services/account.service";
 import { JwtService } from "../_shared/_services/jwt.service";
 import { SecurityManagerService } from "../_shared/_services/security-manager.service";
+import { SecurityModel } from '../_shared/_models/security.model'
 
 @Component({
     selector: "signin",
@@ -26,8 +27,10 @@ export class SigninComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this._securityManager.isAuthenticated())
-            this._router.navigate(['/']);
+        this._securityManager.onAuthChange$.subscribe((model : SecurityModel) => {
+            if(model != null)
+                this._router.navigate(['/']);
+        });
     }
 
     public onSignInClick(email: string, password: string): void {
@@ -50,7 +53,6 @@ export class SigninComponent implements OnInit {
 
                 this._router.navigate(["/"],);
             } else {
-                this._securityManager.checkAuth();
                 this._notificationService.notify(new Notification("Error to sign in!", [], 1000));
             }
         }, (error) => {
@@ -63,8 +65,7 @@ export class SigninComponent implements OnInit {
             else
                 message = "Something went wrong... Please, try again.";
 
-            this._notificationService.notify(new Notification(message, [], 5000));            
-            this._securityManager.checkAuth();
+            this._notificationService.notify(new Notification(message, [], 5000));                        
         });
     }
 

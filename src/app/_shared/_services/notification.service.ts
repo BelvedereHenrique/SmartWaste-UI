@@ -107,18 +107,17 @@ export class NotificationResult {
 export class Notification {
     public status: NotificationStatusEnum;
     public title: String;
-    public buttons: NotificationButton[];
+    public buttons: NotificationButton[] = [];
     public onClickCallback: Function;
     private timeout: number;
 
     constructor(title: String | String[] | any[], buttons: NotificationButton[] = [], timeout: number = 5000) {
-        this.title = this.getTitle(title);
-        this.buttons = buttons || [];
+        this.title = this.getTitle(title);        
         this.timeout = timeout || 0;
         this.status = NotificationStatusEnum.Active;
 
         for (let i = 0; i < buttons.length; i++)
-            this.AddButtonInternal(this.buttons[i]);
+            this.AddButtonInternal(buttons[i]);
     }
 
     private getTitle(title: String | String[] | any[]) : String {

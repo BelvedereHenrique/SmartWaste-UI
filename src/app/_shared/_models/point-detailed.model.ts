@@ -1,4 +1,5 @@
 import { PointContract  } from "./point.model"
+import { PointTypeEnum } from './point-type.enum'
 
 export class PointDetailedContract extends PointContract {
     public Line1 : string;
@@ -36,5 +37,12 @@ export class PointDetailedContract extends PointContract {
             part = ", " + part;
 
         return part;
+    }
+
+    public static getIconClass(pointDetailed : PointDetailedContract) : string {
+        if(pointDetailed.Type == PointTypeEnum.User)
+            return "person";
+        else 
+            return "delete";
     }
 }

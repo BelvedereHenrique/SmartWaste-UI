@@ -9,7 +9,26 @@
     background: #ECEFF1;
 }
 
-    .route-item .route-title {
-        font-weight: bold;
-        font-size: 15px;
+    .route-item .route-title {        
+        
     }
+
+    .route-item .route-title > span {        
+        
+    }
+
+    .route-item .route-title > span:not(:first-child){        
+        float: right;
+        padding-left: 5px;
+    }
+
+    .route-item .route-subtitle > span:not(:last-child){        
+        font-weight: bold;
+        color: #ff9800;
+    }
+
+    .route-item .route-subtitle > span:last-child{        
+        float: right;
+        padding-left: 5px;
+    }
+    

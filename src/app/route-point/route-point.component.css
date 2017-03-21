@@ -5,22 +5,17 @@
     cursor: pointer;
 }
 
-.route-item:hover{
+.route-item:hover {
     background: #ECEFF1;
 }
 
-    .route-item .route-title {
-        font-weight: bold;
-        font-size: 15px;
+    .route-item .route-subtitle {
+        line-height: 28px;   
     }
 
 .route-img {    
-    width: 40px;
-    height: 46px;
+    color: #009688;
+    width: 22px;
     float: left;
     margin-right: 10px;
-}
-
-.route-img img{
-    width: 40px;
 }

@@ -1,8 +1,7 @@
-﻿<div class="route-item">
+﻿<div class="route-item" (click)="onClick()">
     <div class="route-img">
-        <img src="{{imgUrl}}" />
+        <i class="material-icons">{{getIconClass()}}</i>
     </div>
-    <div class="route-title">{{point.Name}}</div>
     <div class="route-subtitle">
         {{getFullAddress(point)}}
     </div>

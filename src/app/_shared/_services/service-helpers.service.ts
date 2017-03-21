@@ -86,7 +86,7 @@ export class ServiceHelpersService {
             this._notificationService.notify(new Notification("Something went wrong... Please, sign in again.", [], 5000));
         } else { 
             const errMsg = (error.message) ? error.message : error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-            console.error(errMsg); // log to console instead
+            //console.error(errMsg); // log to console instead
             return Observable.throw(JSON.parse(error._body));
         }
     }

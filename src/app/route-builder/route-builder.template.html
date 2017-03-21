@@ -1,3 +1,4 @@
+<ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
 <h1 class="title">{{title}} <small>{{subtitle}}</small></h1>
 
 <div class="menu-container">
@@ -20,7 +21,7 @@
         <div class="stat-number">{{kilometers}} km</div>
     </div>
     <div>
-        <div class="stat-number">{{hours | number : '2.0-0'}}:{{minutes | number : '2.0-0'}} min</div>
+        <div class="stat-number">{{minutes | duration}} min</div>
     </div>
 </div>
 
