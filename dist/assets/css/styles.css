@@ -1,0 +1,242 @@
+/* You can add global styles to this file, and also import other style files */
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+* {
+    font-family: Roboto;
+}
+
+body {
+    background: #e4e4e4;
+}
+
+.shadow-1 {
+    box-shadow: 0px 5px 9px darkgrey;
+}
+
+h1, h2, h3 {
+    margin-top: 5px;
+}
+
+h1 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #15b3a6;
+}
+
+    h1.title {
+        margin: 10px 10px 10px 10px;
+        border-bottom: 1px solid #f0efea;
+        padding-bottom: 5px;
+    }
+
+.menu-wrapper h1 > small {
+    font-size: 14px;
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+.z1 {
+    box-shadow: 0px 0px 5px #989898;
+}
+
+*:focus,
+*:active {
+    outline: 0 !important;
+}
+
+.ul-danger {
+    color: red;
+}
+
+
+
+
+
+/* BUTTONS */
+
+.btn {
+    border: none;
+    border-radius: 2px;
+    text-transform: uppercase;
+    padding: 8px 16px 8px 16px;
+}
+
+    .btn:not(.btn-flat) {
+        box-shadow: 0px 1px 3px #989898;
+    }
+
+.btn-success:not(.btn-flat) {
+    background: #009688;
+}
+
+    .btn-success:not(.btn-flat):hover {
+        background: #00897B;
+    }
+
+.btn-danger:not(.btn-flat) {
+    background: #F44336;
+}
+
+    .btn-danger:not(.btn-flat):hover {
+        background: #E53935;
+    }
+
+.btn-info:not(.btn-flat) {
+    background: #2196F3;
+}
+
+    .btn-info:not(.btn-flat):hover {
+        background: #1E88E5;
+    }
+
+.btn-primary:not(.btn-flat) {
+    background: #3F51B5;
+}
+
+    .btn-primary:not(.btn-flat):hover {
+        background: #3949AB;
+    }
+
+.btn-default:not(.btn-flat) {
+    background: #ECEFF1;
+}
+
+    .btn-default:not(.btn-flat):hover {
+        background: #CFD8DC;
+    }
+
+.btn-flat {
+    background: none;
+    border: none;
+}
+
+    .btn-flat.disabled {
+        background: none;
+    }
+
+    .btn-flat:hover,
+    .btn-flat:focus,
+    .btn-flat:active {
+        background: #ECEFF1;
+        box-shadow: none;
+    }
+
+    .btn-flat.btn-danger {
+        color: #F44336;
+    }
+
+    .btn-flat.btn-info {
+        color: #2196F3;
+    }
+
+    .btn-flat.btn-primary {
+        color: #3F51B5;
+    }
+
+    .btn-flat.btn-success {
+        color: #009688;
+    }
+
+    .btn-flat.btn-default {
+        color: #9E9E9E;
+    }
+
+.btn-circle > i,
+.btn-circle-xs > i{
+    line-height: none;
+}
+
+.btn-circle {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    border: none;
+    padding-top: 5px !important;
+    box-shadow: 0px 1px 3px #989898;
+    margin-top: 5px;
+
+    background: #FF9800 !important;
+}
+
+.btn-circle.btn-default:not(.btn-flat),
+.btn-circle-xs.btn-default:not(.btn-flat)
+{
+    background: #ffffff;
+}
+
+.btn-circle-xs {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    border: none;
+    padding-top: 8px !important;
+    box-shadow: 0px 1px 3px #989898;
+    margin-top: 5px; 
+    margin-left: 5px;
+    /*color: #009688;*/
+    color: #FF9800 !important;
+}
+
+/* FORMS */
+
+.form-group label {
+    color: #FF9800;
+    font-weight: 100;
+}
+
+.form-control {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #CFD8DC;
+    border-radius: 0px;
+    box-shadow: none;
+    font-size: 15px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+    .form-control:hover,
+    .form-control:focus,
+    .form-control:active {
+        box-shadow: initial;
+    }
+
+    .form-control:focus,
+    .form-control:active {
+        border-bottom: 2px solid #FF9800;
+    }
+
+.menu-container {
+    margin: 10px;
+}
+
+
+/* SPLASH SCREEN */
+ .loading-app-content {
+        margin-top: 100px;
+    }
+
+        .loading-app-content img {
+            margin: 0 auto;
+            display: block;
+        }
+
+        .loading-app-content div {
+            text-align: center;
+            font-size: 45px;
+            font-weight: bold;
+        }
+
+            .loading-app-content div > span:first-child {
+                color: #009688;
+            }
+
+            .loading-app-content div > span:last-child {
+                color: #ffb308;
+            }
