@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from "@angular/core"
-import { ActivatedRoute, Router } from "@angular/router"
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router, Params } from "@angular/router";
 import { Http } from '@angular/http';
 import { Subscription } from 'rxjs';
 
-import { NotificationService, Notification, NotificationResult, NotificationButton } from '../_shared/_services/notification.service'
+import { NotificationService, Notification, NotificationResult, NotificationButton } from '../_shared/_services/notification.service';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { PasswordService } from '../_shared/_services/password.service';
 
@@ -18,10 +18,27 @@ export class PasswordComponent {
               private _notificationService: NotificationService,
               private _router: Router,
               private slimLoadingBarService: SlimLoadingBarService,
-              private passwordService: PasswordService)
+              private passwordService: PasswordService,
+              private activatedRoute: ActivatedRoute)
   {
     this.canShowSendTokenButton = false;
     this.canShowFirstForm = true;
+    this.activatedRoute.queryParams.subscribe((params: Params) => {
+      debugger;
+      let email = params['email'];
+      let token = params['token'];
+      if (email != null && email != undefined) {
+        this.Password.Email = email;
+      }
+      if (token != null && token != undefined) {
+        this.Password.Token = token.toUpperCase();
+      }
+      if (token && email) {
+        this.canShowSendTokenButton = false;
+        this.canShowFirstForm = false;
+      }
+    });
+
   }
   canShowSendTokenButton: boolean;
   canShowFirstForm: boolean;
