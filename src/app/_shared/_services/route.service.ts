@@ -3,6 +3,7 @@ import { Http, Headers, Response, RequestOptions, URLSearchParams } from '@angul
 import { Observable } from 'rxjs';
 
 import { ServiceHelpersService, ContentTypeEnum } from './service-helpers.service';
+import { RouteDetailedContract } from '../_models/route-detailed.model'
 import { RouteContract } from '../_models/route.model'
 import { JsonModel } from '../_models/json-model'
 
@@ -37,12 +38,20 @@ export class RouteService {
         return this.serviceHelper.post<any>("/Route/Recreate", data, true, ContentTypeEnum.JSON);
     }
 
-    public Get(filter : RouteFilterContract): Observable<JsonModel<RouteContract>> {
-        return this.serviceHelper.post<JsonModel<RouteContract>>("/Route/Get", filter, true, ContentTypeEnum.JSON);
+    public GetDetailed(filter : RouteFilterContract): Observable<JsonModel<RouteDetailedContract>> {
+        return this.serviceHelper.post<JsonModel<RouteDetailedContract>>("/Route/GetDetailed", filter, true, ContentTypeEnum.JSON);
     }
 
-    public GetList(filter : RouteFilterContract): Observable<JsonModel<RouteContract>[]> {
-        return this.serviceHelper.post<JsonModel<RouteContract>[]>("/Route/GetList", filter, true, ContentTypeEnum.JSON);
+    public GetDetailedList(filter : RouteFilterContract): Observable<JsonModel<RouteDetailedContract[]>> {
+        return this.serviceHelper.post<JsonModel<RouteDetailedContract[]>>("/Route/GetDetailedList", filter, true, ContentTypeEnum.JSON);
+    }
+
+    public GetOpenedRoutes(): Observable<JsonModel<RouteContract[]>> {
+        return this.serviceHelper.post<JsonModel<RouteContract[]>>("/Route/GetOpenedRoutes", null, true, ContentTypeEnum.JSON);
+    }
+
+    public GetUserCreatedRoutes(): Observable<JsonModel<RouteContract[]>> {
+        return this.serviceHelper.post<JsonModel<RouteContract[]>>("/Route/GetUserCreatedRoutes", null, true, ContentTypeEnum.JSON);
     }
 
     public Disable(routeID : string) : Observable<any> {

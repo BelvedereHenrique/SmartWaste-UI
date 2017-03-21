@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { MapTypeEnum } from '../_models/map-type.enum'
 import { MapService, PushPinBuilder, PushPinType, PushPinMaterialType, ViewChangeResult } from './map.service'
 import { MapPointLoaderService } from "./map-point-loader.service"
-import { RouteContract } from "../_models/route.model"
+import { RouteDetailedContract } from "../_models/route-detailed.model"
 import { PointDetailedContract } from "../_models/point-detailed.model"
 import { Response, Http, URLSearchParams, RequestOptions, Headers, RequestMethod, Jsonp} from "@angular/http";
 import { Observable } from 'rxjs';
@@ -56,7 +56,7 @@ export class MapRouteMakerService  {
         this.route.calculateDirections();
     }
 
-    public getDirectionsFromRoute(route : RouteContract) : Observable<any>{        
+    public getDirectionsFromRoute(route : RouteDetailedContract) : Observable<any>{        
         return this.getDirectionsFromPoints(route.Points);     
     }
 
