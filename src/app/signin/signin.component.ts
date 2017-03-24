@@ -16,7 +16,7 @@ import { SecurityModel } from '../_shared/_models/security.model'
 
 export class SigninComponent implements OnInit {
     public title: string = "Sign in";
-    public subtitle: string = "Use your personal/corporative e-mail to sign in";
+    public subtitle: string = "use your personal/enterprise account to sign in";
 
     constructor(private _notificationService: NotificationService, 
                 private _accountService: AccountService,

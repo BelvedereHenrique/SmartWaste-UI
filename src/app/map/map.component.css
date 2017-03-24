@@ -21,7 +21,8 @@
 @media screen and (max-width: 998px) {
     .map-content.menu-opened {
         right: 0;
-        bottom: 60%;
+        margin-bottom: 65px;
+        bottom: 50%;
     }
 
     .map-content:not(.menu-opened) {        

@@ -33,7 +33,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     private title: string = "";
     private editTitle: string = "Editing route";
     private createTitle: string = "Creating route";
-    private subtitle: string = "Select points from the map to change the route";
+    private subtitle: string = "select points from the map to change the route";
 
     private assignedToList : any[] = [];
     private getDetailedListSubscription: Subscription = null;
