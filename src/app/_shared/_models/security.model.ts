@@ -5,4 +5,5 @@ export class SecurityModel
     public ShowRoutesMenu : boolean;
     public CanSaveRoutes : boolean;
     public CanNavigateRoutes : boolean;
+    public CanSetTrashcanAsFull : boolean;
 }

@@ -31,6 +31,10 @@ export class PointService {
     public GetPeopleFromCompany() : Observable<any>{
         return this.serviceHelper.post<any>("/Point/GetPeopleFromCompany", null, true, ContentTypeEnum.JSON);
     } 
+
+    public setTrashcanAsFull() : Observable<JsonModel<any>> {
+        return this.serviceHelper.post<JsonModel<any>>("/Point/SetAsFull", null, true, ContentTypeEnum.JSON);
+    }
 }
 
 export class PointSearch {
