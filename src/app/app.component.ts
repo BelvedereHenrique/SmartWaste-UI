@@ -40,8 +40,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        // NOTE: Check if the user is authenticated and setup the app;        
-        //this._securityManager.checkAuth();
+        // NOTE: Check if the user is authenticated and setup the app;                
         this._securityService.updateUserInformation();
     }
 
@@ -55,8 +54,4 @@ export class AppComponent implements OnInit {
         else 
             this._bottomNavigationService.toggle(true);            
     }
- 
-    public onNavigationClick2(button: BottomNavigationButton) : void {
-        
-    };
 }

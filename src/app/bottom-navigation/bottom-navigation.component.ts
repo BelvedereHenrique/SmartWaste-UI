@@ -19,8 +19,7 @@ export class BottomNavigationComponent {
         this.AddButton(new BottomNavigationButton('routes', 'directions', 'Routes', this.onClick.bind(this), "/routes", false));
         this.AddButton(new BottomNavigationButton('history', 'history', 'History', this.onClick.bind(this), "", false));
         this.AddButton(new BottomNavigationButton('account', 'account_circle', 'Account', this.onClick.bind(this), "/account", false));
-        this.AddButton(new BottomNavigationButton('signin', 'assignment_ind', 'Sign in', this.onClick.bind(this), "/signin", false));
-        this.AddButton(new BottomNavigationButton('signout', 'power_settings_new', 'Sign out', this.signout.bind(this), "/signin", false));
+        this.AddButton(new BottomNavigationButton('signin', 'assignment_ind', 'Sign in', this.onClick.bind(this), "/signin", false));        
 
         this._securityManager.onAuthChange$.subscribe(securityModel => {
             this.setup(securityModel);            
@@ -34,7 +33,6 @@ export class BottomNavigationComponent {
         this.getButton("history").setVisible(securityModel != null);
         this.getButton("account").setVisible(securityModel != null); 
         this.getButton("signin").setVisible(securityModel == null);
-        this.getButton("signout").setVisible(securityModel != null); 
     }
 
     private getButton(name : string) : BottomNavigationButton {
@@ -52,10 +50,6 @@ export class BottomNavigationComponent {
         return (100 / this.buttons.filter(button => button.visible).length).toString() + "%";
     }
 
-    public signout() : void {
-      this._securityManager.signout();
-    }
-    
     public onClick(button: BottomNavigationButton) {
         for (var i: number = 0; i < this.buttons.length; i++) {
             this.buttons[i].setActive(false);

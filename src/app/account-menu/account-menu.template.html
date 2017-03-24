@@ -1,23 +1,35 @@
 <ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
 <h1 class="title">Account<small>Actions for your Account</small></h1>
 <div *ngIf="canShowEnterpriseMenu">
-    <div class="col col-lg-12" (click)="onRequestEnterprisePermissionClick()">
-        <div class="col-lg-1 col-xs-1 col-md-1 no-padding">
-            <i style="margin-top:2px; color: #FF9800 " class="material-icons">business</i>
+    <div class="item" (click)="onRequestEnterprisePermissionClick()">        
+        <div class="icon">
+            <i style="color: #FF9800 " class="material-icons">business</i>
         </div>
-        <div class="col-lg-11 col-xs-11 col-md-11 no-padding">
+        <div class="content">
             <div class="account-title"><strong>Enterprise Account</strong></div>
             <div class="account-subtitle">
                 Here you can register a company and associate it with your user.
             </div>
-        </div>
+        </div>        
     </div>
- </div>
+</div>
 
- <div *ngIf="enterprise">
-    <div class="col col-lg-12">
-        <h4 class="title" style="color: #FF9800">Registred Enterprise</h4>
+<div class="item" *ngIf="enterprise">
+    <div class="icon">
+        <i style="color: #FF9800 " class="material-icons">business</i>
+    </div>
+    <div class="content">
+        <div class="account-title"><strong>Registred Enterprise</strong></div>
         <strong>Name</strong>: <span>{{enterprise.Name}}</span><br />
         <strong>CNPJ</strong>: <span>{{enterprise.CNPJ}}</span>
-    </div>    
- </div>   
+    </div>     
+</div>    
+
+<div class="item" (click)="signOut()">        
+    <div class="icon">
+        <i style="color: #E53935 " class="material-icons">exit_to_app</i>
+    </div>
+    <div class="content">
+        <strong>Sign out</strong>
+    </div>        
+</div>

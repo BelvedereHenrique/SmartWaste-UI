@@ -4,7 +4,7 @@ import { Router } from "@angular/router"
 import { NotificationService, Notification, NotificationResult, NotificationButton } from '../_shared/_services/notification.service'
 import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
 import { AccountEnterpriseService } from "../_shared/_services/account-enterprise.service";
-//import { NotificationComponent, Notification } from "./notification.component"
+import { SecurityManagerService } from "../_shared/_services/security-manager.service";
 
 @Component({
     selector: "account-menu",
@@ -14,33 +14,32 @@ import { AccountEnterpriseService } from "../_shared/_services/account-enterpris
 
 
 export class AccountMenuComponent {
-    constructor(private router: Router, private _accountService: AccountEnterpriseService, private _notificationService: NotificationService, private slimLoadingBarService: SlimLoadingBarService ) {
-        this.CheckUserEnterprise();
-        console.log(this.retrieve());
-        //check can make a enterprise
-
-    }
     public canShowEnterpriseMenu = false;
     public enterprise = null;
     private isLoading = false;
+
+    constructor(private _router: Router, 
+                private _accountService: AccountEnterpriseService, 
+                private _notificationService: NotificationService, 
+                private _slimLoadingBarService: SlimLoadingBarService,
+                private _securityManagerService: SecurityManagerService) {
+        this.CheckUserEnterprise();
+
+        this._securityManagerService.onAuthChange$.subscribe(securityModel => {
+            if(securityModel == null)
+                this._router.navigate(["/"]);
+        });
+    }
+    
     public onRequestEnterprisePermissionClick(): void {
-        this.router.navigateByUrl("account/enterprise");
-        //this.n.Notify(new Notification("Teste", [], 15000));
+        this._router.navigateByUrl("account/enterprise");
     }
 
-    public currentUser: User = new User();
-    
-    public mockUser(): void {
-        this.currentUser.name = "Felipe";
-        this.currentUser.userID = 1234;
-        localStorage.setItem("currentUser", JSON.stringify({ user: this.currentUser }));
-    }
     private CheckUserEnterprise():void{
-      this.slimLoadingBarService.start();
+      this._slimLoadingBarService.start();
       this._accountService.getUserEnterprise().subscribe(
       data => {
             if(data.Success == true){
-                debugger
                 if(data.Result.ID != null){
                     this.enterprise = data.Result;
                     this.canShowEnterpriseMenu = false;
@@ -53,18 +52,11 @@ export class AccountMenuComponent {
           console.log(error)
           this._notificationService.notify(new Notification("An Error Ocurred on Server",[],3000));
         },
-        () =>  this.slimLoadingBarService.complete()
+        () =>  this._slimLoadingBarService.complete()
         );
     }
 
-    private retrieve() {
-        let storedUser: string = localStorage.getItem("currentUser");
-        if (!storedUser) throw 'no token found';
-        return JSON.parse(storedUser);
+    private signOut() : void {
+        this._securityManagerService.signout();
     }
-
-}
-export class User {
-    name: string;
-    userID: number;
 }

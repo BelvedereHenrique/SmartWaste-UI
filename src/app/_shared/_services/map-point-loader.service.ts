@@ -24,10 +24,6 @@ export class MapPointLoaderService  {
     private lastViewChange : ViewChangeResult = null;
     private search: PointSearch = null;
 
-    //private biggestSearch : PointSearch = null;
-    //private searchHistory : PointSearch[] = [];
-    //private dataCache: any[] = [];
-
     private onPushPinClick : Subject<PushPinBuilder> = new Subject<PushPinBuilder>();
     onPushPinClick$ = this.onPushPinClick.asObservable();
 
@@ -37,7 +33,7 @@ export class MapPointLoaderService  {
     constructor(private _mapService : MapService,
                 private _pointService : PointService,
                 private _notificationService : NotificationService){
-
+        
     }
 
     public init() : void{
@@ -79,7 +75,6 @@ export class MapPointLoaderService  {
     public reset() : void{
         this.search = null;
         this.pushpins = [];
-        //this.dataCache = [];
         this.clearPointsLayer();
 
         this.reload();
@@ -122,8 +117,6 @@ export class MapPointLoaderService  {
         search.Southeast.Longitude = southEast.longitude;
 
         search.NotIDs = [];
-        //for(let i = 0; i < this.dataCache.length; i++)
-          //  search.NotIDs.push(this.dataCache[i].ID)
         
         return search;
     }
@@ -157,7 +150,6 @@ export class MapPointLoaderService  {
         
         this.pushpins.push(pushpin);
         this.pointsLayer.add(pushpin.build()); 
-        //this.dataCache.push(pushpin.getData());
     }
 
     private loadPoints(viewChange: ViewChangeResult) : void{
@@ -170,9 +162,6 @@ export class MapPointLoaderService  {
         if (this.pointsSubscription)
             this.pointsSubscription.unsubscribe();
 
-        //if(this.hasViewCached(search))
-        //    return;
-
         if (viewChange.zoom < this.limitZoomToShowPoints){
             this.clearPointsLayer();                        
             return;
@@ -182,15 +171,8 @@ export class MapPointLoaderService  {
             if(jsonResult.Success){                
                 this.clearPointsLayer();
 
-                //this.checkBiggestSearch(search);
-                //this.searchHistory.push(search); 
-
                 this.pointsLayer = new Microsoft.Maps.EntityCollection();
                 this._mapService.removeLayer(this.pointsLayer);
-
-                //this.dataCache = this.dataCache.concat(jsonResult.Result);
-
-                //jsonResult.Result = jsonResult.Result.concat(this.getDataFromCache(search));
 
                 for(let i = 0; i < jsonResult.Result.length; i++){
                     let pushpinBuilder = new PushPinBuilder(new Microsoft.Maps.Location(jsonResult.Result[i].Latitude, 
@@ -213,60 +195,6 @@ export class MapPointLoaderService  {
             }
         });
     }
-/*
-    private checkBiggestSearch(search : PointSearch) : void{
-        if(this.biggestSearch == null)
-        {
-            this.biggestSearch = search;
-            return;
-        }
-
-        if(!this.hasViewCached(search))
-            this.biggestSearch = search;
-    }
-*/
-/*
-    private hasViewCached2(search: PointSearch): boolean {
-        if(!this.searchHistory.length)
-            return false;
-
-        let hasViewCached : boolean = false;
-
-        for(let i = 0; this.searchHistory.length; i++){
-
-            if(this.biggestSearch.Northwest.Latitude > search.Northwest.Latitude ||
-               this.biggestSearch.Northwest.Longitude < search.Northwest.Longitude ||
-               this.biggestSearch.Southeast.Latitude < search.Southeast.Latitude ||
-               this.biggestSearch.Southeast.Longitude > search.Southeast.Longitude){
-
-                   break;
-               }
-        }
-
-        return hasViewCached;
-     }
-
-    private hasViewCached(search: PointSearch): boolean {
-        if(!this.biggestSearch)
-            return false;
-
-        return this.biggestSearch.Northwest.Latitude > search.Northwest.Latitude &&
-               this.biggestSearch.Northwest.Longitude < search.Northwest.Longitude &&
-               this.biggestSearch.Southeast.Latitude < search.Southeast.Latitude &&
-               this.biggestSearch.Southeast.Longitude > search.Southeast.Longitude;
-}*/
-
-    /*private getDataFromCache(search: PointSearch) : any[]{
-        return this.dataCache.filter((data : any) => {
-            return search.NotIDs.filter((ID : string) => {
-                return ID == data.ID;
-            }).length > 0 &&
-            (search.Northwest.Latitude == null || data.Latitude <= search.Northwest.Latitude) &&
-            (search.Southeast.Latitude == null || data.Latitude >= search.Southeast.Latitude) &&
-            (search.Northwest.Longitude == null || data.Latitude >= search.Northwest.Longitude) &&
-            (search.Southeast.Longitude == null || data.Longitude <= search.Southeast.Longitude);
-        });
-    }*/
 
     private PushPinClick(pushpin: PushPinBuilder) : void{
         this.onPushPinClick.next(pushpin);     
