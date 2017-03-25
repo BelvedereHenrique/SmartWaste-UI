@@ -19,6 +19,8 @@ import { AccountPersonalComponent } from './account-personal/account-personal.co
 import { RouteBuilderComponent } from './route-builder/route-builder.component'
 import { HistoryComponent } from './history/history.component'
 import { PasswordComponent } from './password/password.component';
+import { CompanyRequestComponent } from './company-request/company-request.component'
+
 
 import { NotificationService } from './_shared/_services/notification.service';
 import { ServiceHelpersService } from './_shared/_services/service-helpers.service';
@@ -52,6 +54,7 @@ import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 import { RouteBuilderRoutingModule } from './route-builder/route-builder-routing.module';
 import { PasswordRoutingModule } from './password/password.routing.module';
 import { MomentModule } from 'angular2-moment';
+import { CompanyRequestRoutingModule } from './company-request/company-request-routing.module'
 
 import { DurationPipe } from './_shared/_pipes/duration.pipe';
 
@@ -81,7 +84,8 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     RouteBuilderComponent,
     HistoryComponent,
     DurationPipe,
-    PasswordComponent
+    PasswordComponent,
+    CompanyRequestComponent
   ],
   imports: [    
     RouterModule.forRoot([], {useHash: true}),
@@ -101,7 +105,8 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     AccountPersonalModule,
     SigninModule,
     RouteBuilderRoutingModule,
-    PasswordRoutingModule,    
+    PasswordRoutingModule,
+    CompanyRequestRoutingModule,
     JsonpModule,
     MomentModule
   ],
