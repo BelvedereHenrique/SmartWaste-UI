@@ -68,7 +68,7 @@ export class PasswordComponent {
           }
         }
       },
-      error => this._notificationService.notify(new Notification("An Error Ocurred on Server: Get States", [], 3000)),
+      error => this._notificationService.notify(new Notification("An Error Ocurred on Server: CheckUserToken", [], 3000)),
       () => this.slimLoadingBarService.complete()
     );
   }
@@ -92,7 +92,7 @@ export class PasswordComponent {
           }
         }
       },
-      error => this._notificationService.notify(new Notification("An Error Ocurred on Server: Get States", [], 3000)),
+      error => this._notificationService.notify(new Notification("An Error Ocurred on Server: SendToken", [], 3000)),
       () => this.slimLoadingBarService.complete()
     );
   }
@@ -155,7 +155,7 @@ export class PasswordComponent {
           }
         }
       },
-      error => this._notificationService.notify(new Notification("An Error Ocurred on Server: Get States", [], 3000)),
+      error => this._notificationService.notify(new Notification("An Error Ocurred on Server: Change Password", [], 3000)),
       () => this.slimLoadingBarService.complete()
     );
   }

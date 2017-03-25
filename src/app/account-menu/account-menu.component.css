@@ -24,6 +24,7 @@
 .item {
     padding: 10px;
     cursor: pointer;
+    display: flex;
 }
 
 .item:hover{
@@ -38,4 +39,41 @@
 .item > .content{
     padding-left: 35px;
     padding-top: 2px;
+}
+.hidden{
+  display: none;
+}
+
+#enterprise+#signout{
+  padding-top: 20px;
+}
+
+.ng-valid[required], .ng-valid.required  {
+}
+ .ng-dirty.ng-invalid:not(form)  {
+  border-bottom: 1px solid #a94442; /* red */
+}
+ .ng-touched.ng-invalid:not(form)  {
+  border-bottom: 1px solid #a94442; /* red */
+}
+.alert-danger{
+    border: none;
+    background-color:transparent !important;
+    margin:0;
+    padding: 0;
+}
+
+.btn-logout{
+    border: none;
+    display: inline-block;
+    outline: 0;
+    padding: 6px 16px;
+    vertical-align: middle;
+    overflow: hidden;
+    text-decoration: none!important;
+    color: #fff;
+    background-color: #2196f3;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
 }
