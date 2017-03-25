@@ -36,4 +36,7 @@ export class AccountEnterpriseService{
   sendEmployeeToken(email: any) {
      return this.serviceHelpers.post<any>("/Account/SendEmployeeEnterpriseToken", email, true, ContentTypeEnum.JSON);
   }
+  setEnterprisePermission(companyRequest: any) {
+     return this.serviceHelpers.post<any>("/Account/SetEnterprisePermission", companyRequest, true, ContentTypeEnum.JSON);
+  }
 }
