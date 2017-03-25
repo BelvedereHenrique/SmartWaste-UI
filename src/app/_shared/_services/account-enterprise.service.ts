@@ -33,4 +33,7 @@ export class AccountEnterpriseService{
   saveEnterprise(enterprise:any){
     return this.serviceHelpers.post<any>("/Account/SaveEnterprise", enterprise, true, ContentTypeEnum.JSON);
   }
+  sendEmployeeToken(email: any) {
+     return this.serviceHelpers.post<any>("/Account/SendEmployeeEnterpriseToken", email, true, ContentTypeEnum.JSON);
+  }
 }
