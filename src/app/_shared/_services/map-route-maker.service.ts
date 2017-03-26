@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { MapTypeEnum } from '../_models/map-type.enum'
-import { MapService, PushPinBuilder, PushPinType, PushPinMaterialType, ViewChangeResult } from './map.service'
+import { MapService, PushPinBuilder, PushPinType, PushPinColorEnum, ViewChangeResult } from './map.service'
 import { MapPointLoaderService } from "./map-point-loader.service"
 import { RouteDetailedContract } from "../_models/route-detailed.model"
 import { PointDetailedContract } from "../_models/point-detailed.model"
@@ -19,7 +19,7 @@ export class MapRouteMakerService  {
     constructor(private _mapService : MapService,
                 private _pointService : MapPointLoaderService,
                 private _jsonp: Jsonp){
-        this._pointService.init();
+        //this._pointService.init();
     }
 
     public init() : void {

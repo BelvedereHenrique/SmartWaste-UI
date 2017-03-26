@@ -5,7 +5,7 @@ import { Component, NgZone, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
-import { MapService, PushPinBuilder, PushPinMaterialType, PushPinType } from '../_shared/_services/map.service'
+import { MapService, PushPinBuilder, PushPinColorEnum, PushPinType } from '../_shared/_services/map.service'
 import { MapPointLoaderService } from '../_shared/_services/map-point-loader.service'
 import { MapRouteMakerService } from '../_shared/_services/map-route-maker.service'
 import { NotificationService, Notification, NotificationResult } from '../_shared/_services/notification.service'
@@ -47,6 +47,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     private onPushpinClickSubscription : Subscription = null;
     private onUpdatePushpinkSubscription : Subscription = null;
     private routeStatsSubscription : Subscription = null;
+    private onAuthChangeSubscription : Subscription = null;
 
     constructor(private _activatedRouter: ActivatedRoute,
                 private _router: Router,
@@ -66,7 +67,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.reset();
 
-        this._securityManagerService.onAuthChange$.subscribe((securityModel : SecurityModel) => {            
+        this.onAuthChangeSubscription = this._securityManagerService.onAuthChange$.subscribe((securityModel : SecurityModel) => {            
             if(!securityModel || !securityModel.CanSaveRoutes){
                 this._router.navigate(["/"]);
                 return;
@@ -83,7 +84,11 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(){
+        this._pointLoaderService.setDefaultPushpinClickEnabled(true);
         this.reset();
+        
+        if(this.onAuthChangeSubscription)
+            this.onAuthChangeSubscription.unsubscribe();
     }
 
     private createFloatActionButtons() : void{
@@ -174,7 +179,8 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     }
 
     private init(routeID : string) : void {
-        this._mapService.onLoad.subscribe(() => {            
+        this._mapService.onLoad.subscribe(() => {                  
+            this._pointLoaderService.setDefaultPushpinClickEnabled(false);      
             this.onPushpinClickSubscription = this._pointLoaderService.onPushPinClick$.subscribe(this.onPushpinClick.bind(this));
             this.onUpdatePushpinkSubscription = this._pointLoaderService.onUpdatePushpins$.subscribe(this.onUpdatePushpin.bind(this));        
         
@@ -190,7 +196,9 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
         });        
     }
 
-    private initEditing(routeID: string) : void {   
+    private initEditing(routeID: string) : void {           
+        this._pointLoaderService.setDefaultPushpinClickEnabled(false);
+
         let filter : RouteFilterContract = new RouteFilterContract();
         filter.ID = routeID;
 
@@ -229,9 +237,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
         let editEvent : Subscription = this._pointLoaderService.onUpdatePushpins$.subscribe(() => {
             for(let i = 0; i < route.Points.length; i++){
                 let pushpin : PushPinBuilder = new PushPinBuilder(
-                    new Microsoft.Maps.Location(route.Points[i].Latitude, route.Points[i].Longitude),
-                    route.Points[i].Type == PointTypeEnum.User ? PushPinType.Person : PushPinType.Trash,
-                    PushPinMaterialType.Glass);
+                    new Microsoft.Maps.Location(route.Points[i].Latitude, route.Points[i].Longitude));
 
                 pushpin.setData(route.Points[i]);
 
@@ -324,7 +330,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
         if(this.isPushpinSelected(pushpin))
             return;
 
-        pushpin.setMaterialType(PushPinMaterialType.Glass);
+        pushpin.setSelected(true);
 
         this._ngZone.run(() => {
             this.pushpins.push(pushpin);
@@ -336,7 +342,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
         if(!this.isPushpinSelected(pushpin))
             return;
 
-        pushpin.setMaterialType(PushPinMaterialType.Plastic);
+        pushpin.setSelected(false);
 
         var index : number = this.pushpins.indexOf(pushpin);
         this._ngZone.run(() => {

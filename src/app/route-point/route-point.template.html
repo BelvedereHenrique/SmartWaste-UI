@@ -1,6 +1,6 @@
 ﻿<div class="route-item" (click)="onClick()">
     <div class="route-img">
-        <i class="material-icons">{{getIconClass()}}</i>
+        <img [src]="getSvgIcon()">
     </div>
     <div class="route-subtitle">
         {{getFullAddress(point)}}

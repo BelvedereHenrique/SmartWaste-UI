@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Subscription, Subject, Observable } from 'rxjs';
 
 import { MapTypeEnum } from '../_models/map-type.enum'
-import { MapService, PushPinBuilder, PushPinType, PushPinMaterialType, ViewChangeResult } from './map.service'
+import { MapService, PushPinBuilder, PushPinType, PushPinColorEnum, ViewChangeResult } from './map.service'
 import { PointService, PointSearch, PointCoordinator } from "./point.service"
 
 import { PointStatusEnum } from "../_models/point-status.enum"
@@ -24,6 +24,9 @@ export class MapPointLoaderService  {
     private lastViewChange : ViewChangeResult = null;
     private search: PointSearch = null;
 
+    private defaultClickEnabled : boolean = false;
+    private defaultOnClick : Function = null;
+
     private onPushPinClick : Subject<PushPinBuilder> = new Subject<PushPinBuilder>();
     onPushPinClick$ = this.onPushPinClick.asObservable();
 
@@ -36,10 +39,13 @@ export class MapPointLoaderService  {
         
     }
 
-    public init() : void{
+    public init(defaultPushpinClick : Function) : void{
         if (this.isInitialized) return;
         
-        this._mapService.onLoad.subscribe(() => {                        
+        this._mapService.onLoad.subscribe(() => {
+            this.defaultOnClick = defaultPushpinClick;
+            this.setDefaultPushpinClickEnabled(true);
+
             this.start();
             this._mapService.onViewChange.subscribe((bounds: ViewChangeResult) => {      
                 this.loadPoints(bounds);                      
@@ -55,6 +61,19 @@ export class MapPointLoaderService  {
 
     public stop() : void {
         this.canLoad = false;
+    }
+
+    public setDefaultPushpinClickEnabled(enabled: boolean) : void{
+        this.defaultClickEnabled = enabled;
+    }
+
+    private callDefaultPushpinClick(pushpin: PushPinBuilder) : boolean {
+        let canCall : boolean = this.defaultClickEnabled && null != this.defaultOnClick;
+
+        if(canCall)
+            this.defaultOnClick(pushpin);
+        
+        return canCall;
     }
 
     public updatePushpin(pushpin : PushPinBuilder) : void{
@@ -176,9 +195,7 @@ export class MapPointLoaderService  {
 
                 for(let i = 0; i < jsonResult.Result.length; i++){
                     let pushpinBuilder = new PushPinBuilder(new Microsoft.Maps.Location(jsonResult.Result[i].Latitude, 
-                            jsonResult.Result[i].Longitude), 
-                            jsonResult.Result[i].Type == PointTypeEnum.User ? PushPinType.Person : PushPinType.Trash, 
-                            PushPinMaterialType.Plastic);
+                            jsonResult.Result[i].Longitude));
                     
                     pushpinBuilder.setData(jsonResult.Result[i]);
                     this.addPushpin(pushpinBuilder);
@@ -197,6 +214,9 @@ export class MapPointLoaderService  {
     }
 
     private PushPinClick(pushpin: PushPinBuilder) : void{
+        if(this.callDefaultPushpinClick(pushpin))
+            return;
+
         this.onPushPinClick.next(pushpin);     
     }
 } 

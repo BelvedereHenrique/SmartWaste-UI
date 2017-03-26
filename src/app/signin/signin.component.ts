@@ -1,5 +1,6 @@
-import { Component, OnInit } from "@angular/core"
+import { Component, OnInit, OnDestroy } from "@angular/core"
 import { Router, ActivatedRoute, Params } from "@angular/router"
+import { Subscription } from 'rxjs';
 
 import { NotificationService, Notification, NotificationButton, NotificationResult } from "../_shared/_services/notification.service";
 import { AccountService } from "../_shared/_services/account.service";
@@ -14,9 +15,11 @@ import { SecurityModel } from '../_shared/_models/security.model'
     providers: [JwtService]
 })
 
-export class SigninComponent implements OnInit {
+export class SigninComponent implements OnInit, OnDestroy {
     public title: string = "Sign in";
     public subtitle: string = "use your personal/enterprise account to sign in";
+
+    private onAuthChangeSubscription : Subscription = null;
 
     constructor(private _notificationService: NotificationService, 
                 private _accountService: AccountService,
@@ -27,10 +30,15 @@ export class SigninComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._securityManager.onAuthChange$.subscribe((model : SecurityModel) => {
+        this.onAuthChangeSubscription = this._securityManager.onAuthChange$.subscribe((model : SecurityModel) => {
             if(model != null)
                 this._router.navigate(['/']);
         });
+    }
+
+    ngOnDestroy() {
+        if(this.onAuthChangeSubscription)
+            this.onAuthChangeSubscription.unsubscribe();
     }
 
     public onSignInClick(email: string, password: string): void {

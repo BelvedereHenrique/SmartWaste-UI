@@ -1,0 +1,10 @@
+<ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
+<h1 class="title">Point details <small></small></h1>
+
+<div class="menu-container">
+    <point-detailed-item [point]="point"></point-detailed-item>    
+</div>
+
+<h1 class="title" [hidden]="point == null || point.Histories == null || point.Histories.length == 0">History</h1>
+
+<point-history-item *ngFor="let history of point.Histories" [history]="history"></point-history-item>

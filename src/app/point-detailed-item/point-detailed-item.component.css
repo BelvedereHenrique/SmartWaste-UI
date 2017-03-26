@@ -1,0 +1,10 @@
+.item > .icon{
+    float: left;
+    width: 35px;
+    color: #ff9800;
+}
+
+.item > .content{
+    padding-top: 3px;
+    margin-left: 35px;
+}

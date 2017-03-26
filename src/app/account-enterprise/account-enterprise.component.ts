@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { NotificationService, Notification, NotificationResult, NotificationButton } from '../_shared/_services/notification.service'
 import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
 import { AccountEnterpriseService } from '../_shared/_services/account-enterprise.service';
-import { MapService, PushPinBuilder, PushPinType, PushPinMaterialType } from "../_shared/_services/map.service";
+import { MapService, PushPinBuilder, PushPinType, PushPinColorEnum } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
 
 @Component({
@@ -173,7 +173,7 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
     private onMapClick(location : Microsoft.Maps.Location) : void {
         if(!this.allowClickMap) return;
         this._mapService.clear();
-        this._mapService.addPushPin(new PushPinBuilder(location, PushPinType.Person, PushPinMaterialType.Paper).build());
+        this._mapService.addPushPin(new PushPinBuilder(location).build());
         
         var notification : Notification = new Notification("Is the pin exactly on your address?", [], 0);
         notification.AddButton("No", () => {

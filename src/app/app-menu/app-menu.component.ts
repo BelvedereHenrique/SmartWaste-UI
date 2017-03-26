@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Subscription } from 'rxjs';
 
 import { FloatActionButtonService, FloatActionButton, FloatActionButtonType }  from '../_shared/_services/float-action-button.service';
 import { NotificationService, Notification, NotificationResult } from '../_shared/_services/notification.service';
@@ -13,6 +14,8 @@ import { PointService } from '../_shared/_services/point.service';
 })
 
 export class AppMenuComponent implements OnInit{
+    private onAuthChangeSubscription : Subscription = null;
+
     constructor(private _fabService : FloatActionButtonService,
                 private _notificationService : NotificationService,
                 private _securityManagerService: SecurityManagerService,
@@ -35,11 +38,14 @@ export class AppMenuComponent implements OnInit{
                                                          FloatActionButtonType.normal,
                                                          this.onWarnTrashcanAsFull.bind(this), 1, false));
 
-        this._securityManagerService.onAuthChange$.subscribe(this.setupSecurity.bind(this));
+        this.onAuthChangeSubscription = this._securityManagerService.onAuthChange$.subscribe(this.setupSecurity.bind(this));
     }
 
     ngOnDestroy() {
         this._fabService.clear();
+
+        if(this.onAuthChangeSubscription)
+            this.onAuthChangeSubscription.unsubscribe();
     }
 
     private setupSecurity(securityModel : SecurityModel) : void {         

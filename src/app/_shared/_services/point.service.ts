@@ -11,6 +11,7 @@ import { PointTypeEnum } from "../_models/point-type.enum"
 import { PointContract } from "../_models/point.model"
 import { PointDetailedContract } from "../_models/point-detailed.model"
 import { JsonModel } from "../_models/json-model"
+import { PointDetailedHistoriesContract } from '../_models/point-detailed-histories.model'
 
 import 'rxjs/add/operator/map';
 
@@ -22,6 +23,10 @@ export class PointService {
 
     public GetList(search: PointSearch): Observable<JsonModel<PointContract[]>> {
         return this.serviceHelper.post<JsonModel<PointContract[]>>("/Point/GetList", search, true, ContentTypeEnum.JSON);
+    }
+
+    public GetDetailed(search: PointSearch) : Observable<JsonModel<PointDetailedHistoriesContract>>{
+        return this.serviceHelper.post<JsonModel<PointDetailedHistoriesContract>>("/Point/GetDetailed", search, true, ContentTypeEnum.JSON);
     }
 
     public GetDetailedList(search: PointSearch) : Observable<JsonModel<PointDetailedContract[]>>{

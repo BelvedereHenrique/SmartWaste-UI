@@ -19,6 +19,10 @@ import { AccountPersonalComponent } from './account-personal/account-personal.co
 import { RouteBuilderComponent } from './route-builder/route-builder.component'
 import { HistoryComponent } from './history/history.component'
 import { PasswordComponent } from './password/password.component';
+import { PointDetailsComponent } from './point-details/point-details.component';
+import { PointDetailedItemComponent } from './point-detailed-item/point-detailed-item.component'
+import { PointHistoryItemComponent } from './point-history-item/point-history-item.component'
+import { MapLegendComponent } from './map-legend/map-legend.component'
 import { CompanyRequestComponent } from './company-request/company-request.component'
 
 
@@ -55,6 +59,7 @@ import { RouteBuilderRoutingModule } from './route-builder/route-builder-routing
 import { PasswordRoutingModule } from './password/password.routing.module';
 import { MomentModule } from 'angular2-moment';
 import { CompanyRequestRoutingModule } from './company-request/company-request-routing.module'
+import { PointDetailsRoutingModule } from './point-details/point-details.routing.module'
 
 import { DurationPipe } from './_shared/_pipes/duration.pipe';
 
@@ -85,6 +90,10 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     HistoryComponent,
     DurationPipe,
     PasswordComponent,
+    PointDetailsComponent,
+    PointDetailedItemComponent,
+    PointHistoryItemComponent,
+    MapLegendComponent,
     CompanyRequestComponent
   ],
   imports: [    
@@ -108,7 +117,8 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     PasswordRoutingModule,
     CompanyRequestRoutingModule,
     JsonpModule,
-    MomentModule
+    MomentModule,
+    PointDetailsRoutingModule
   ],
   providers: [NotificationService, 
               ServiceHelpersService, 

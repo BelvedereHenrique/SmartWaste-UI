@@ -1,5 +1,7 @@
 import { PointContract  } from "./point.model"
 import { PointTypeEnum } from './point-type.enum'
+import { PointStatusEnum } from './point-status.enum'
+import { PointRouteStatusEnum } from './point-route-status.enum'
 
 export class PointDetailedContract extends PointContract {
     public Line1 : string;
@@ -44,5 +46,19 @@ export class PointDetailedContract extends PointContract {
             return "person";
         else 
             return "delete";
+    }
+
+    public static getStatusName(pointDetailed : PointDetailedContract) : string{
+        if(pointDetailed.Status == PointStatusEnum.Empty)
+            return "Empty";
+        else
+            return "Full";
+    }
+
+    public static getRouteStatusName(pointDetailed : PointDetailedContract) : string{
+        if(pointDetailed.PointRouteStatus == PointRouteStatusEnum.Free)
+            return "Free";
+        else
+            return "In a Route";
     }
 }

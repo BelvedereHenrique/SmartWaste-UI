@@ -1,8 +1,9 @@
-import { Component } from "@angular/core"
+import { Component, OnDestroy, OnInit } from "@angular/core"
 import { Router } from "@angular/router"
+import { Subscription } from 'rxjs';
 
 import { NotificationService, Notification, NotificationResult, NotificationButton } from '../_shared/_services/notification.service'
-import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
+import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { AccountEnterpriseService } from "../_shared/_services/account-enterprise.service";
 import { SecurityManagerService } from "../_shared/_services/security-manager.service";
 
@@ -12,15 +13,13 @@ import { SecurityManagerService } from "../_shared/_services/security-manager.se
   styleUrls: ["./account-menu.component.css"]
 })
 
-export class AccountMenuComponent {
+export class AccountMenuComponent implements OnDestroy, OnInit {
 
-  constructor(private router: Router, private _accountService: AccountEnterpriseService, private _notificationService: NotificationService, private slimLoadingBarService: SlimLoadingBarService, private _securityManagerService: SecurityManagerService) {
-    this.CheckUserEnterprise();
+  private onAuthChangeSubscription : Subscription = null;
+
+  constructor(private router: Router, private _accountService: AccountEnterpriseService, private _notificationService: NotificationService, private slimLoadingBarService: SlimLoadingBarService, private _securityManagerService: SecurityManagerService) {    
     //check can make a enterprise
-    this._securityManagerService.onAuthChange$.subscribe(securityModel => {
-            if(securityModel == null)
-                this.router.navigate(["/"]);
-    });
+    this.CheckUserEnterprise();    
   }
 
   public canShowEnterpriseMenu = false;
@@ -37,7 +36,18 @@ export class AccountMenuComponent {
     Email: '',
     check: true
   }
-    
+
+  public ngOnInit() : void{
+    this.onAuthChangeSubscription = this._securityManagerService.onAuthChange$.subscribe(securityModel => {
+            if(securityModel == null)
+                this.router.navigate(["/"]);              
+    });
+  }
+
+  public ngOnDestroy() : void {
+    if(this.onAuthChangeSubscription)
+      this.onAuthChangeSubscription.unsubscribe();
+  }  
   
   private signOut() : void {
       this._securityManagerService.signout();

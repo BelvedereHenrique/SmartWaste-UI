@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Router, Event, NavigationStart } from "@angular/router";
 
 import { BottomNavigationButton } from "./_shared/_models/BottomNavigationButton.model";
 import { SecurityManagerService } from "./_shared/_services/security-manager.service";
-import { MapService } from './_shared/_services/map.service'
+import { MapService, PushPinBuilder } from './_shared/_services/map.service'
 import { MapPointLoaderService } from './_shared/_services/map-point-loader.service'
 import { NotificationService, Notification } from './_shared/_services/notification.service'
 import { BottomNavigationService } from './_shared/_services/bottom-navigation.service'
@@ -23,14 +23,19 @@ export class AppComponent implements OnInit {
                 private _notificationService: NotificationService,
                 private _mapService : MapService,
                 private _bottomNavigationService: BottomNavigationService,
-                private _securityService : SecurityService) {
+                private _securityService : SecurityService,
+                private _ngZone: NgZone) {
 
         this._router.events.subscribe((val : Event) => {     
             if(val instanceof NavigationStart)       
                 this.VerifyMenuForUrl(val.url);
         });
 
-        this._locationLoaderService.init();
+        this._locationLoaderService.init((point : PushPinBuilder) => {
+            this._ngZone.run(() => {
+                this._router.navigate(["point", point.getData().ID]);                
+            });     
+        });
 
         this._mapService.onLoad.subscribe(() => {
             this._mapService.setUserLocation();
@@ -44,8 +49,8 @@ export class AppComponent implements OnInit {
         this._securityService.updateUserInformation();
     }
 
-    private toggleMenu(open : boolean) : void{
-        this.showMenu = open;
+    private toggleMenu(open : boolean) : void{                
+            this.showMenu = open;   
     }
 
     private VerifyMenuForUrl(url: string) {

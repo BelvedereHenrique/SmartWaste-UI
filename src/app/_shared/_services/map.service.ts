@@ -3,9 +3,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
 
-import { MapTypeEnum } from '../_models/map-type.enum'
-import { PointService, PointSearch, PointCoordinator } from "./point.service"
-
+import { MapTypeEnum } from '../_models/map-type.enum';
+import { PointService, PointSearch, PointCoordinator } from "./point.service";
+import { PointStatusEnum } from '../_models/point-status.enum';
+import { PointRouteStatusEnum } from '../_models/point-route-status.enum';
+import { PointContract } from '../_models/point.model';
+import { PointTypeEnum } from '../_models/point-type.enum';
 
 @Injectable()
 export class MapService {
@@ -100,21 +103,17 @@ export class MapService {
 
 export class PushPinBuilder {
     private pushpin : Microsoft.Maps.Pushpin = null;
-    private _type: PushPinType;
-    private _material: PushPinMaterialType;
     private _location: Microsoft.Maps.Location;
     private size: number = 24;
     private _onClick : Function = null;
     private strokeColor: string = "#ffffff";
     private strokeWidth: number = 7;
-    private userIconPath : string = "m84.171 16.179c-14.306 0-25.893 11.587-25.893 25.893s11.587 25.893 25.893 25.893 25.893-11.587 25.893-25.893-11.587-25.893-25.893-25.893zm0 64.732c-17.283 0-51.785 8.6741-51.785 25.893v12.945h30.031l21.754 21.754 21.754-21.754h30.031v-12.945c0-17.218-34.502-25.893-51.785-25.893z";
-    private companyIconPath : string = "m43.162 127.43c0 7.6987 6.299 13.998 13.998 13.998h55.991c7.6987 0 13.998-6.299 13.998-13.998v-76.822h-83.986zm90.985-104.98h-24.496l-6.9988-6.9988h-34.994l-6.9988 6.9988h-24.496v17.998h97.984z";
-    private data : any = null;
 
-    constructor(location: Microsoft.Maps.Location, type: PushPinType, material: PushPinMaterialType) {
-        this._location = location;
-        this._type = type;
-        this._material = material;
+    private data : any = null;
+    private selected : boolean = false;
+
+    constructor(location: Microsoft.Maps.Location) {
+        this._location = location;        
     }
 
     public build(): Microsoft.Maps.Pushpin {
@@ -136,10 +135,6 @@ export class PushPinBuilder {
         };
     }
 
-    public setMaterialType(material: PushPinMaterialType) : void {
-        this._material = material;
-    }
-
     public setData(data : any) : void {
         this.data = data;
     }
@@ -148,7 +143,7 @@ export class PushPinBuilder {
         return this.data;
     }
 
-    public setSizeForZoom(zoom: number) : void{        
+    public setSizeForZoom(zoom: number) : void {        
         this.size = Math.pow(zoom, 2) / 15;
     }
 
@@ -161,34 +156,45 @@ export class PushPinBuilder {
         this._onClick = onClick;
     }
 
-    private getSvgIcon(): string {
-        var path : string = "";
-        if(this._type == PushPinType.Person)
-            path = this.userIconPath;
-        else
-            path = this.companyIconPath;
-
-        return "<svg fill='" + this.getColor() + "' height='" + this.size + "' viewBox='0 0 107.8652 125.84255' width='" + this.size + "' xmlns='http://www.w3.org/2000/svg'><g xmlns='http://www.w3.org/2000/svg' transform='translate(-30.009,-15.66)'><path stroke-width='" + this.strokeWidth + "' stroke='" + this.strokeColor + "' d='" + path +"'/></g><path d='M0 0h24v24H0z' fill='none'/></svg>";
+    private getSvgIcon() : string {
+        return PointContract.getSvgIcon(this.selected, this.getPointType(), this.getPointStatus(), this.getPointRouteStatus(), this.getSize(), this.getStrokeColor(), this.getStrokeWidth());
     }
 
-    private getColor(): string {
-        switch (this._material) {
-            case PushPinMaterialType.Glass: {
-                return "#009688";
-            }
-            case PushPinMaterialType.Steel: {
-                return "#FFC107";
-            }
-            case PushPinMaterialType.Plastic: {
-                return "#F44336";
-            }
-            case PushPinMaterialType.Organic: {
-                return "#607D8B";
-            }
-            case PushPinMaterialType.Paper: {
-                return "#3F51B5";
-            }
-        }
+    private getPointType() : PointTypeEnum{
+        if(this.data && this.data.Type)
+            return this.data.Type;
+        else
+            return PointTypeEnum.User;
+    }
+
+    private getPointStatus() : PointStatusEnum{
+        if(this.data && this.data.Status)
+            return this.data.Status;
+        else
+            return PointStatusEnum.Empty;
+    }
+
+    private getPointRouteStatus() : PointRouteStatusEnum{
+        if(this.data && this.data.PointRouteStatus)
+            return this.data.PointRouteStatus;
+        else
+            return PointRouteStatusEnum.Free;
+    }
+
+    private getSize() : number{        
+        return this.size;
+    }
+
+    private getStrokeColor() : string{
+        return this.strokeColor;
+    }
+
+    private getStrokeWidth() : number{
+        return this.strokeWidth;
+    }
+
+    public setSelected(selected : boolean) : void{
+        this.selected = selected;
     }
 }
 
@@ -197,12 +203,11 @@ export enum PushPinType {
     Trash = 2
 }
 
-export enum PushPinMaterialType {
-    Glass = 1,
-    Steel = 2,
-    Plastic = 3,
-    Organic = 4,
-    Paper = 5
+export enum PushPinColorEnum {
+    Green = 1,
+    Yellow = 2,
+    Red = 3,
+    Blue = 4
 }
 
 export class ViewChangeResult{

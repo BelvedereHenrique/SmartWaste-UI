@@ -27,11 +27,6 @@
 
 <div class="point-content">    
     <div class="point" *ngFor="let point of detailedPoints" (click)="onRoutePointClick(point)">
-        <div class="point-image">
-            <i class="material-icons">{{getIcon(point)}}</i>
-        </div>
-        <div class="description">
-            {{getFullAddress(point)}}
-        </div>
+        <route-point [point]="point" [enable-click]="false" ></route-point>
     </div>
 </div>

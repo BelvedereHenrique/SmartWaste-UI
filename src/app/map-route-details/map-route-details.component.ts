@@ -6,7 +6,7 @@ import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { FloatActionButtonService, FloatActionButton, FloatActionButtonType }  from '../_shared/_services/float-action-button.service'
 import { RouteService, RouteFilterContract } from '../_shared/_services/route.service';
 import { RouteDetailedContract } from "../_shared/_models/route-detailed.model"
-import { MapService, PushPinBuilder, PushPinMaterialType, PushPinType } from '../_shared/_services/map.service'
+import { MapService, PushPinBuilder, PushPinColorEnum, PushPinType } from '../_shared/_services/map.service'
 import { MapPointLoaderService } from '../_shared/_services/map-point-loader.service'
 import { SecurityManagerService } from '../_shared/_services/security-manager.service'
 import { SecurityModel } from '../_shared/_models/security.model'
@@ -90,7 +90,8 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
                 var pushpin : PushPinBuilder = pushpins.find((builder) => builder.getData().ID == point.ID);
 
                 if(pushpin){
-                    pushpin.setMaterialType(PushPinMaterialType.Glass);
+                    pushpin.setSelected(true);
+                    //pushpin.setMaterialType(PushPinColorEnum.Green);
                     this._mapPointLoaderService.updatePushpin(pushpin);
                 }
             });
