@@ -1,7 +1,7 @@
 /// <reference path="../../../../node_modules/bingmaps/scripts/MicrosoftMaps/Microsoft.Maps.All.d.ts"/>
 
 import { Injectable } from '@angular/core';
-import { Subscription } from 'rxjs';
+import {  Observable, Subject, ReplaySubject, Subscription } from 'rxjs';
 
 import { MapTypeEnum } from '../_models/map-type.enum'
 import { MapService, PushPinBuilder, PushPinType, PushPinColorEnum, ViewChangeResult } from './map.service'
@@ -9,12 +9,14 @@ import { MapPointLoaderService } from "./map-point-loader.service"
 import { RouteDetailedContract } from "../_models/route-detailed.model"
 import { PointDetailedContract } from "../_models/point-detailed.model"
 import { Response, Http, URLSearchParams, RequestOptions, Headers, RequestMethod, Jsonp} from "@angular/http";
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class MapRouteMakerService  {
     private canLoad: boolean = false;
     private route: Microsoft.Maps.Directions.DirectionsManager = null;
+
+    private onRouteReady = new ReplaySubject<Microsoft.Maps.Directions.DirectionsManager>(1);
+    onRouteReady$ = this.onRouteReady.asObservable();
 
     constructor(private _mapService : MapService,
                 private _pointService : MapPointLoaderService,
@@ -24,13 +26,17 @@ export class MapRouteMakerService  {
 
     public init() : void {
         this._mapService.onLoad.subscribe(() => {
-            this._mapService.onCreateRoute$.subscribe(this.onCreateRoute.bind(this));            
+            this._mapService.onCreateRouteResult$.subscribe(this.onCreateRoute.bind(this));            
         });
     }
 
-    public createRoute() : void {
-        if(this.route) return;
+    public routeExists() : boolean{
+        return this.route != null;
+    }
 
+    public createRoute() : void {
+        debugger;
+        if(this.route) return;
         this._mapService.createRoute();
     }
 
@@ -40,24 +46,44 @@ export class MapRouteMakerService  {
         this.route.clearDisplay();
         this.route.clearAll();        
         this.route.dispose();
+        this.onRouteReady.unsubscribe();
     }
 
     private onCreateRoute(route: Microsoft.Maps.Directions.DirectionsManager) : void {
-        this.route = route;
-        this.route.setRenderOptions({
-            autoUpdateMapView: false
-        });
+        debugger;
+        if(route){
+            this.route = route;
+
+            Microsoft.Maps.Events.addHandler(this.route, 'directionsError', (displayError) => {
+                console.log(displayError);
+            });
+
+            this.route.setRenderOptions({
+                autoUpdateMapView: false,
+                displayManeuverIcons: false,
+                displayDisclaimer : false,
+                displayPostItineraryItemHints: false,
+                displayRouteSelector: false,
+                displayPreItineraryItemHints: false,
+                displayStepWarnings: false,
+                displayWalkingWarning: false,
+                showInputPanel: false
+            });
+            
+            this.onRouteReady.next(this.route);
+        }
     }
 
     public addWaypoint(waypoint: Microsoft.Maps.Directions.Waypoint) : void{
         if(!this.route) return;
 
         this.route.addWaypoint(waypoint);
+
         this.route.calculateDirections();
     }
 
     public getDirectionsFromRoute(route : RouteDetailedContract) : Observable<any>{        
-        return this.getDirectionsFromPoints(route.Points);     
+        return this.getDirectionsFromPoints(route.RoutePoints.map(routePoint => routePoint.Point));     
     }
 
     public getDirectionsFromPoints(points : PointDetailedContract[]) : Observable<any> {
@@ -84,10 +110,72 @@ export class MapRouteMakerService  {
                 query += "&";
             query += "waypoint." + i + "=" + points[i].Latitude + "," + points[i].Longitude;
         }
+
+        query += "&ra=routePath";
         
         return this._jsonp.get(url + query + "&jsonp=JSONP_CALLBACK&key=AvKQ5s33Ij_kD9Am76fBJGX75CGsW5v7s2Wq8hA8XBg-KTr_xKY1vXHvV4JG16qD&optmz=distance").map(result => {
             return result.json();
         });
+    }
+
+    public translateDirections(data : any) : Route {
+        var route : Route = new Route();
+
+        var resources = data.resourceSets[0].resources[0];
+
+        route.expectedKilometers = resources.travelDistance;
+        route.expectedMinutes = resources.travelDurationTraffic / 60;
+
+        resources.routePath.line.coordinates.forEach((c) => {
+            route.routePath.push(new Microsoft.Maps.Location(c[0], c[1]));                        
+        });
+
+        for (let i = 0; i < route.routePath.length; i++){
+            if(i == 0)
+                continue;
+            
+            route.routeLines.push(new Microsoft.Maps.Polyline([
+                route.routePath[i - 1],
+                route.routePath[i]
+            ],{
+                strokeColor: new Microsoft.Maps.Color(1, 0, 150, 136),
+                strokeThickness: 5
+            }));
+        }
+
+        resources.routeLegs.forEach((l) => {
+            l.itineraryItems.forEach((i) => {
+                let instruction : RouteInstructions = new RouteInstructions();
+
+                instruction.location = new Microsoft.Maps.Location(
+                        i.maneuverPoint.coordinates[0],
+                        i.maneuverPoint.coordinates[1]
+                );
+
+                instruction.text = i.instruction.text;
+                instruction.type = i.instruction.maneuverType;
+
+                route.instructions.push(instruction);
+            });
+        });
+
+        return route;     
+    }
+
+    public getNearestPoint(origin : PointDetailedContract, options : PointDetailedContract[]) : PointDetailedContract {
+        var nearestPoint : PointDetailedContract = null;
+        var bestDistace : number = null;
+
+        options.forEach((option : PointDetailedContract) => {
+            var distance = this.getDistanceFromLatLonInKm(origin.Latitude, origin.Longitude, option.Latitude, option.Longitude);
+
+            if(bestDistace == null || bestDistace > distance){
+                nearestPoint = option;
+                bestDistace = distance;
+            }
+        });
+
+        return nearestPoint;
     }
 
     invert(list : any[], x : number, y: number){
@@ -113,4 +201,25 @@ export class MapRouteMakerService  {
     deg2rad(deg) {
         return deg * (Math.PI/180)
     }
+}
+
+export class Route {
+    constructor(){
+        this.routeLines = [];
+        this.routePath = [];
+        this.instructions = [];
+
+    }
+
+    public routePath: Microsoft.Maps.Location[];
+    public routeLines : Microsoft.Maps.Polyline[];
+    public instructions : RouteInstructions[];
+    public expectedKilometers : number;
+    public expectedMinutes : number;
+}
+
+export class RouteInstructions {
+    public text : string;
+    public type : string;
+    public location : Microsoft.Maps.Location;
 }

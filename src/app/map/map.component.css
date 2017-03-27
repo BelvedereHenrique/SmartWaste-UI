@@ -12,20 +12,37 @@
 }
 
 @media screen and (min-width: 999px) {
-    .map-content.menu-opened {
+    .map-content.menu-opened.no-margin {
+        right: 420px;
+        bottom: 0;
+    }
+
+    .map-content.menu-opened:not(.no-margin) {
         right: 495px;
         bottom: 0;
     }
 }
 
 @media screen and (max-width: 998px) {
-    .map-content.menu-opened {
+    .map-content.menu-opened.no-margin {
+        right: 0;
+        margin-bottom: 0px;
+    }
+
+    .map-content.menu-opened:not(.no-margin) {
         right: 0;
         margin-bottom: 65px;
-        bottom: 50%;
     }
 
     .map-content:not(.menu-opened) {        
         bottom: 65px;
+    }
+
+    .map-content.menu-opened:not(.mini) {        
+        bottom: 50%;
+    }
+
+    .map-content.menu-opened.mini {        
+        bottom: 20%;
     }
 }

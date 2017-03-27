@@ -1,3 +1,7 @@
 .item > div:first-child {
-    font-weight: bold;
+    color: #ff9800;
+}
+
+.item{
+    margin: 10px;
 }

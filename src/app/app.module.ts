@@ -20,11 +20,12 @@ import { RouteBuilderComponent } from './route-builder/route-builder.component'
 import { HistoryComponent } from './history/history.component'
 import { PasswordComponent } from './password/password.component';
 import { PointDetailsComponent } from './point-details/point-details.component';
-import { PointDetailedItemComponent } from './point-detailed-item/point-detailed-item.component'
-import { PointHistoryItemComponent } from './point-history-item/point-history-item.component'
-import { MapLegendComponent } from './map-legend/map-legend.component'
-import { CompanyRequestComponent } from './company-request/company-request.component'
-
+import { PointDetailedItemComponent } from './point-detailed-item/point-detailed-item.component';
+import { PointHistoryItemComponent } from './point-history-item/point-history-item.component';
+import { MapLegendComponent } from './map-legend/map-legend.component';
+import { CompanyRequestComponent } from './company-request/company-request.component';
+import { NavigationComponent } from './navigation/navigation.component';
+import { TabComponent } from './tab/tab.component';
 
 import { NotificationService } from './_shared/_services/notification.service';
 import { ServiceHelpersService } from './_shared/_services/service-helpers.service';
@@ -39,6 +40,7 @@ import { BottomNavigationService } from './_shared/_services/bottom-navigation.s
 import { RouteService } from './_shared/_services/route.service';
 import { SecurityService } from './_shared/_services/security.service';
 import { PasswordService } from './_shared/_services/password.service';
+import { SearchBarService } from './_shared/_services/search-bar.service';
 
 import { BottomNavigationModule } from './bottom-navigation/bottom-navigation.module';
 import { MapRouteMenuRoutingModule } from './map-route-menu/map-route-menu-routing.module';
@@ -60,6 +62,7 @@ import { PasswordRoutingModule } from './password/password.routing.module';
 import { MomentModule } from 'angular2-moment';
 import { CompanyRequestRoutingModule } from './company-request/company-request-routing.module'
 import { PointDetailsRoutingModule } from './point-details/point-details.routing.module'
+import { NavigationRoutingModule } from './navigation/navigation.routing.module'
 
 import { DurationPipe } from './_shared/_pipes/duration.pipe';
 
@@ -94,7 +97,9 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     PointDetailedItemComponent,
     PointHistoryItemComponent,
     MapLegendComponent,
-    CompanyRequestComponent
+    CompanyRequestComponent,
+    NavigationComponent,
+    TabComponent
   ],
   imports: [    
     RouterModule.forRoot([], {useHash: true}),
@@ -118,7 +123,8 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
     CompanyRequestRoutingModule,
     JsonpModule,
     MomentModule,
-    PointDetailsRoutingModule
+    PointDetailsRoutingModule,
+    NavigationRoutingModule
   ],
   providers: [NotificationService, 
               ServiceHelpersService, 
@@ -133,6 +139,7 @@ import { ConfirmDirective } from './_shared/_directives/confirm.directive';
               BottomNavigationService,
               PasswordService,
               RouteService,
+              SearchBarService
               ],
   bootstrap: [AppComponent]
 })

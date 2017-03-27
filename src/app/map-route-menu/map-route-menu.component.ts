@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core"
-import { Router } from "@angular/router"
+import { Router, ActivatedRoute } from "@angular/router"
 import { Subscription } from 'rxjs';
 
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
@@ -9,6 +9,8 @@ import { RouteContract } from '../_shared/_models/route.model'
 import { NotificationService, Notification, NotificationButton, NotificationResult } from '../_shared/_services/notification.service'
 import { SecurityModel } from '../_shared/_models/security.model'
 import { SecurityManagerService } from '../_shared/_services/security-manager.service'
+import { TabButton } from '../tab/tab.component';
+import { RouteStatusEnum } from '../_shared/_models/route-status.enum';
 
 @Component({
     selector: "map-route-menu",
@@ -20,11 +22,13 @@ export class MapRouteMenuComponent implements OnInit{
     private routes : RouteContract[] = [];    
     private getListSubscription : Subscription = null;
     private onAuthChangeSubscription : Subscription = null;
-
-    title = "TODO: We need to list here the user routes.";
+    private routesLoaded : boolean = false;
+    private tabButtons : TabButton[] = [];
+    private userCanCreateRoutes : boolean = false;
 
     constructor(private _fabService : FloatActionButtonService,
                 private _router : Router,
+                private _activatedRoute : ActivatedRoute,
                 private _routeService : RouteService,
                 private _notificationService : NotificationService,
                 private _slimLoadingBarService : SlimLoadingBarService,
@@ -44,6 +48,32 @@ export class MapRouteMenuComponent implements OnInit{
         this.onAuthChangeSubscription = this._SecurityManagerService.onAuthChange$.subscribe(this.init.bind(this));
     }
 
+    private addTabButtons(status : RouteStatusEnum) : void{
+        this.tabButtons = [];
+
+        let btnOpen : TabButton = new TabButton("Opened", () => {
+            this._router.navigate(["routes", "opened"]);
+        });
+
+        btnOpen.setActive(status == RouteStatusEnum.Opened);
+
+        let btnClosed : TabButton = new TabButton("Closed", () => {
+            this._router.navigate(["routes", "closed"]);
+        });
+
+        btnClosed.setActive(status == RouteStatusEnum.Closed);
+
+        let btnAll : TabButton = new TabButton("All", () => {
+            this._router.navigate(["routes", "all"]);
+        });
+
+        btnAll.setActive(status == null);
+
+        this.tabButtons.push(btnOpen);
+        this.tabButtons.push(btnClosed);
+        this.tabButtons.push(btnAll);
+    }
+
     private init(model : SecurityModel) : void{
         if(!model || !model.ShowRoutesMenu)
         {
@@ -51,12 +81,29 @@ export class MapRouteMenuComponent implements OnInit{
             return;
         }
 
+        this.userCanCreateRoutes = model.CanSaveRoutes;
+
         this._fabService.setVisible({
             name: "add",
             visible: model.CanSaveRoutes
         });
 
-        this.LoadUserRoutes();        
+        this._activatedRoute.params.subscribe((params) => {
+            let status : RouteStatusEnum = this.GetStatusFilter(params["status"]);
+            this.LoadUserRoutes(status);
+            this.addTabButtons(status);
+        });
+    }
+
+    private GetStatusFilter(urlStatus : string) : RouteStatusEnum {
+        let status : RouteStatusEnum = null;
+        
+        if(!urlStatus || urlStatus == "opened")
+            status = RouteStatusEnum.Opened
+        else if (urlStatus == "closed")
+            status = RouteStatusEnum.Closed;        
+
+        return status;
     }
 
     private unsubscribe() : void{
@@ -67,21 +114,29 @@ export class MapRouteMenuComponent implements OnInit{
             this.onAuthChangeSubscription.unsubscribe();
     }
 
-    private LoadUserRoutes() : void {
+    private LoadUserRoutes(status : RouteStatusEnum) : void {
         this._slimLoadingBarService.start();
-        this.getListSubscription = this._routeService.GetOpenedRoutes().subscribe((jsonModel) => {
+
+        this.routesLoaded = false;
+        this.routes = [];
+
+        if(this.getListSubscription)
+            this.getListSubscription.unsubscribe();
+
+        this.getListSubscription = this._routeService.GetList(status).subscribe((jsonModel) => {
             this._slimLoadingBarService.complete();
             if(jsonModel.Success){
                 this.routes =  jsonModel.Result.sort((a : RouteContract, b : RouteContract) => {
                     return new Date(a.CreatedOn).getTime() - new Date(b.CreatedOn).getTime();                    
                 });
+                this.routesLoaded = true;
             }else{
                 this._notificationService.notify(new Notification(jsonModel.Messages, [], 6000));
             }
         }, jsonError => {
             this._slimLoadingBarService.complete();
             let tryAgainButton : NotificationButton = new NotificationButton("Try again", () => {
-                this.LoadUserRoutes();
+                this.LoadUserRoutes(status);
             });
             this._notificationService.notify(new Notification("There were errors to load the routes.", [
                 tryAgainButton

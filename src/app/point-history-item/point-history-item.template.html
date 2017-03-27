@@ -1,4 +1,7 @@
 <div class="item">
     <div class="title">{{history.Reason}}</div>
-    <div class="subtitle">by {{history.Person.Name}} {{history.Date | amTimeAgo}}</div>
+    <div class="subtitle">
+        {{history.Person.Name}}
+        <span class="pull-right">{{history.Date | amDateFormat:'LL'}} {{history.Date | amDateFormat:'hh:mm a'}}</span>
+    </div>
 </div>

@@ -10,6 +10,8 @@ import { MapService, PushPinBuilder, PushPinColorEnum, PushPinType } from '../_s
 import { MapPointLoaderService } from '../_shared/_services/map-point-loader.service'
 import { SecurityManagerService } from '../_shared/_services/security-manager.service'
 import { SecurityModel } from '../_shared/_models/security.model'
+import { RoutePointContract } from '../_shared/_models/route-point.model';
+import { RouteStatusEnum } from '../_shared/_models/route-status.enum';
 
 @Component({
     selector: "map-route-details",
@@ -21,9 +23,10 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
     private onUpdatePushpinsSubscription : Subscription = null;
     private onAuthChangeSubscription : Subscription = null;
 
-    private route : RouteDetailedContract = new RouteDetailedContract();
-
+    private route : RouteDetailedContract = new RouteDetailedContract();    
     private routeID: string;
+
+    private securityModel : SecurityModel = null;
 
     constructor(private _activatedRoute: ActivatedRoute,
                 private _router : Router,
@@ -55,21 +58,13 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
     }
 
     private init(model : SecurityModel) : void {
+        this.securityModel = model;
+
         if(!model || !model.ShowRoutesMenu)
         {
             this._router.navigate(["/"]);
             return;
         }
-
-        this._fabService.setVisible({
-            name: "edit",
-            visible: model.CanSaveRoutes
-        });
-
-        this._fabService.setVisible({
-            name: "navigate",
-            visible: model.CanNavigateRoutes
-        });
 
         this._activatedRoute.params.subscribe(params => {
             this.routeID = params["routeID"]
@@ -82,12 +77,24 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
+    private checkFabSecurity(securityModel : SecurityModel, route: RouteDetailedContract) : void{
+        this._fabService.setVisible({
+            name: "edit",
+            visible: securityModel.CanSaveRoutes && route.Status == RouteStatusEnum.Opened
+        });
+
+        this._fabService.setVisible({
+            name: "navigate",
+            visible: securityModel.CanNavigateRoutes && route.Status == RouteStatusEnum.Opened
+        });
+    }
+
     private onUpdatePushpin() : void {
         if(this.route){
             var pushpins : PushPinBuilder[] = this._mapPointLoaderService.getLoadedPushpins();
 
-            this.route.Points.forEach((point) => {
-                var pushpin : PushPinBuilder = pushpins.find((builder) => builder.getData().ID == point.ID);
+            this.route.RoutePoints.forEach((routePoint : RoutePointContract) => {
+                var pushpin : PushPinBuilder = pushpins.find((builder) => builder.getData().ID == routePoint.Point.ID);
 
                 if(pushpin){
                     pushpin.setSelected(true);
@@ -100,9 +107,9 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
 
     private setRouteViewOnMap() : void{
         this._mapService.onLoad.subscribe(() => {
-            if(this.route && this.route.Points.length){            
+            if(this.route && this.route.RoutePoints.length){            
                 this._mapService.setView({
-                    center: new Microsoft.Maps.Location(this.route.Points[0].Latitude, this.route.Points[0].Longitude),
+                    center: new Microsoft.Maps.Location(this.route.RoutePoints[0].Point.Latitude, this.route.RoutePoints[0].Point.Longitude),
                     zoom: 15
                 });
             }
@@ -135,6 +142,7 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
             if(jsonModel.Success){
                 this.route = jsonModel.Result;
                 this.setRouteViewOnMap();
+                this.checkFabSecurity(this.securityModel, this.route);
             }else{
 
             }
@@ -143,7 +151,17 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
+    private getStatusName() : string{
+        if(!this.route.ID)
+            return "";
+
+        return RouteDetailedContract.getStatusName(this.route).toLocaleLowerCase();
+    }
+
     private getAssignedTo() : string{
+        if(!this.route.ID)
+            return "";
+
         if(this.route.AssignedTo)
             return "Assigned to " + this.route.AssignedTo.Name;
         else
@@ -156,6 +174,6 @@ export class MapRouteDetailsComponent implements OnInit, OnDestroy {
     }
 
     private onNavigateClick() : void{
-
+        this._router.navigate(["navigation", this.routeID]);
     }
 }

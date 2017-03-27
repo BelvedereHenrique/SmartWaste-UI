@@ -57,7 +57,6 @@ export class AccountMenuComponent implements OnDestroy, OnInit {
     this._accountService.getUserEnterprise().subscribe(
       data => {
         if (data.Success == true) {
-          debugger
           if (data.Result.ID != null) {
             this.enterprise = data.Result;
             this.canShowEnterpriseMenu = false;

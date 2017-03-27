@@ -7,7 +7,8 @@ import { MapRouteMenuComponent } from './map-route-menu.component';
 @NgModule({
   imports: [
     RouterModule.forChild([
-      { path: 'routes', component: MapRouteMenuComponent }
+      { path: 'routes', component: MapRouteMenuComponent },
+      { path: 'routes/:status', component: MapRouteMenuComponent }
     ])
   ]
 })

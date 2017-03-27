@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Router, Event, NavigationStart } from "@angular/router";
 
 import { BottomNavigationButton } from "./_shared/_models/BottomNavigationButton.model";
@@ -6,7 +6,7 @@ import { SecurityManagerService } from "./_shared/_services/security-manager.ser
 import { MapService, PushPinBuilder } from './_shared/_services/map.service'
 import { MapPointLoaderService } from './_shared/_services/map-point-loader.service'
 import { NotificationService, Notification } from './_shared/_services/notification.service'
-import { BottomNavigationService } from './_shared/_services/bottom-navigation.service'
+import { BottomNavigationService, BottomNavigationMenuSizeEnum } from './_shared/_services/bottom-navigation.service'
 import { SecurityService } from './_shared/_services/security.service'
 
 @Component({
@@ -15,7 +15,10 @@ import { SecurityService } from './_shared/_services/security.service'
     styleUrls: ["./app.component.css"]
 })
 export class AppComponent implements OnInit {
+    @ViewChild("menuWrapper") private menuWrapper;
     public showMenu: boolean = true;    
+    private menuHeight : BottomNavigationMenuSizeEnum = null;
+    private bottomNavigationVisible : boolean = true;
 
     constructor(private _router: Router,
                 private _securityManager: SecurityManagerService,
@@ -42,6 +45,8 @@ export class AppComponent implements OnInit {
         });        
 
         this._bottomNavigationService.onToggle$.subscribe(this.toggleMenu.bind(this));
+        this._bottomNavigationService.onSizeChange$.subscribe(this.onMenuSizeChange.bind(this));
+        this._bottomNavigationService.onChangeBottomNavigationVisibility$.subscribe(this.onBottomNavigationChangeVisibility.bind(this));
     }
 
     ngOnInit() {
@@ -49,8 +54,23 @@ export class AppComponent implements OnInit {
         this._securityService.updateUserInformation();
     }
 
-    private toggleMenu(open : boolean) : void{                
-            this.showMenu = open;   
+    private toggleMenu(open : boolean) : void {                
+        this.showMenu = open;   
+
+        this.scrollMenuToTop();
+    }
+
+    private scrollMenuToTop() : void {
+        if(this.menuWrapper)
+            this.menuWrapper.nativeElement.scrollTop = 0;
+    }
+
+    private onMenuSizeChange(size : BottomNavigationMenuSizeEnum) : void {        
+        this.menuHeight = size;
+    }
+
+    private onBottomNavigationChangeVisibility(visible : boolean) : void{
+        this.bottomNavigationVisible = visible;
     }
 
     private VerifyMenuForUrl(url: string) {

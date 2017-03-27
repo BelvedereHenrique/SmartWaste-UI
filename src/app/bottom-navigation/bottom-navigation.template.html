@@ -1,4 +1,4 @@
-<div class="bottom-navigation">
+<div class="bottom-navigation" [ngClass]="{ 'no-visible' : visible == false }">
     <button [style.width]="getButtonsWidth()" [ngClass]="{ 'active' : button.active, 'visible': button.visible }" routerLink="{{button.link}}" *ngFor="let button of buttons" (click)="button.onClick(button)">
         <div class="material-icons">{{button.icon}}</div>
         <div>{{button.text}}</div>

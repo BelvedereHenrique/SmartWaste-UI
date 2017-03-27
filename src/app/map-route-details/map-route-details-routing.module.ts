@@ -6,7 +6,7 @@ import { MapRouteDetailsComponent } from './map-route-details.component';
 @NgModule({
   imports: [
     RouterModule.forChild([
-      { path: 'routes/:routeID', component: MapRouteDetailsComponent }
+      { path: 'route-details/:routeID', component: MapRouteDetailsComponent }
     ])
   ]
 })

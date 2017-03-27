@@ -1,4 +1,15 @@
-﻿<ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
-<h1 class="title">Routes <small>manage your routes</small></h1>
+﻿<div class="header">    
+    <ng2-slim-loading-bar [color]="'#ffffff'" [height]="'2px'"></ng2-slim-loading-bar>
+    <h1 class="title">    
+        Routes
+    </h1>        
+    <tab [buttons]="tabButtons"></tab>       
+</div>
+<div class="empty-content" *ngIf="routes.length == 0 && routesLoaded == true && userCanCreateRoutes == true">
+    Use the <b>+</b> button to create a new route.
+</div>
+<div class="empty-content" *ngIf="routes.length == 0 && routesLoaded == true && userCanCreateRoutes == false">
+    There are no routes to show.
+</div>
 
 <map-route-item *ngFor="let route of routes" [route]="route"></map-route-item>

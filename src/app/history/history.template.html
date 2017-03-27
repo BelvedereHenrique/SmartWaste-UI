@@ -3,8 +3,7 @@
         {{history.Reason}}
     </div>
     <div>
-        by {{history.Person.Name}} {{history.Date | amTimeAgo}}
+        {{history.Person.Name}}
+        <span class="pull-right">{{history.Date | amDateFormat:'LL'}} {{history.Date | amDateFormat:'hh:mm a'}}</span>        
     </div>
 </div>
-
-

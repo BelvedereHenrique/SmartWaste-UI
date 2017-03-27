@@ -21,6 +21,11 @@
     left: 0px;
     right: 0px;
     width: 600px;
+    transition: .3s all;
+}
+
+.search-content.no-visible {
+    top: -60px !important;
 }
 
     .search-content span {
@@ -52,6 +57,7 @@
     border: none !important;
     padding: 0 !important;
     float: right;
+    color: darkgrey;
 }
 
 .autocomplete {    

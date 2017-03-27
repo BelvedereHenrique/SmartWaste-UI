@@ -1,0 +1,9 @@
+<div class="btn-group tab">
+    <button *ngFor="let button of buttons" 
+            class="btn active" 
+            (click)="onClick(button)"
+            [style.width]="getWidth()"
+            [ngClass]="{ 'active' : button.active }">
+        {{button.title}}
+    </button>
+</div>

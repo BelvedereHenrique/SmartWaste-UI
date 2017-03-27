@@ -19,7 +19,8 @@ export class MapService {
     private onClear = new Subject();
     public onPositionChange = new Subject<Microsoft.Maps.Location>();
     public onLoad = new ReplaySubject(1);
-    private onCreateRoute = new Subject<Microsoft.Maps.Directions.DirectionsManager>();
+    private onCreateRoute = new Subject<any>();
+    private onCreateRouteResult = new Subject<Microsoft.Maps.Directions.DirectionsManager>();
     public onViewChange = new Subject<ViewChangeResult>();
     public onAddLayer = new Subject<Microsoft.Maps.Layer>();
     public onRemoveLayer = new Subject<Microsoft.Maps.Layer>();
@@ -27,6 +28,8 @@ export class MapService {
     public onSetUserLocation = new Subject();
     public onChangeMapType = new Subject<Microsoft.Maps.MapTypeId>();
     public onSetView = new Subject<Microsoft.Maps.IViewOptions>();
+    public onSetWatchPositionEnabled = new Subject<any>();
+    public onSetCompass = new Subject<boolean>();
 
     onSearch$ = this.onSearch.asObservable();
     onSetup$ = this.onSetup.asObservable();
@@ -36,6 +39,7 @@ export class MapService {
     onPositionChange$ = this.onPositionChange.asObservable();
     onLoad$ = this.onLoad.asObservable();
     onCreateRoute$ = this.onCreateRoute.asObservable();
+    onCreateRouteResult$ = this.onCreateRouteResult.asObservable();
     onViewChange$ = this.onViewChange.asObservable();
     onAddLayer$ = this.onAddLayer.asObservable();
     onRemoveLayer$ = this.onRemoveLayer.asObservable();
@@ -43,9 +47,19 @@ export class MapService {
     onSetUserLocation$ = this.onSetUserLocation.asObservable();
     onChangeMapType$ = this.onChangeMapType.asObservable();
     onSetView$ = this.onSetView.asObservable();
+    onSetWatchPositionEnabled$ = this.onSetWatchPositionEnabled.asObservable();
+    onSetCompass$ = this.onSetCompass.asObservable();
 
     constructor(private _routesService: PointService){
         
+    }
+
+    public setCompass(enable : boolean) : void{
+        this.onSetCompass.next(enable);
+    }
+
+    public setWatchPositionEnabled(enable : boolean){
+        this.onSetWatchPositionEnabled.next(enable);
     }
 
     public setView(view: Microsoft.Maps.IViewOptions) : void{

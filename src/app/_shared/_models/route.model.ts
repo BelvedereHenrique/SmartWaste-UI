@@ -17,4 +17,15 @@ export class RouteContract
     public CompanyID : string;
     public ExpectedKilometers : number;
     public ExpectedMinutes : number;
+    public NavigationFinishedOn : Date;
+    public NavigationStartedOn : Date;
+
+    public static getStatusName(route : RouteContract) : string{
+        if(route.Status == RouteStatusEnum.Opened)
+            return "Opened";
+        else if(route.Status == RouteStatusEnum.Closed)
+            return "Closed";
+        else
+            return "Disabled";
+    }
 } 

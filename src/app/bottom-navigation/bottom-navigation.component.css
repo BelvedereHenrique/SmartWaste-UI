@@ -4,10 +4,14 @@
         height: 100% !important;
     }
 
+    .bottom-navigation.no-visible{
+        right: -75px;
+    }
+
     .bottom-navigation button {
         height: 80px !important;
         width: 100% !important;
-    }
+    }    
 }
 
 .bottom-navigation {
@@ -21,7 +25,12 @@
     /*border-radius: 4px 0px 0px 0px !important;        */
     background: #009688;
     z-index: 4;
+    transition: .3s all;
 }
+
+    .bottom-navigation.no-visible{
+        bottom: -65px;
+    }
 
     .bottom-navigation button {
         height: 65px;   

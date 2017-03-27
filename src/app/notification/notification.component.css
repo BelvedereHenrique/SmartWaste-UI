@@ -1,7 +1,12 @@
 ﻿@media screen and (min-width: 999px) {
-    .notification {
+    .notification:not(.no-margin) {
         width: 420px !important;
         margin-right: 75px !important;
+    }
+
+    .notification.no-margin {
+        width: 420px !important;
+        margin-right: 0px !important;
     }
     
     .notification.active {        
@@ -26,13 +31,18 @@
     z-index: 4;
 }
 
-    .notification.active {        
+    .notification.active.no-margin {        
+        bottom: 0px;
+        opacity: 1;
+    }
+
+    .notification.active:not(.no-margin) {        
         bottom: 65px;
         opacity: 1;
     }
 
     .notification:not(.active) {        
-        bottom: 0px;
+        bottom: -65px;
         opacity: 0;
     }
 

@@ -1,4 +1,4 @@
-import { PointDetailedContract } from './point-detailed.model'
+import { RoutePointContract } from './route-point.model'
 import { RouteHistoryModel } from './route-history.model'
 import { RouteContract } from './route.model'
 
@@ -6,10 +6,10 @@ export class RouteDetailedContract extends RouteContract
 {
     constructor() {
         super();
-        this.Points = [];
         this.Histories = [];
+        this.RoutePoints = [];
     }
     
-    public Points : PointDetailedContract[];
+    public RoutePoints : RoutePointContract[];
     public Histories : RouteHistoryModel[];
 } 

@@ -12,7 +12,7 @@ import { ViewChild } from '@angular/core';
 import { NotificationService, Notification, NotificationResult, NotificationButton } from "../_shared/_services/notification.service";
 import { MapService, ViewChangeResult, ZoomOptions, SearchOptions } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
-import { BottomNavigationService } from '../_shared/_services/bottom-navigation.service'
+import { BottomNavigationService, BottomNavigationMenuSizeEnum } from '../_shared/_services/bottom-navigation.service'
 
 @Component({
     selector: 'map',
@@ -25,11 +25,17 @@ export class MapComponent{
     private instance: Microsoft.Maps.Map;
     private pushpins: Microsoft.Maps.Pushpin[];
 
+    private noMargin : boolean = false;
+
     private menuOpened: boolean;
+    private menuSize : BottomNavigationMenuSizeEnum;
 
     private mapIconSize: number = 24;
 
     private mapType : MapTypeEnum = null;
+
+    private isCompassEnabled : boolean = false;
+    private watchPositionNumber : number = null;
 
     constructor(private _notificationService: NotificationService,
                 private _mapService : MapService,
@@ -48,14 +54,35 @@ export class MapComponent{
         this._mapService.onSetUserLocation$.subscribe(this.setUserLocation.bind(this));   
         this._mapService.onChangeMapType$.subscribe(this.changeMapType.bind(this));   
         this._mapService.onSetView.subscribe(this.setView.bind(this));
+        this._mapService.onSetWatchPositionEnabled$.subscribe(this.setWatchPositionEnabled.bind(this));    
+        this._mapService.onSetCompass$.subscribe(this.setCompass.bind(this));
 
         this._bottomNavigationService.onToggle$.subscribe(this.onMenuToggle.bind(this));
+        this._bottomNavigationService.onSizeChange$.subscribe(this.onMenuSizeChange.bind(this));
+        this._bottomNavigationService.onChangeBottomNavigationVisibility$.subscribe(this.onChangeBottomNavigationVisibility.bind(this));
     }
 
     ngAfterViewInit() {
         this.loadMap();        
     }
     
+    private setupCompassEvent() : void{
+        if(!(<any>window).DeviceOrientationEvent)
+            return;
+
+        window.addEventListener('deviceorientation', (eventData) => {
+            if(this.map != null){
+                this.setView({
+                    heading: eventData.alpha
+                });
+            }
+        }, false);
+    }
+
+    private setCompass(enable : boolean) : void{
+        this.isCompassEnabled = enable;
+    }
+
     private setZoom(options : ZoomOptions) : void {        
         var actual : number = this.instance.getZoom();
 
@@ -106,17 +133,23 @@ export class MapComponent{
         this.instance.layers.clear();   
     };
 
-    private setupPosition() : void {
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(this.onPositionChange.bind(this), null, {
-                enableHighAccuracy: true,
-                timeout: 1000                
-            });
-        }
+    private setWatchPositionEnabled(enable : boolean) : void {
+        if(enable) {
+            if (navigator.geolocation) {
+                this.watchPositionNumber = navigator.geolocation.watchPosition(this.onPositionChange.bind(this), null, {
+                    enableHighAccuracy: true,
+                    timeout: 1000,
+                    maximumAge: 0                
+                });
+            }
+        } else {
+            if(this.watchPositionNumber && navigator.geolocation)
+                navigator.geolocation.clearWatch(this.watchPositionNumber);
+        }        
     }
 
-    private onPositionChange(position: Position) : void {    
-        this._mapService.onPositionChange.next(new Microsoft.Maps.Location(position.coords.altitude, position.coords.longitude));        
+    private onPositionChange(position: Position) : void {            
+        this._mapService.onPositionChange.next(new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude));        
     }
 
     private getLocationFromPixel(x: number, y: number): Microsoft.Maps.Location {
@@ -140,9 +173,9 @@ export class MapComponent{
     }
 
     /* NOTE: Docs for routes: https://msdn.microsoft.com/en-us/library/mt750406.aspx */
-    public createRoute() : void {                 
+    public createRoute() : void {            
         Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {            
-            this._mapService.onCreateRoute$.next(
+            this._mapService.onCreateRouteResult.next(
                 new Microsoft.Maps.Directions.DirectionsManager(this.instance)
             );
         }.bind(this));
@@ -235,6 +268,14 @@ export class MapComponent{
 
     private onMenuToggle(opened: boolean) : void{
         this.menuOpened = opened;
+    }
+
+    private onMenuSizeChange(size : BottomNavigationMenuSizeEnum) : void{
+        this.menuSize = size;
+    }
+
+    private onChangeBottomNavigationVisibility(visible : boolean) : void{
+        this.noMargin = visible;
     }
 }
 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { BottomNavigationButton } from "../_shared/_models/BottomNavigationButton.model";
 import { SecurityManagerService } from "../_shared/_services/security-manager.service";
 import { SecurityModel } from '../_shared/_models/security.model'
+import { BottomNavigationService } from '../_shared/_services/bottom-navigation.service';
 
 @Component({
     selector: 'bottom-navigation',
@@ -14,7 +15,10 @@ export class BottomNavigationComponent {
     public buttons: BottomNavigationButton[] = [];
     @Output() onNavigationClick: EventEmitter<BottomNavigationButton> = new EventEmitter();
 
-    constructor(private _securityManager: SecurityManagerService) {
+    private visible : boolean = true;
+
+    constructor(private _securityManager: SecurityManagerService,
+                private _bottomNavigationService : BottomNavigationService) {
         this.AddButton(new BottomNavigationButton('map', 'map', 'Map', this.onClick.bind(this), "/", true));
         this.AddButton(new BottomNavigationButton('routes', 'directions', 'Routes', this.onClick.bind(this), "/routes", false));
         this.AddButton(new BottomNavigationButton('history', 'history', 'History', this.onClick.bind(this), "", false));
@@ -23,6 +27,10 @@ export class BottomNavigationComponent {
 
         this._securityManager.onAuthChange$.subscribe(securityModel => {
             this.setup(securityModel);            
+        });
+
+        this._bottomNavigationService.onChangeBottomNavigationVisibility$.subscribe((visible : boolean) => {
+            this.visible = visible;
         });
     }
 

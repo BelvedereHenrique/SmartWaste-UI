@@ -1,0 +1,25 @@
+<ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
+<div class="menu-container">
+    <div class="point-info">
+        {{getBestPointAddress()}}
+    </div>    
+</div>
+
+<div class="menu-container">
+    <div class="directions-info" *ngIf="directions != null && statsVisible">
+        <span>{{this.waitingPoints.length}} points remaining</span>
+        <span>{{directions.expectedKilometers}} Km</span>
+        <span>{{directions.expectedMinutes | duration}} min</span>
+    </div>
+</div>
+
+<div class="menu-container" *ngIf="question != null">
+    <div class="question">{{question.title}}</div>
+    <div class="tips" *ngIf="question.tips.length > 0">
+        <span *ngFor="let tip of question.tips" (click)="tip.click()">{{tip.title}}</span>        
+    </div>    
+    <input #answerInput class="form-control answer-input" [(ngModel)]="question.inputValue" placeholder="Add reason" *ngIf="question.showInput">
+    <button *ngFor="let answer of question.answers" [ngClass]="answer.classes" class="btn" (click)="answer.click()">
+        {{answer.title}}
+    </button>
+</div>

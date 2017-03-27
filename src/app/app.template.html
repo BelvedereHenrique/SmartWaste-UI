@@ -5,7 +5,7 @@
 
     <map></map>
 
-    <div [ngClass]="{ 'active' : showMenu }" class="menu-wrapper z1">        
+    <div #menuWrapper [ngClass]="{ 'active' : showMenu, 'mini' : menuHeight == 2, 'no-margin' : bottomNavigationVisible == false }" class="menu-wrapper z1">        
         <router-outlet></router-outlet>
     </div>    
 

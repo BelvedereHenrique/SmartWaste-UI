@@ -2,7 +2,15 @@
     <div class="route-img">
         <img [src]="getSvgIcon()">
     </div>
+    <span *ngIf="routePoint" class="collect-points-content">
+        <i class="material-icons collected" title="Collected" *ngIf="routePoint.IsCollected === true">done</i>
+        <i class="material-icons not-collected" title="Not collected" *ngIf="routePoint.IsCollected === false">clear</i>
+    </span>
     <div class="route-subtitle">
-        {{getFullAddress(point)}}
-    </div>
+        {{getFullAddress(point)}}                 
+        <div class="route-details" *ngIf="canShowDetails">
+            <div>{{ routePoint.IsCollected ? 'Collected' : 'Tried to collect '}} on {{routePoint.CollectedOn | amDateFormat:'LL'}} at {{ routePoint.CollectedOn | amDateFormat:'hh:mm a'}}</div>        
+            <div *ngIf="routePoint.Reason">{{routePoint.Reason}}</div>
+        </div>
+    </div>    
 </div>

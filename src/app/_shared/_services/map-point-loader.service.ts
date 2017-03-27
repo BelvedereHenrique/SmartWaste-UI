@@ -102,8 +102,7 @@ export class MapPointLoaderService  {
     private clearPointsLayer() : void{
         if(this.pointsLayer){        
             this.pushpins = [];
-            this.pointsLayer.clear();
-            this.pointsLayer.dispose();                            
+            this.pointsLayer.clear();                       
         }
     }
 
@@ -186,13 +185,13 @@ export class MapPointLoaderService  {
             return;
         }
 
-        this.pointsSubscription = this._pointService.GetList(search).subscribe((jsonResult) => {
+        this.pointsSubscription = this._pointService.GetList(search).subscribe((jsonResult) => {            
             if(jsonResult.Success){                
                 this.clearPointsLayer();
 
-                this.pointsLayer = new Microsoft.Maps.EntityCollection();
-                this._mapService.removeLayer(this.pointsLayer);
-
+                if(!this.pointsLayer)
+                    this.pointsLayer = new Microsoft.Maps.EntityCollection();
+                
                 for(let i = 0; i < jsonResult.Result.length; i++){
                     let pushpinBuilder = new PushPinBuilder(new Microsoft.Maps.Location(jsonResult.Result[i].Latitude, 
                             jsonResult.Result[i].Longitude));

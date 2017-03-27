@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter, NgZone, ViewChild } from '@angular/core';
 
 import { MapService, SearchOptions } from "../_shared/_services/map.service";
+import { SearchBarService } from '../_shared/_services/search-bar.service';
 
 @Component({
   selector: 'search',
@@ -15,10 +16,16 @@ export class SearchComponent {
     private autocompleteHeight: string = "0px";
     private autocompleteItemHeight: number = 40;
     private limitResults: number = 5;
+    private visible : boolean = true;
 
     constructor(private _mapService : MapService,
+                private _searchBarService : SearchBarService,
                 private _ngZone: NgZone){
-    
+        this._searchBarService.onSearchBarChangeVisibility$.subscribe(this.onSearchBarChangeVisibility.bind(this));
+    }
+
+    private onSearchBarChangeVisibility(visible : boolean) : void {
+        this.visible = visible;
     }
 
     public onSeachKepress(query: string): void {

@@ -1,4 +1,4 @@
-﻿<div class="notification" [ngClass]="{ 'active' : showNotification }">
+﻿<div class="notification" [ngClass]="{ 'active' : showNotification, 'no-margin' : noMargin }">
     <div *ngFor="let b of showingNotification.buttons" class="buttons">
         <button (click)="b.onClick()">{{b.text}}</button>        
     </div>

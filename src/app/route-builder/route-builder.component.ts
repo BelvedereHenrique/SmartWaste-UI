@@ -222,7 +222,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
     private loadRoute(route : RouteDetailedContract) : void {
         this._pointLoaderService.setFilter(this.getPointsFilterForRoute(route));
 
-        this.detailedPoints = route.Points;
+        this.detailedPoints = route.RoutePoints.map(routePoint => routePoint.Point);
         
         this.setRouteStats(route.ExpectedKilometers, route.ExpectedMinutes);
 
@@ -230,16 +230,16 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
             this.assignedTo.nativeElement.value = route.AssignedTo.ID;
 
         this._mapService.setView({
-            center: new Microsoft.Maps.Location(route.Points[0].Latitude, route.Points[0].Longitude),
+            center: new Microsoft.Maps.Location(route.RoutePoints[0].Point.Latitude, route.RoutePoints[0].Point.Longitude),
             zoom: 16
         });
 
         let editEvent : Subscription = this._pointLoaderService.onUpdatePushpins$.subscribe(() => {
-            for(let i = 0; i < route.Points.length; i++){
+            for(let i = 0; i < route.RoutePoints.length; i++){
                 let pushpin : PushPinBuilder = new PushPinBuilder(
-                    new Microsoft.Maps.Location(route.Points[i].Latitude, route.Points[i].Longitude));
+                    new Microsoft.Maps.Location(route.RoutePoints[i].Point.Latitude, route.RoutePoints[i].Point.Longitude));
 
-                pushpin.setData(route.Points[i]);
+                pushpin.setData(route.RoutePoints[i].Point);
 
                 this.addPushpin(pushpin);
                 editEvent.unsubscribe();
@@ -300,10 +300,10 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
         return search;
     }
 
-    private getPointsFilterForRoute(route: any) : PointSearch {
+    private getPointsFilterForRoute(route: RouteDetailedContract) : PointSearch {
         var search : PointSearch = this.getPointsFilter();
         
-        route.Points.forEach((p) => search.AlwaysIDs.push(p.ID));
+        route.RoutePoints.forEach((p) => search.AlwaysIDs.push(p.ID));
 
         return search;
     }
@@ -512,7 +512,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
             loadingResult.Cancel();
             if(jsonModel.Success && jsonModel.Result.Success){                
                 this._notificationService.notify(new Notification("Route saved.", [], 5000));
-                this._router.navigate(["routes", jsonModel.Result.Result]);
+                this._router.navigate(["route-details", jsonModel.Result.Result]);
             }else{
                 this._notificationService.notify(new Notification(jsonModel.Messages.length ? jsonModel.Messages : jsonModel.Result.Messages));    
             }
@@ -543,7 +543,7 @@ export class RouteBuilderComponent implements OnInit, OnDestroy {
             loadingResult.Cancel();
             if(jsonModel.Success && jsonModel.Result.Success){                
                 this._notificationService.notify(new Notification("Route saved.", [], 5000));
-                this._router.navigate(["routes", jsonModel.Result.Result]);
+                this._router.navigate(["route-details", jsonModel.Result.Result]);
             }else{
                 this._notificationService.notify(new Notification(jsonModel.Messages.length ? jsonModel.Messages : jsonModel.Result.Messages));    
             }

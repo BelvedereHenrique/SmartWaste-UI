@@ -1,21 +1,33 @@
-﻿<ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
-<h1 class="title">Route details <small>by {{route.CreatedBy.Name}} {{route.CreatedOn | amTimeAgo}}</small></h1>
-
-<div class="menu-container">
-    <div>{{getAssignedTo()}}</div>
+﻿<div class="header">    
+    <h1 class="title">Route details <small>by {{route.CreatedBy.Name}} {{route.CreatedOn | amTimeAgo}}</small></h1>
+    <ng2-slim-loading-bar [color]="'#FFFFFF'" [height]="'2px'"></ng2-slim-loading-bar>
 </div>
-
-<div class="menu-container">
-    <div class="stats">
-        <span>{{route.Points.length}} points</span>
-        <span>{{route.ExpectedKilometers}} km</span>
-        <span>{{route.ExpectedMinutes | duration}} min</span>
+<div *ngIf="route.ID != null">
+    <div class="menu-container">
+        <div class="stats">
+            <span>{{route.RoutePoints.length}} points</span>
+            <span>{{route.ExpectedKilometers}} km</span>
+            <span>{{route.ExpectedMinutes | duration}} min</span>
+        </div>
     </div>
-</div>
 
-<route-point *ngFor="let point of route.Points" [point]="point" enable-click="true"></route-point>
+    <div class="menu-container">    
+        <div>Route is {{getStatusName()}}</div>
+        <div>{{getAssignedTo()}}</div>
+    </div>
 
-<div class="menu-container">
-    <h1>History</h1>
+    <div class="menu-container" *ngIf="route.NavigationStartedOn != null && route.NavigationFinishedOn != null">        
+        <h1>Navigation</h1>
+        <div *ngIf="route.NavigationStartedOn != null">Started on {{route.NavigationStartedOn | amDateFormat:'LL'}} {{route.NavigationStartedOn | amDateFormat:'hh:mm a'}}</div>
+        <div *ngIf="route.NavigationFinishedOn != null">Finished on {{route.NavigationFinishedOn | amDateFormat:'LL'}} {{route.NavigationFinishedOn | amDateFormat:'hh:mm a'}}</div>
+    </div>
+    <div class="menu-container">        
+        <h1>Points</h1>
+    </div>
+    <route-point *ngFor="let routePoint of route.RoutePoints" [routePoint]="routePoint" [point]="routePoint.Point" enable-click="true"></route-point>
+
+    <div class="menu-container">
+        <h1>History</h1>    
+    </div>
     <history *ngFor="let history of route.Histories" [history]="history"></history>
 </div>

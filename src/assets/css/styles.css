@@ -35,7 +35,6 @@ h1 {
 
 .menu-wrapper h1 > small {
     font-size: 14px;
-    font-weight: bold;
     display: block;
     margin-top: 10px;
 }
@@ -53,8 +52,11 @@ h1 {
     color: red;
 }
 
-
-
+div.empty-content {
+    margin: 10px;
+    text-align: center;
+    color: #ff9800;
+}
 
 
 /* BUTTONS */
@@ -240,3 +242,19 @@ h1 {
             .loading-app-content div > span:last-child {
                 color: #ffb308;
             }
+
+.header {
+    background: #26A69A; 
+    color: #ffffff;
+    box-shadow: 0px 0px 5px #989898;     
+}
+
+.header .title {
+    background: #26A69A; 
+    color: #ffffff; 
+    border: none;
+}
+
+.header .title > small {
+    color: #ffffff; 
+}

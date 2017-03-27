@@ -1,4 +1,4 @@
-<div class="search-content z1">
+<div class="search-content z1" [ngClass]="{ 'no-visible' : visible == false }">
     <img title="SmartWaste" class="logo" _ngcontent-elu-2="" src="../../assets/img/logo_256.png">    
     <button title="Search" [hidden]="search.value.length > 0">
         <span class="material-icons icon">search</span>
@@ -7,7 +7,7 @@
         <span class="material-icons icon">clear</span>
     </button>    
     <div class="search-input-content">
-        <input #search (keyup)="onSeachKepress(search.value)" placeholder="Pesquise" />
+        <input #search (keyup)="onSeachKepress(search.value)" placeholder="Search Cities & Addresses" />
     </div>
     <div class="separator" [hidden]="results.length == 0"></div>
     <div class="autocomplete" [style.height]="autocompleteHeight">

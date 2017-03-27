@@ -11,6 +11,12 @@
 
     .route-item .route-subtitle {
         line-height: 28px;   
+        margin-left: 32px;
+    }
+
+    .route-item .route-details {
+        font-size: 13px;
+        color: #ff9800;
     }
 
 .route-img {    
@@ -18,4 +24,16 @@
     width: 22px;
     float: left;
     margin-right: 10px;
+}
+
+.collect-points-content{
+    float: right;
+}
+
+.collect-points-content i.collected{
+    color: #009688;
+}
+
+.collect-points-content i.not-collected{
+    color: #f44336;
 }

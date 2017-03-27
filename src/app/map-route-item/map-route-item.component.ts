@@ -16,7 +16,7 @@ export class MapRouteItemComponent {
     @Input("route") private route : RouteDetailedContract;
 
     public onItemClick(route : RouteDetailedContract): void {
-        this.router.navigate(["routes", route.ID]);
+        this.router.navigate(["route-details", route.ID]);
     }
 
     private getAssignedTo() : string {
