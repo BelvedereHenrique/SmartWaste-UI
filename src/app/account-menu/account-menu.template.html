@@ -1,13 +1,13 @@
-<div class="header">    
+<div class="header">
     <h1 class="title">Account<small>manage your account</small></h1>
     <ng2-slim-loading-bar [color]="'#FFFFFF'" [height]="'2px'"></ng2-slim-loading-bar>
 </div>
- <div class="btn-logout col col-lg-12 col-md-12 col-sm-12 col-xs-12"(click)="signOut()"> <i style="color: #ff9800 " class="material-icons">exit_to_app</i>
-  <span style="position: relative; top: -5px;">Sign-Out</span>
- </div>
+<div class="btn-logout col col-lg-12 col-md-12 col-sm-12 col-xs-12" (click)="signOut()"> <i style="color: #ff9800 " class="material-icons">exit_to_app</i>
+    <span style="position: relative; top: -5px;">Sign-Out</span>
+</div>
 
 <div *ngIf="canShowEnterpriseMenu">
-    <div class="item" (click)="onRequestEnterprisePermissionClick()">        
+    <div class="item" (click)="onRequestEnterprisePermissionClick()">
         <div class="icon">
             <i style="color: #FF9800 " class="material-icons">business</i>
         </div>
@@ -16,7 +16,7 @@
             <div class="account-subtitle">
                 Here you can register a company and associate it with your user.
             </div>
-        </div>        
+        </div>
     </div>
 </div>
 
@@ -28,27 +28,97 @@
         <div class="account-title"><strong>Registred Enterprise</strong></div>
         <strong>Name</strong>: <span>{{enterprise.Name}}</span><br />
         <strong>CNPJ</strong>: <span>{{enterprise.CNPJ}}</span>
-    </div>       
-</div>    
-  <div id="enterprise" *ngIf="enterprise">
-    <div class="col col-lg-12">
-      <hr />
-      <h4 class="title" style="color: #FF9800">Send Permissions</h4>
-      <label>Send to employee an invitation to associate the account with an enterprise account</label>
-      <div>
-        <button *ngIf="fillform" type="button" class="btn btn-info" (click)="goToEmployeeRequest()">Fill email</button>
-        <div *ngIf=!fillform>
-          <form novalidate #heroForm2="ngForm">
-            <div class="form-group">
-                <label>Employee Email</label>
-                <input type="email" [(ngModel)]="Employee.Email" required name="email" #email="ngModel" class="form-control" placeholder="Enter employee email">
-                <div *ngIf="email.errors && (email.dirty || email.touched)" class="alert alert-danger"><div [hidden]="!email.errors.required">Insert the email</div></div>
-                <div *ngIf="!validateEmail() && (email.dirty || email.touched)" class="alert alert-danger"><div>Invalid e-mail!</div></div>
-            </div>
-            <button [disabled]="!checkAllProperties()" type="button" class="btn btn-success pull-right" (click)="sendEmployeeToken()">Send Invitation</button>
-            <button  *ngIf="resend && Employee.Email != ''" [disabled]="!checkAllProperties()" type="button" class="btn btn-info pull-left" (click)="resendEmployeeToken()">Re-send Invitation</button>
-          </form>
-        </div>
-      </div> 
     </div>
- </div> 
+</div>
+<div id="enterprise" *ngIf="enterprise">
+    <div class="col col-lg-12">
+        <hr />
+        <h4 class="title" style="color: #FF9800">Send Permissions</h4>
+        <label>Send to employee an invitation to associate the account with an enterprise account</label>
+        <div>
+            <button *ngIf="fillform" type="button" class="btn btn-info" (click)="goToEmployeeRequest()">Fill email</button>
+            <div *ngIf=!fillform>
+                <form novalidate #heroForm2="ngForm">
+                    <div class="form-group">
+                        <label>Employee Email</label>
+                        <input type="email" [(ngModel)]="Employee.Email" required name="email" #email="ngModel" class="form-control" placeholder="Enter employee email">
+                        <div *ngIf="email.errors && (email.dirty || email.touched)" class="alert alert-danger">
+                            <div [hidden]="!email.errors.required">Insert the email</div>
+                        </div>
+                        <div *ngIf="!validateEmail() && (email.dirty || email.touched)" class="alert alert-danger">
+                            <div>Invalid e-mail!</div>
+                        </div>
+                    </div>
+                    <button [disabled]="!checkAllProperties()" type="button" class="btn btn-success pull-right" (click)="sendEmployeeToken()">Send Invitation</button>
+                    <button *ngIf="resend && Employee.Email != ''" [disabled]="!checkAllProperties()" type="button" class="btn btn-info pull-left"
+                        (click)="resendEmployeeToken()">Re-send Invitation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="enterprisePoint" *ngIf="enterprise">
+    <div class="col col-lg-12">
+        <hr />
+        <h4 class="title" style="color: #FF9800">Request point</h4>
+        <label>Request point registration for company trash can.</label>
+        <div>
+            <button *ngIf="fillpointform" type="button" class="btn btn-info" (click)="goToPointRequest()">Request</button>
+            <div *ngIf=!fillpointform>
+                <div class="form-group">
+                    <label>Country</label><br />
+                    <select class="form-control" [disabled]="Countries.length == 0" (change)="onCountryChange($event.target.value)">
+            <option *ngFor="let country of Countries" value="{{country.ID}}">{{country.Name}}</option>
+        </select>
+                </div>
+                <div class="form-group">
+                    <label>State</label><br />
+                    <select class="form-control" [disabled]="States.length == 0" (change)="onStateChange($event.target.value)">
+            <option *ngFor="let state of States" value="{{state.ID}}">{{state.Name}}</option>
+        </select>
+                </div>
+                <div class="form-group">
+                    <label>City</label><br />
+                    <select class="form-control" name="city" #city="ngModel" [(ngModel)]="AccountEnterprise.Address.City" [disabled]="Cities.length == 0">
+            <option *ngFor="let city of Cities" required [ngValue]="city" >{{city.Name}}</option>
+        </select>
+                </div>
+                <div class="form-group">
+                    <label>Address</label><br />
+                    <input type="text" class="form-control" required name="address" #address="ngModel" [(ngModel)]="AccountEnterprise.Address.Line1"
+                        placeholder="Ex: Fifth avenue 1040">
+                    <div *ngIf="address.errors && (address.dirty || address.touched)" class="alert alert-danger">
+                        <div [hidden]="!address.errors.required">Address is required</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Complement</label><br />
+                    <input type="text" class="form-control" name="complement" #complement="ngModel" [(ngModel)]="AccountEnterprise.Address.Line2"
+                        placeholder="Apartment A2">
+                </div>
+                <div class="form-group">
+                    <label>Neighborhood</label><br />
+                    <input type="text" class="form-control" required name="neighborhood" #neighborhood="ngModel" [(ngModel)]="AccountEnterprise.Address.Neighborhood"
+                        placeholder="Neighborhood">
+                    <div *ngIf="neighborhood.errors && (neighborhood.dirty || neighborhood.touched)" class="alert alert-danger">
+                        <div [hidden]="!neighborhood.errors.required">Neighborhood is required</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>ZIP Code</label><br />
+                    <input type="text" class="form-control" required name="zipcode" #zipcode="ngModel" [(ngModel)]="AccountEnterprise.Address.ZipCode"
+                        placeholder="ZipCode">
+                    <div *ngIf="zipcode.errors && (zipcode.dirty || zipcode.touched)" class="alert alert-danger">
+                        <div [hidden]="!zipcode.errors.required">ZipCode is required</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-info" *ngIf="!AccountEnterprise.Address.Latitude && !AccountEnterprise.Address.Longitude"
+                        (click)="getCurrentLocation()">  <i class="glyphicon glyphicon-globe"></i> Get Current Location</button>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success" (click)="saveEnterprise()" *ngIf="checkPointProperties()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
