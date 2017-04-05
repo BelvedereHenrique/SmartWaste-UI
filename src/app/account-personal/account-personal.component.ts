@@ -1,10 +1,13 @@
-import { Component } from "@angular/core"
+import { Component, OnDestroy, OnInit} from "@angular/core"
 import { ActivatedRoute } from "@angular/router"
+import { Subscription } from 'rxjs';
 import { Http } from '@angular/http';
 import { AccountPersonalService } from '../_shared/_services/account-personal.service';
-import {ViewChild} from '@angular/core';
-import {NotificationService, Notification} from '../_shared/_services/notification.service';
+import { ViewChild } from '@angular/core';
+import { NotificationService, Notification, NotificationResult } from '../_shared/_services/notification.service';
 import { Router } from "@angular/router"
+import { MapService, PushPinBuilder, PushPinType, PushPinColorEnum } from "../_shared/_services/map.service";
+import { MapTypeEnum } from '../_shared/_models/map-type.enum'
 
 @Component({
   selector: "account-personal-details",
@@ -12,7 +15,7 @@ import { Router } from "@angular/router"
   styleUrls: ["./account-personal.component.css"]
 })
 
-export class AccountPersonalComponent {
+export class AccountPersonalComponent implements OnInit, OnDestroy {
   Countries = [];
   Cities = [];
   States = [];
@@ -32,7 +35,9 @@ export class AccountPersonalComponent {
       Line1: "",
       Line2: "",
       ZipCode: "",
-      Neighborhood:""
+      Neighborhood:"",
+      Latitude: 0,
+      Longitude: 0
     },
     
     
@@ -42,12 +47,69 @@ export class AccountPersonalComponent {
   DocumentAlreadyInUse = false;
   private isLoading = true;
 
+  private onMapClickSubscription : Subscription;
+  private allowClickMap : boolean = false;
+  private notificationResult : NotificationResult;
+
   constructor(private http: Http,
     private _service: AccountPersonalService,
     private _notificationService: NotificationService,
+    private _mapService: MapService,
     private _router: Router) {
     this.getCountries();
   }
+
+  public ngOnInit() : void{
+        this._mapService.onLoad.subscribe(() => {
+            this._mapService.setup(MapTypeEnum.CoordinatesColletor);        
+            this.onMapClickSubscription = this._mapService.onClick$.subscribe(this.onMapClick.bind(this));        
+        });
+  }
+
+  public ngOnDestroy() : void{
+    if(this.onMapClickSubscription)
+        this.onMapClickSubscription.unsubscribe();
+
+    this._mapService.onLoad.subscribe(() => {
+      this._mapService.clear();
+    });
+  }
+
+  private onMapClick(location : Microsoft.Maps.Location) : void {
+        if(!this.allowClickMap) return;
+        this._mapService.onLoad.subscribe(() => {
+          this._mapService.clear();
+          this._mapService.addPushPin(new PushPinBuilder(location).build());
+          
+          var notification : Notification = new Notification("Is the pin exactly on your address?", [], 0);
+          notification.AddButton("No", () => {
+              this._mapService.clear();
+              this.allowClickMap = true;
+          });
+          notification.AddButton("Yes", () => {
+              this.allowClickMap = true;
+              this.Form.Fields.Latitude = location.latitude;
+              this.Form.Fields.Longitude = location.longitude;
+          });
+          this.notificationResult = this._notificationService.notify(notification);
+        });
+    }
+
+    private getCityName() : string{
+      return this.Cities.find(x => x.ID == this.Form.Fields.City).Name;
+    }
+
+    public getCurrentLocation(){
+      if(this.Form.Fields.City != '' && this.Form.Fields.City != null){
+        let query:string;
+        query = this.Form.Fields.Line1 + ", " + this.getCityName();
+        this._mapService.search(query);
+        this.allowClickMap = true;
+        this._notificationService.notify(new Notification("Search for your address and click on it!"));
+      }else{
+        this._notificationService.notify(new Notification("City must not be Empty!!"));
+      }
+    }
 
   public onCountryChange(value) {
     this.getStates(value);
@@ -107,7 +169,7 @@ export class AccountPersonalComponent {
     this._service.saveRequest(this.Form).subscribe(
       data => {
         if (data.Result == true) {
-          this._notificationService.notify(new Notification("User subscribed!",[]))
+          this._notificationService.notify(new Notification("Account created.",[]))
           
           this._router.navigateByUrl("signin");
           
@@ -196,7 +258,9 @@ export class AccountPersonalComponent {
       this.Form.Fields.State &&
       this.Form.Fields.City &&
       !this.EmailAlreadyInUse &&
-      !this.DocumentAlreadyInUse
+      !this.DocumentAlreadyInUse &&
+      this.Form.Fields.Latitude != 0 &&
+      this.Form.Fields.Longitude != 0
     )&&
     (this.validateAddressLine1()&&
     this.validateCity()&&

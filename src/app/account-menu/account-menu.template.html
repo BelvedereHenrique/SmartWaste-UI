@@ -2,8 +2,14 @@
     <h1 class="title">Account<small>manage your account</small></h1>
     <ng2-slim-loading-bar [color]="'#FFFFFF'" [height]="'2px'"></ng2-slim-loading-bar>
 </div>
-<div class="btn-logout col col-lg-12 col-md-12 col-sm-12 col-xs-12" (click)="signOut()"> <i style="color: #ff9800 " class="material-icons">exit_to_app</i>
-    <span style="position: relative; top: -5px;">Sign-Out</span>
+
+<div class="item" (click)="signOut()">
+    <div class="icon">
+        <i style="color: #f30000 " class="material-icons">exit_to_app</i>
+    </div>
+    <div class="content" style="padding-top: 8px;">
+        <div class="account-title"><strong><span style="position: relative; top: -5px;">Sign-Out</span></strong></div>
+    </div>
 </div>
 
 <div *ngIf="canShowEnterpriseMenu">
@@ -36,7 +42,7 @@
         <h4 class="title" style="color: #FF9800">Send Permissions</h4>
         <label>Send to employee an invitation to associate the account with an enterprise account</label>
         <div>
-            <button *ngIf="fillform" type="button" class="btn btn-info" (click)="goToEmployeeRequest()">Fill email</button>
+            <button *ngIf="fillform" type="button" class="btn btn-success pull-right" (click)="goToEmployeeRequest()">Fill email</button>
             <div *ngIf=!fillform>
                 <form novalidate #heroForm2="ngForm">
                     <div class="form-group">
@@ -57,6 +63,8 @@
         </div>
     </div>
 </div>
+
+<!--
 <div id="enterprisePoint" *ngIf="enterprise">
     <div class="col col-lg-12">
         <hr />
@@ -121,4 +129,4 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>-->

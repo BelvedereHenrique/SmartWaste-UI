@@ -55,7 +55,7 @@
         <div *ngIf="zipcode.errors && (zipcode.dirty || zipcode.touched)" class="alert alert-danger"><div [hidden]="!zipcode.errors.required">ZipCode is required</div></div>
     </div>
     <div class="form-group">
-        <button type="button" class="btn btn-info" *ngIf="!AccountEnterprise.Address.Latitude && !AccountEnterprise.Address.Longitude" (click)="getCurrentLocation()" >  <i class="glyphicon glyphicon-globe"></i> Get Current Location</button>
+        <button type="button" class="btn btn-info" *ngIf="!AccountEnterprise.Address.Latitude && !AccountEnterprise.Address.Longitude" (click)="getCurrentLocation()" >  <i class="glyphicon glyphicon-globe"></i> GET YOUR ADDRESS</button>
     </div>
     <div class="form-group">
         <button type="button" class="btn btn-success" (click)="saveEnterprise()" *ngIf="checkAllProperties()">Save</button>

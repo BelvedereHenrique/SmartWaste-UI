@@ -52,10 +52,7 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
     private notificationResult : NotificationResult;    
 
     ngOnInit() {
-        console.log("ngOnInit");
         this._mapService.onLoad.subscribe(() => {
-            console.log("ONLOAD");
-            //this.allowClickMap = this.AccountEnterprise.Address.Line1 != '';
             this._mapService.setup(MapTypeEnum.CoordinatesColletor);        
             this.onMapClickSubscription = this._mapService.onClick$.subscribe(this.onMapClick.bind(this));        
         });        
