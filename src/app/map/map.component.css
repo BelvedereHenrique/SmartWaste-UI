@@ -39,7 +39,7 @@
     }
 
     .map-content.menu-opened:not(.mini) {        
-        bottom: 50%;
+        bottom: 60%;
     }
 
     .map-content.menu-opened.mini {        
