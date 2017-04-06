@@ -6,6 +6,7 @@ import { NotificationService, Notification, NotificationResult } from '../_share
 import { SecurityManagerService } from '../_shared/_services/security-manager.service';
 import { SecurityModel } from '../_shared/_models/security.model';
 import { PointService } from '../_shared/_services/point.service';
+import { MapService } from '../_shared/_services/map.service';
 
 @Component({
     selector: "app-menu",
@@ -19,7 +20,8 @@ export class AppMenuComponent implements OnInit{
     constructor(private _fabService : FloatActionButtonService,
                 private _notificationService : NotificationService,
                 private _securityManagerService: SecurityManagerService,
-                private _pointService : PointService){
+                private _pointService : PointService,
+                private _mapService : MapService){
 
     }
 
@@ -36,7 +38,7 @@ export class AppMenuComponent implements OnInit{
                                                          "Warn trashcan as full", 
                                                          "warn_trashcan_as_full", 
                                                          FloatActionButtonType.normal,
-                                                         this.onWarnTrashcanAsFull.bind(this), 1, false));
+                                                         this.localeUserPoint.bind(this), 1, false));
 
         this.onAuthChangeSubscription = this._securityManagerService.onAuthChange$.subscribe(this.setupSecurity.bind(this));
     }
@@ -52,6 +54,27 @@ export class AppMenuComponent implements OnInit{
         this._fabService.setVisible({
             name : 'warn_trashcan_as_full',
             visible : securityModel && securityModel.CanSetTrashcanAsFull
+        });
+    }
+
+    private localeUserPoint() : void{
+        let notification : NotificationResult = this._notificationService.notify(new Notification("Loading...", [], 0));
+
+        this._pointService.GetOwnPoint().subscribe((jsonModel) => {
+            notification.Cancel();
+            if(jsonModel.Success && jsonModel.Result){
+                this._mapService.setView({
+                    center : new Microsoft.Maps.Location(jsonModel.Result.Latitude, jsonModel.Result.Longitude),
+                    zoom: 16
+                });
+
+                this.onWarnTrashcanAsFull();
+            }else{
+                this._notificationService.notify(new Notification("It was not possible to set your trashcan as full.", [], 0));
+            }
+        }, (jsonErrorModel) => {
+            notification.Cancel();
+            this._notificationService.notify(new Notification("It was not possible to set your trashcan as full.", [], 0));
         });
     }
 

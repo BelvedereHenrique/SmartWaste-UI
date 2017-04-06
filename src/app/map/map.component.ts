@@ -66,21 +66,27 @@ export class MapComponent{
         this.loadMap();        
     }
     
-    private setupCompassEvent() : void{
+    private setupCompassEvent(enable : boolean) : void{
         if(!(<any>window).DeviceOrientationEvent)
             return;
 
-        window.addEventListener('deviceorientation', (eventData) => {
-            if(this.map != null){
-                this.setView({
-                    heading: eventData.alpha
-                });
-            }
-        }, false);
+        if (enable)
+            window.addEventListener('deviceorientation', this.compassCallback.bind(this), false);
+        else
+            window.removeEventListener("deviceorientation", this.compassCallback);
+    }
+
+    private compassCallback(eventData) : void{
+        if(this.map != null){
+            this.setView({
+                heading: eventData.alpha
+            });
+        }
     }
 
     private setCompass(enable : boolean) : void{
         this.isCompassEnabled = enable;
+        this.setupCompassEvent(enable);
     }
 
     private setZoom(options : ZoomOptions) : void {        
@@ -100,7 +106,7 @@ export class MapComponent{
         this.instance.setMapType(type);
     }
 
-    private setView(view: Microsoft.Maps.IViewOptions) : void{
+    private setView(view: Microsoft.Maps.IViewOptions) : void{        
         this.instance.setView(view);
     }
 
@@ -249,7 +255,8 @@ export class MapComponent{
                 showDashboard: false,
                 showZoomButtons: false,
                 showTermsLink: false,
-                showTrafficButton: false
+                showTrafficButton: false,
+                liteMode: true
             });
 
             Microsoft.Maps.Events.addHandler(this.instance, "click", this.onMapClick.bind(this));

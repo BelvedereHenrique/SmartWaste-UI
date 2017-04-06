@@ -8,6 +8,7 @@ import { AccountEnterpriseService } from "../_shared/_services/account-enterpris
 import { SecurityManagerService } from "../_shared/_services/security-manager.service";
 import { MapService, PushPinBuilder, PushPinType, PushPinColorEnum } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
+import { SecurityModel } from '../_shared/_models/security.model';
 
 @Component({
   selector: "account-menu",
@@ -34,6 +35,7 @@ export class AccountMenuComponent implements OnDestroy, OnInit {
   private notificationResult: NotificationResult;
   public canShowEnterpriseMenu = false;
   public enterprise = null;
+  public CanInviteUserToYourCompany : boolean;
   private isLoading = false;
   public fillform = true;
   public fillpointform = true;
@@ -69,10 +71,14 @@ export class AccountMenuComponent implements OnDestroy, OnInit {
   }
 
   public ngOnInit(): void {
-    this.onAuthChangeSubscription = this._securityManagerService.onAuthChange$.subscribe(securityModel => {
-      if (securityModel == null)
+    this.onAuthChangeSubscription = this._securityManagerService.onAuthChange$.subscribe((securityModel : SecurityModel) => {
+      if (securityModel == null){
         this.router.navigate(["/"]);
-    });
+        return
+      }
+          
+        this.CanInviteUserToYourCompany = securityModel.CanInviteUserToYourCompany;        
+      });
   }
 
   public ngOnDestroy(): void {

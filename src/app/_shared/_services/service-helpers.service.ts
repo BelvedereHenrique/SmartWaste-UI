@@ -83,7 +83,7 @@ export class ServiceHelpersService {
             // NOTE: User is not authorized. Redirecting to sign in component.
             this._securityManager.signout();
             this._router.navigate(["/signin"]);
-            this._notificationService.notify(new Notification("Something went wrong... Please, sign in again.", [], 5000));
+            //this._notificationService.notify(new Notification("Something went wrong... Please, sign in again.", [], 5000));
         } else { 
             const errMsg = (error.message) ? error.message : error.status ? `${error.status} - ${error.statusText}` : 'Server error';
             //console.error(errMsg); // log to console instead

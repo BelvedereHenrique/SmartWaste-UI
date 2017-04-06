@@ -39,7 +39,8 @@
     }
 
     .map-content.menu-opened:not(.mini) {        
-        bottom: 60%;
+        bottom: 50%;
+        margin-bottom: 65px;
     }
 
     .map-content.menu-opened.mini {        

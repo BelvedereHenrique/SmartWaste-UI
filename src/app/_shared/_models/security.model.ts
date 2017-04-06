@@ -9,4 +9,5 @@ export class SecurityModel
     public CanSetTrashcanAsFull : boolean;
     public CanSeeAllPointDetails : boolean;    
     public CanSeeMapLegendColors : boolean;
+    public CanInviteUserToYourCompany : boolean;
 }

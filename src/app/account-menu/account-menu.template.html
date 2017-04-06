@@ -36,7 +36,7 @@
         <strong>CNPJ</strong>: <span>{{enterprise.CNPJ}}</span>
     </div>
 </div>
-<div id="enterprise" *ngIf="enterprise">
+<div id="enterprise" *ngIf="enterprise && CanInviteUserToYourCompany">
     <div class="col col-lg-12">
         <hr />
         <h4 class="title" style="color: #FF9800">Send Permissions</h4>

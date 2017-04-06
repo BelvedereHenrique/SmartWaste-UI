@@ -40,6 +40,10 @@ export class PointService {
     public setTrashcanAsFull() : Observable<JsonModel<any>> {
         return this.serviceHelper.post<JsonModel<any>>("/Point/SetAsFull", null, true, ContentTypeEnum.JSON);
     }
+
+    public GetOwnPoint() : Observable<JsonModel<PointDetailedContract>> {
+        return this.serviceHelper.post<JsonModel<PointDetailedContract>>("/Point/GetOwnPoint", null, true, ContentTypeEnum.JSON);
+    }    
 }
 
 export class PointSearch {
