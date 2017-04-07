@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { NotificationService, Notification, NotificationResult, NotificationButton } from '../_shared/_services/notification.service'
 import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
 import { AccountEnterpriseService } from '../_shared/_services/account-enterprise.service';
+import { SecurityManagerService } from '../_shared/_services/security-manager.service';
 
 @Component({
     selector: "company-request",
@@ -18,6 +19,7 @@ export class CompanyRequestComponent {
     private _service: AccountEnterpriseService,
     private _notificationService: NotificationService,
     private _router: Router,
+    private _securityManagerService : SecurityManagerService,
     private slimLoadingBarService: SlimLoadingBarService,
     private activatedRoute: ActivatedRoute) {
     
@@ -50,7 +52,9 @@ export class CompanyRequestComponent {
     this._service.setEnterprisePermission(this.CompanyRequest).subscribe(
       data => {
           if(data.Success == true){
-            this._router.navigateByUrl("/account")
+            this._router.navigateByUrl("/signin");
+            this._securityManagerService.signout();
+            this._notificationService.notify(new Notification("You joined in a company. Sign in again..", [], 5000));
           } else {
               for(var i = 0; i< data.Messages.length; i++){
                 this._notificationService.notify(new Notification(data.Messages[i].Message));

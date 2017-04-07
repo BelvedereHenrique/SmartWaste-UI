@@ -128,12 +128,15 @@ export class AccountMenuComponent implements OnDestroy, OnInit {
   public sendEmployeeToken() {
     this.slimLoadingBarService.start();
     this.Employee.check = true;
-    debugger;
+    
     this._accountService.sendEmployeeToken(this.Employee).subscribe(
       data => {
         if (data.Success == true) {
+          this._notificationService.notify(new Notification("An email was sent to " + this.Employee.Email + " with the next instructions.", [], 5000));
+
           this.fillform = true;
-          this.Employee.Email = ''
+          this.Employee.Email = ''          
+
           this.resend = false;
         } else {
           for (var i = 0; i < data.Messages.length; i++) {
@@ -157,13 +160,15 @@ export class AccountMenuComponent implements OnDestroy, OnInit {
   public resendEmployeeToken() {
     this.slimLoadingBarService.start();
     this.Employee.check = false;
-    debugger;
+    
     this._accountService.sendEmployeeToken(this.Employee).subscribe(
       data => {
         if (data.Success == true) {
+          this._notificationService.notify(new Notification("An email was sent to " + this.Employee.Email + " with the next instructions.", [], 5000));
+
           this.fillform = true;
           this.Employee.Email = '';
-          this.resend = false;
+          this.resend = false;          
         } else {
           for (var i = 0; i < data.Messages.length; i++) {
             this._notificationService.notify(new Notification(data.Messages[i].Message));

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Response, Http, URLSearchParams, RequestOptions, Headers, RequestMethod} from "@angular/http";
 import { Observable } from 'rxjs';
@@ -17,6 +17,8 @@ export class ServiceHelpersService {
     constructor(private _http: Http,
                 private _jwtService: JwtService,
                 private _router: Router,
+                private _activatedRoute : ActivatedRoute,
+                private _location : Location,
                 private _securityManager: SecurityManagerService,
                 private _notificationService: NotificationService){
 
@@ -82,7 +84,14 @@ export class ServiceHelpersService {
         if(error.status == 401){
             // NOTE: User is not authorized. Redirecting to sign in component.
             this._securityManager.signout();
-            this._router.navigate(["/signin"]);
+            
+            var redirectionExceptions : string[] = ["/", "/account/companyrequest"];
+            var currentUrl : string = this._router.url.split("?")[0];
+
+            if(!redirectionExceptions.find(x => x == currentUrl)){
+                this._router.navigate(["/signin"]);
+            }
+
             //this._notificationService.notify(new Notification("Something went wrong... Please, sign in again.", [], 5000));
         } else { 
             const errMsg = (error.message) ? error.message : error.status ? `${error.status} - ${error.statusText}` : 'Server error';

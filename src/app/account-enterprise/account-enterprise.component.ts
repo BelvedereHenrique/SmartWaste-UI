@@ -8,6 +8,7 @@ import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
 import { AccountEnterpriseService } from '../_shared/_services/account-enterprise.service';
 import { MapService, PushPinBuilder, PushPinType, PushPinColorEnum } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
+import { SecurityManagerService } from '../_shared/_services/security-manager.service';
 
 @Component({
     selector: "account-enterprise-details",
@@ -20,6 +21,7 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
                  private _service: AccountEnterpriseService,
                  private _mapService: MapService,
                  private _notificationService: NotificationService,
+                 private _securityManagerService : SecurityManagerService,
                  private _router: Router,
                  private slimLoadingBarService: SlimLoadingBarService) {
                   this.getCountries();
@@ -138,8 +140,10 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
             if(data.Success == true){
               console.log(data); 
               this.slimLoadingBarService.complete()
-              this._notificationService.notify(new Notification("Success. You'll receive an email with the next instructions.",[],5000));
-              this._router.navigateByUrl("/account");
+              this._notificationService.notify(new Notification("Your enterprise was created. Please, sign in again.", [], 5000));
+
+              this._router.navigateByUrl("/signin");
+              this._securityManagerService.signout();
             }else{              
               for(var i = 0; i< data.Messages.length; i++){
                   this._notificationService.notify(new Notification(data.Messages[i].Message));
@@ -168,6 +172,7 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
     }
 
     private onMapClick(location : Microsoft.Maps.Location) : void {
+      this._mapService.onLoad$.subscribe(() => {
         if(!this.allowClickMap) return;
         this._mapService.clear();
         this._mapService.addPushPin(new PushPinBuilder(location).build());
@@ -183,5 +188,6 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
             this.AccountEnterprise.Address.Longitude = location.longitude.toString();
         });
         this.notificationResult = this._notificationService.notify(notification);
+      });        
     }
 }

@@ -1,26 +1,26 @@
-<ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
-<h1 class="title"><a href="#/account">Account</a>/Company request <small>Get enterprise concession</small></h1>
-<div class="row">
-    <div class="container">
-      <form novalidate #heroForm="ngForm">
-        <div class="col col-lg-12 form-group">
-            <label>Email</label><br />
-            <input type="email" [(ngModel)]="CompanyRequest.email" required name="email" #email="ngModel" class="form-control" placeholder="Email">
-            <div *ngIf="email.errors && (email.dirty || email.touched)" class="alert alert-danger"><div [hidden]="!email.errors.required">Email is required</div></div>
-        </div>
-        <div class="col col-lg-12 form-group">
-            <label>Password</label><br />
-            <input type="password" class="form-control" name="password" required #password="ngModel" [(ngModel)]="CompanyRequest.password" placeholder="Enter your password">
-            <div *ngIf="password.errors && (password.dirty || password.touched)" class="alert alert-danger"><div [hidden]="!password.errors.required">Password is required</div></div>
-        </div>
-        <div class="col col-lg-12 form-group">
-            <label>Token</label><br />
-            <input type="text" class="form-control" name="token" required #token="ngModel" [(ngModel)]="CompanyRequest.token" placeholder="Enter your token">
-            <div *ngIf="token.errors && (token.dirty || token.touched)" class="alert alert-danger"><div [hidden]="!token.errors.required">Token is required</div></div>
-        </div>
-        <div class="col col-lg-12 form-group">
-            <button [disabled]="!checkAllProperties()" type="button" class="btn btn-success" (click)="setPermission()">Save</button>
-        </div>
-     </form>
+<div class="header">
+    <ng2-slim-loading-bar [color]="'#009688'" [height]="'2px'"></ng2-slim-loading-bar>
+    <h1 class="title">Join a company <small>get enterprise concession</small></h1>
+</div>
+<div class="menu-container">
+    <form novalidate #heroForm="ngForm">
+    <div class="form-group">
+        <label>Email</label><br />
+        <input type="email" [(ngModel)]="CompanyRequest.email" required name="email" #email="ngModel" class="form-control" placeholder="Email">
+        <div *ngIf="email.errors && (email.dirty || email.touched)" class="alert alert-danger"><div [hidden]="!email.errors.required">Email is required</div></div>
     </div>
+    <div class="form-group">
+        <label>Password</label><br />
+        <input type="password" class="form-control" name="password" required #password="ngModel" [(ngModel)]="CompanyRequest.password" placeholder="Enter your password">
+        <div *ngIf="password.errors && (password.dirty || password.touched)" class="alert alert-danger"><div [hidden]="!password.errors.required">Password is required</div></div>
+    </div>
+    <div class="form-group">
+        <label>Token</label><br />
+        <input type="text" class="form-control" name="token" required #token="ngModel" [(ngModel)]="CompanyRequest.token" placeholder="Enter your token">
+        <div *ngIf="token.errors && (token.dirty || token.touched)" class="alert alert-danger"><div [hidden]="!token.errors.required">Token is required</div></div>
+    </div>
+    <div class="form-group">
+        <button [disabled]="!checkAllProperties()" type="button" class="btn btn-success" (click)="setPermission()">Save</button>
+    </div>
+    </form>
 </div>
