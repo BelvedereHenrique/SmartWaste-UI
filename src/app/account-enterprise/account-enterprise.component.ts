@@ -1,3 +1,5 @@
+/// <reference path="../../../node_modules/bingmaps/scripts/MicrosoftMaps/Microsoft.Maps.All.d.ts"/>
+
 import { Component, OnDestroy, OnInit } from "@angular/core"
 import { ActivatedRoute, Router } from "@angular/router"
 import { Http } from '@angular/http';
@@ -9,6 +11,7 @@ import { AccountEnterpriseService } from '../_shared/_services/account-enterpris
 import { MapService, PushPinBuilder, PushPinType, PushPinColorEnum } from "../_shared/_services/map.service";
 import { MapTypeEnum } from '../_shared/_models/map-type.enum'
 import { SecurityManagerService } from '../_shared/_services/security-manager.service';
+import { MapPointLoaderService } from '../_shared/_services/map-point-loader.service';
 
 @Component({
     selector: "account-enterprise-details",
@@ -22,6 +25,7 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
                  private _mapService: MapService,
                  private _notificationService: NotificationService,
                  private _securityManagerService : SecurityManagerService,
+                 private _mapPointLoaderService : MapPointLoaderService,
                  private _router: Router,
                  private slimLoadingBarService: SlimLoadingBarService) {
                   this.getCountries();
@@ -53,9 +57,12 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
     private allowClickMap: boolean  = false;
     private notificationResult : NotificationResult;    
 
+    private userLayer : Microsoft.Maps.Layer = null;
+
     ngOnInit() {
         this._mapService.onLoad.subscribe(() => {
-            this._mapService.setup(MapTypeEnum.CoordinatesColletor);        
+            this.setupUserLayer();
+            this._mapPointLoaderService.stop();
             this.onMapClickSubscription = this._mapService.onClick$.subscribe(this.onMapClick.bind(this));        
         });        
     }
@@ -63,9 +70,27 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
     ngOnDestroy(){
       if(this.onMapClickSubscription)
         this.onMapClickSubscription.unsubscribe();
-      this._mapService.clear();
+      this.clearUserLayer();
       if(this.notificationResult)
         this.notificationResult.Cancel();
+
+      this._mapService.onLoad.subscribe(() => {
+        this._mapPointLoaderService.start();
+      });
+    }
+
+    private setupUserLayer() : void{
+        if(this.userLayer == null)
+            this.userLayer = new Microsoft.Maps.Layer();
+
+        this._mapService.addLayer(this.userLayer);
+    }
+
+    private clearUserLayer() : void{
+      if(this.userLayer)
+      {
+        this.userLayer.clear();      
+      }
     }
 
     public onCountryChange(value){
@@ -174,12 +199,13 @@ export class AccountEnterpriseComponent implements OnDestroy, OnInit {
     private onMapClick(location : Microsoft.Maps.Location) : void {
       this._mapService.onLoad$.subscribe(() => {
         if(!this.allowClickMap) return;
-        this._mapService.clear();
-        this._mapService.addPushPin(new PushPinBuilder(location).build());
+        this.clearUserLayer();
+        this._mapPointLoaderService.stop();
+        this.userLayer.add(new PushPinBuilder(location).build());
         
         var notification : Notification = new Notification("Is the pin exactly on your address?", [], 0);
         notification.AddButton("No", () => {
-            this._mapService.clear();
+            this.clearUserLayer();
             this.allowClickMap = true;
         });
         notification.AddButton("Yes", () => {

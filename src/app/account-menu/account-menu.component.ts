@@ -243,33 +243,4 @@ export class AccountMenuComponent implements OnDestroy, OnInit {
     if (this.AccountEnterprise.Name == '') return false;
     return true;
   }
-  public getCurrentLocation() {
-    if (this.AccountEnterprise.Address.City.ID != '' && this.AccountEnterprise.Address.City.ID != null) {
-      let query: string;
-      query = this.AccountEnterprise.Address.Line1 + ", " + this.AccountEnterprise.Address.City.Name;
-      this._mapService.search(query);
-      this.allowClickMap = true;
-      this._notificationService.notify(new Notification("Search for your address and click on it!"));
-    } else {
-      this._notificationService.notify(new Notification("City must not be Empty!!"));
-    }
-  }
-
-  private onMapClick(location: Microsoft.Maps.Location): void {
-    if (!this.allowClickMap) return;
-    this._mapService.clear();
-    this._mapService.addPushPin(new PushPinBuilder(location).build());
-
-    var notification: Notification = new Notification("Is the pin exactly on your address?", [], 0);
-    notification.AddButton("No", () => {
-      this._mapService.clear();
-      this.allowClickMap = true;
-    });
-    notification.AddButton("Yes", () => {
-      this.allowClickMap = true;
-      this.AccountEnterprise.Address.Latitude = location.latitude.toString();
-      this.AccountEnterprise.Address.Longitude = location.longitude.toString();
-    });
-    this.notificationResult = this._notificationService.notify(notification);
-  }
 }

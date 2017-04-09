@@ -13,10 +13,8 @@ import { PointTypeEnum } from '../_models/point-type.enum';
 @Injectable()
 export class MapService {
     private onSearch = new Subject<SearchOptions>();
-    private onSetup = new Subject<MapTypeEnum>();
     private onAddPushpin = new Subject<Microsoft.Maps.Pushpin>();
     public onClick = new Subject<Microsoft.Maps.Location>();
-    private onClear = new Subject();
     public onPositionChange = new Subject<Microsoft.Maps.Location>();
     public onLoad = new ReplaySubject(1);
     private onCreateRoute = new Subject<any>();
@@ -32,10 +30,8 @@ export class MapService {
     public onSetCompass = new Subject<boolean>();
 
     onSearch$ = this.onSearch.asObservable();
-    onSetup$ = this.onSetup.asObservable();
     onClick$ = this.onClick.asObservable();
     onAddPushpin$ = this.onAddPushpin.asObservable();
-    onClear$ = this.onClear.asObservable();
     onPositionChange$ = this.onPositionChange.asObservable();
     onLoad$ = this.onLoad.asObservable();
     onCreateRoute$ = this.onCreateRoute.asObservable();
@@ -74,20 +70,12 @@ export class MapService {
         this.onSearch.next(options);
     }
 
-    public setup(type: MapTypeEnum): void {        
-        this.onSetup.next(type);
-    }
-
     public addPushPin(pushpin: Microsoft.Maps.Pushpin) : void{
         this.onAddPushpin.next(pushpin);
     }
 
     public createRoute() : void {
         this.onCreateRoute.next();
-    }
-
-    public clear() : void{
-        this.onClear.next();
     }
 
     public addLayer(layer: Microsoft.Maps.Layer) : void{

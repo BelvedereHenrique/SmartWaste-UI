@@ -44,9 +44,7 @@ export class MapComponent{
         this.pushpins = [];
 
         this._mapService.onSearch$.subscribe(this.search.bind(this));
-        this._mapService.onSetup$.subscribe(this.setup.bind(this));
         this._mapService.onAddPushpin$.subscribe(this.addPushpin.bind(this));
-        this._mapService.onClear$.subscribe(this.clear.bind(this));        
         this._mapService.onCreateRoute$.subscribe(this.createRoute.bind(this));      
         this._mapService.onAddLayer$.subscribe(this.addLayer.bind(this));      
         this._mapService.onRemoveLayer$.subscribe(this.removeLayer.bind(this));      
@@ -120,11 +118,6 @@ export class MapComponent{
         }, { enableHighAccuracy: true });
     }
 
-    private setup(type: MapTypeEnum): void {
-        this.clear();
-        this.mapType = type;       
-    }   
-
     private addLayer(layer: Microsoft.Maps.Layer) : void {        
         this.instance.layers.insertAll([layer]);
     }
@@ -132,12 +125,6 @@ export class MapComponent{
     private removeLayer(layer: Microsoft.Maps.Layer) : void {
         this.instance.layers.remove(layer);
     }
-
-    private clear(): void {
-        this.mapType = null;
-        this.instance.entities.clear();
-        this.instance.layers.clear();   
-    };
 
     private setWatchPositionEnabled(enable : boolean) : void {
         if(enable) {
